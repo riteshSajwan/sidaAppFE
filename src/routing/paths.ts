@@ -2,6 +2,13 @@ export enum Routes {
   DEFAULT = '/home',
   LOGIN = '/login',
   PROFILE = '/profile',
+  UPLOAD = '/upload',
+  Payment = '/payment',
+  USER = '/user',
+  REPORTS = '/reports',
+  DASHBOARD = '/dashboard',
+
+
   CHANGE_PASSWORD = '/changePassword',
   RESTAURANTS = '/restaurants',
   PREVIEW = '/preview',
@@ -12,7 +19,7 @@ export enum Routes {
   COUNTRIES = '/countries',
   STATES = '/states',
   CITIES = '/cities',
-  DASHBOARD = '/dashboard',
+
   RATE_TIERS = '/rateTiers',
   MENU_MANAGEMENT = '/management',
   REQUESTS = '/requestManagement',

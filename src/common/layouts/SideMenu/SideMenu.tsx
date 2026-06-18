@@ -25,7 +25,7 @@ const SideMenu = () => {
     },
     // drawerType: 'front',
     drawerType: 'back',
-    drawerPosition: 'right',
+    drawerPosition: 'left',
     drawerActiveBackgroundColor: theme.colors.surfaceBase,
     headerShown: true,
     swipeEdgeWidth: 0,

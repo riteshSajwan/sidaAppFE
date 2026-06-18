@@ -2,6 +2,13 @@ import { LOCALES } from 'src/i18n/locales';
 
 export default {
   [LOCALES['English']]: {
+
+    'Admin.Sida.App.Layout.Upload': 'Upload',
+    'Admin.Sida.App.Reports': 'Reports',
+    'Admin.Sida.App.Users': 'Users',
+    'Admin.Sida.App.Payment': 'Payment',
+
+
     'Admin.Delivery.App.LogIn.Label': 'Log In',
     'Admin.Delivery.App.LogIn.PasswordLabel': 'Enter your Password',
     'Admin.Delivery.App.LogIn.Continue': 'Continue',
@@ -1027,6 +1034,8 @@ export default {
     'Admin.Delivery.App.Total.Tenants': 'Total Tenants',
     'Admin.Delivery.App.User.Email': 'User Email',
     'Admin.Delivery.App.Booking.Payment.Awaited': 'Payment Awaited',
+    // Drawer menu translations
+    
     
   },
 };

@@ -1,0 +1,6 @@
+[submodule "src/submodules/iconlibrary"]
+	path = src/submodules/iconlibrary
+	url = https://bitbucket.org/Evontech/iconlibrary
+[submodule "src/submodules/mapservicesfe"]
+	path = src/submodules/mapservicesfe
+	url = https://bitbucket.org/Evontech/mapservicesfe

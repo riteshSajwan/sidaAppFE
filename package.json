@@ -46,7 +46,7 @@
     "react-apexcharts": "^1.7.0",
     "react-dom": "19.1.0",
     "react-google-autocomplete": "^2.7.5",
-    "react-i18next": "^15.7.4",
+    "react-i18next": "^15.7.3",
     "react-leaflet": "^5.0.0",
     "react-native": "0.81.4",
     "react-native-calendars": "^1.1313.0",

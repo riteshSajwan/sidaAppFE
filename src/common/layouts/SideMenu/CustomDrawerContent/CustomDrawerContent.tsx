@@ -76,15 +76,16 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     //   path: Routes.RESTAURANTS,
     //   icon: 'silverware-fork-knife',
     // },
+    
     {
-      label: TranslateMessage('Admin.Delivery.App.Rate.Tiers'),
-      path: `${Routes.RATE_TIERS}${Routes.CITIES}`,
-      icon: 'dollar',
+      label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
+      path: `${Routes.UPLOAD}`,
+      icon: 'upload',
     },
     {
-      label: TranslateMessage('Admin.Delivery.App.Countries'),
-      path: Routes.COUNTRIES,
-      icon: 'pickup',
+      label: TranslateMessage('Admin.Sida.App.Reports'),
+      path: Routes.REPORT,
+      icon: 'statsDownSquare',
     },
     // {
     //   label: TranslateMessage('Admin.Delivery.App.Orders'),
