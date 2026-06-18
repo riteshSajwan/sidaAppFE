@@ -1,0 +1,192 @@
+import { StyleSheet } from 'react-native';
+import { useAppTheme } from 'src/common/context/AppTheme';
+export const useMonthPickerStyle = () => {
+    const { theme } = useAppTheme();
+    return StyleSheet.create({
+        inputContainer: {
+            flexDirection: 'row',
+            borderWidth: 1,
+            borderColor: theme.colors.borderMedium,
+            paddingLeft: 12,
+            borderRadius: theme.roundness.sm,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: theme.colors.surfaceBase,
+            minHeight: 50,
+        },
+        inputText: {
+            fontSize: theme.fontSize.textBodyMedium,
+            fontFamily: theme.fontFamily.regular,
+            color: theme.colors.textBody,
+            flex: 1,
+        },
+        placeholderText: {
+            color: theme.colors.textNeutral,
+        },
+        modalBackground: {
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            justifyContent: 'center',
+            paddingHorizontal: theme.spacing.lg,
+        },
+        modalContainer: {
+            backgroundColor: theme.colors.surfaceBase,
+            borderRadius: theme.spacing.md,
+            padding: theme.spacing.xl,
+            maxHeight: '85%',
+            shadowColor: theme.colors.surfaceInverse,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.25,
+            shadowRadius: theme.roundness.sm,
+            elevation: 8,
+            minWidth: 300,
+            maxWidth: 500,
+            width: 500,
+            margin: 'auto',
+            height: 420
+        },
+        modalTitle: {
+            fontSize: theme.fontSize.S1Subtitle,
+            fontFamily: theme.fontFamily.bold,
+            color: theme.colors.textBody,
+            marginBottom: theme.spacing.lg,
+            textAlign: 'center',
+        },
+        label: {
+            fontSize: theme.fontSize.textBodyMedium,
+            fontFamily: theme.fontFamily.semiBold,
+            marginBottom: theme.spacing.sm,
+            color: theme.colors.textBodyLight,
+        },
+        endLabel: {
+            marginTop: theme.spacing.lg,
+        },
+        dropdownInput: {
+            borderWidth: 1,
+            borderColor: theme.colors.borderMedium,
+            paddingHorizontal: 12,
+            paddingVertical: 12,
+            borderRadius: theme.roundness.sm,
+            backgroundColor: theme.colors.surfaceBase,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            minHeight: 48,
+        },
+        dropdownInputActive: {
+            borderColor: theme.colors.borderErrorInverse,
+            borderWidth: 2,
+        },
+        dropdownInputText: {
+            fontSize: theme.fontSize.textBodyMedium,
+            fontFamily: theme.fontFamily.regular,
+            color: theme.colors.textBody,
+            flex: 1,
+        },
+        dropdownArrow: {
+            fontSize: theme.fontSize.textCaptionS,
+            color: theme.colors.textBodyLight,
+            marginLeft: 8,
+        },
+        dropdownContainer: {
+            marginTop: 4,
+            borderRadius: theme.roundness.sm,
+            overflow: 'hidden',
+            shadowColor: theme.colors.surfaceInverse,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: theme.roundness.xs,
+            elevation: 4,
+        },
+        dropdownList: {
+            borderWidth: 1,
+            borderColor: theme.colors.borderMedium,
+            borderRadius: theme.roundness.sm,
+            maxHeight: 180,
+            backgroundColor: theme.colors.surfaceBase,
+        },
+        dropdownItem: {
+            paddingVertical: 12,
+            paddingHorizontal: theme.spacing.md,
+            borderBottomWidth: 0.5,
+            borderBottomColor: theme.colors.borderLow,
+            minHeight: 44,
+            justifyContent: 'center',
+        },
+        dropdownItemText: {
+            fontSize: theme.fontSize.textBodyMedium,
+            fontFamily: theme.fontFamily.regular,
+            color: theme.colors.textBody,
+        },
+        selectedItem: {
+            backgroundColor: theme.colors.surfaceErrorInverse,
+        },
+        selectedItemText: {
+            color: theme.colors.textInverse,
+            fontFamily: theme.fontFamily.semiBold,
+        },
+        errorText: {
+            color: theme.colors.textErrorDark,
+            fontSize: theme.fontSize.textCaptionS,
+            fontFamily: theme.fontFamily.medium,
+            marginTop: 8,
+            textAlign: 'center',
+            fontStyle: 'italic',
+        },
+        buttonsRow: {
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            marginTop: 24,
+            gap: 12,
+        },
+        disabledDropdown: {
+            backgroundColor: theme.colors.surfaceLow,
+            opacity: 0.6,
+        },
+        disabledText: {
+            color: theme.colors.textOnDisabled,
+            fontFamily: theme.fontFamily.medium,
+        },
+        cancelButton: {
+            paddingHorizontal: theme.spacing.lg,
+            paddingVertical: 12,
+            borderRadius: theme.roundness.sm,
+            backgroundColor: theme.colors.surfaceLow,
+            borderWidth: 1,
+            borderColor: theme.colors.borderLow,
+        },
+        cancelText: {
+            color: theme.colors.textBodyLight,
+            fontFamily: theme.fontFamily.semiBold,
+            fontSize: theme.fontSize.S2Subtitle,
+        },
+        confirmButton: {
+            paddingHorizontal: theme.spacing.lg,
+            paddingVertical: 12,
+            borderRadius: theme.roundness.sm,
+            backgroundColor: theme.colors.surfaceInverse,
+        },
+        confirmText: {
+            color: theme.colors.textInverse,
+            fontFamily: theme.fontFamily.bold,
+            fontSize: theme.fontSize.S2Subtitle,
+        },
+        disabledButton: {
+            backgroundColor: theme.colors.surfaceMedium,
+        },
+        absoluteDropdown: {
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            backgroundColor: theme.colors.surfaceBase,
+            maxHeight: 200,
+            borderWidth: 1,
+            borderColor: theme.colors.borderLow,
+            borderRadius: theme.roundness.sm,
+            marginTop: 4,
+        },
+    });
+
+}

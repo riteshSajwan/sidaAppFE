@@ -1,20 +1,18 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "baseUrl": ".",
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react-native",
     "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/assets/*": [
-        "./assets/*"
-      ]
+      "src/*": ["src/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "extends": "expo/tsconfig.base",
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

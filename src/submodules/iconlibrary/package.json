@@ -1,0 +1,30 @@
+{
+  "name": "iconlibraryfe-module",
+  "version": "1.0.0",
+  "description": "Icon library",
+  "main": "src/index.ts",
+  "files": [
+    "lib",
+    "assets"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "echo '⚠️ Ensure host app installs peerDependencies: react, react-native, react-native-svg and configure metro.config.js in your main app for react-native-svg-transformer. See our README.'"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-native": ">=0.64",
+    "react-native-svg": ">=15.11.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-native": "^0.71.0",
+    "react-native-svg-transformer": "^1.5.1"
+  
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=8"
+  }
+}

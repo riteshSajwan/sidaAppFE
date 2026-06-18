@@ -1,0 +1,31 @@
+{
+  "name": "map-services-module",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "echo '⚠️ Please ensure the following dependencies are installed in your main app: react-native-paper, react-native-maps, react-native-maps-directions'"
+  },
+"peerDependencies": {
+  "react-native-paper": ">=5.0.0",
+  "react-native-maps": ">=1.3.0",
+  "react-native-maps-directions": ">=1.8.0",
+  "react-native-google-places-autocomplete": ">=2.5.7",
+  "react-google-autocomplete": ">=2.7.5",
+  "@expo/vector-icons": ">=14.0.4",
+  "react-native-get-random-values": ">=1.8.0",
+  "geolib": ">=3.3.1",
+  "expo-location": ">=17.0.1",
+  "leaflet": ">=1.9.4",
+  "leaflet-polylinedecorator": ">=1.6.0",
+  "react-leaflet": ">=5.0.0"
+},
+  "engines": {
+    "node": ">=18",
+    "npm": ">=8"
+  }
+}

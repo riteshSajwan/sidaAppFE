@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+      "target": "esnext",
+      "module": "commonjs",
+      "jsx": "react-native",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "lib",
+      "rootDir": "src",
+      "moduleResolution": "node",
+      "declaration": true,
+      "declarationMap": true,
+      "resolveJsonModule": true,
+  },
+  "include": ["src/**/*", "src/svg.d.ts"],
+  "exclude": ["node_modules", "lib"]
+}
