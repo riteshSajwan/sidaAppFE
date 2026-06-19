@@ -123,9 +123,37 @@ const FileViewer: FunctionComponent<IFileViewerProps> = (props) => {
     );
   }
 
+  function renderDxfFile(index: number, dxfURI: string, fileName: string) {
+    function onClickDxfFile() {
+      openPdfDocument(dxfURI, fileName, tenantId);
+    }
+    return (
+      <View key={index} style={uploadimage.pdfborder}>
+        <Pressable onPress={onClickDxfFile}>
+          <Icon name={MediaIconName.DOCUMENT} size={100} color='#E67E22' />
+        </Pressable>
+        {removeFile && (
+          <Pressable
+            style={uploadimage.closeButton}
+            disabled={disabled}
+            onPress={() => removeFile(index)}
+          >
+            <Icon name='closeAlt' color={theme.colors.iconInverse} size={12} />
+          </Pressable>
+        )}
+      </View>
+    );
+  }
+
   function renderFile(fileData: IFilesData, index: number) {
     const { uri: fileUri, fileName } = fileData;
-    const fileType = getFileType(checkIfEmpty(fileData?.blob?.type), checkIfEmpty(fileData.fileType));
+    // Resolve type from blob MIME, stored fileType, or fall back to the filename extension
+    const resolvedType =
+      checkIfEmpty(fileData?.blob?.type) ||
+      checkIfEmpty(fileData.fileType) ||
+      (fileName?.toLowerCase().endsWith('.dxf') ? '.dxf' : '');
+    const fileType = getFileType(resolvedType, resolvedType);
+    console.log(`[FilesViewer] fileName="${fileName}" | resolvedType="${resolvedType}" | fileType="${fileType}"`);
     switch (fileType) {
       case 'image':
         return renderImages(index, fileUri);
@@ -137,8 +165,14 @@ const FileViewer: FunctionComponent<IFileViewerProps> = (props) => {
         return renderDocFiles(index, fileUri, fileName);
       case 'excel':
         return renderFiles(index, fileUri, fileName, MediaIconName.EXCEL);
+      case 'dxf':
+        return renderDxfFile(index, fileUri, fileName);
       default:
-        return renderImages(index, fileUri);
+        // Fallback: try detecting from filename extension for unsupported MIME types
+        if (fileName?.toLowerCase().endsWith('.dxf')) {
+          return renderDxfFile(index, fileUri, fileName);
+        }
+        return renderDocFiles(index, fileUri, fileName);
     }
   }
   function renderFileContainer() {

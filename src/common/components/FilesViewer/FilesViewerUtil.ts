@@ -35,7 +35,19 @@ function getFileType(fileName: string, fileType?: string) {
     case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
       return 'excel';
 
+    // DXF drawing files — various MIME types browsers/OS may report
+    case 'application/dxf':
+    case 'image/vnd.dxf':
+    case 'application/x-dxf':
+    case 'drawing/x-dxf':
+    case '.dxf':
+      return 'dxf';
+
     default:
+      // Last-resort: check the raw string for a .dxf extension
+      if (type.toLowerCase().endsWith('.dxf')) {
+        return 'dxf';
+      }
       return 'unsupported';
   }
 }

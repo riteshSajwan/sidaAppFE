@@ -79,6 +79,7 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
           uri: result.uri,
           blob: Array.isArray(blobs) ? blobs[index] : blobs,
           fileName: result.name,
+          fileType: result.mimeType ?? '',
         }))
       : [];
 

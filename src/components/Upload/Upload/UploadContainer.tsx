@@ -68,8 +68,8 @@ const UploadContainer = () => {
   // };
   const handleFileSelect = (_blobs: IBlobType, results: IFilesData[]) => {
     console.log("results",results)
-    console.log("_blobs",_blobs)
     alert()
+    setUploadedFiles(results)
   };
 
   const handleFileError = (error: string) => {
@@ -121,10 +121,8 @@ const UploadContainer = () => {
           onSelect={handleFileSelect}
           files={uploadedFiles}
           handleRemoveFile={handleRemoveFile}
-          // multiple={false}
-          // type={['.dxf']}
-          // maxImages={1}
           multiple={false}
+          // type = {}
           maxSize={DXF_FILE_SIZE_BYTES}
         />
 
