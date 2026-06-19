@@ -13,7 +13,7 @@ import { useFormStyle } from 'src/common/assets/styles/form';
 interface ICustomDocumentWrapperProps {
   label?: string;
   onSelect: (blobs: IBlobType, result: IFilesData[]) => void;
-  files?: IFilesData[];
+  files: IFilesData[];
   handleRemoveFile?: (index: number) => void;
   multiple?: boolean;
   type?: string[];
@@ -29,8 +29,21 @@ const CustomDocumentWrapper = (props: ICustomDocumentWrapperProps) => {
     disabled =false,
     onSelect,
     multiple = false,
-    type = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    maxImages = 5,
+type = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+  // DXF formats
+  ".dxf",
+  "application/dxf",
+  "image/vnd.dxf",
+  "application/x-dxf",
+  "drawing/x-dxf"
+],
+ maxImages = 5,
     handleRemoveFile,
     maxSize
   } = props;
@@ -46,11 +59,12 @@ const CustomDocumentWrapper = (props: ICustomDocumentWrapperProps) => {
   };
   const formStyle = useFormStyle();
   const uploadimage = useUploadImageStyle();
+
   return (
     <View>
       <Text style={formStyle.labelTitle}>{label}</Text>
       <View style={[uploadimage.uploadImageContainer,]}>
-        <CustomDocumentPicker
+        {files.length ==0 &&<CustomDocumentPicker
           onSelect={onSelect}
           type={type}
           maxImages={maxImages}
@@ -60,7 +74,7 @@ const CustomDocumentWrapper = (props: ICustomDocumentWrapperProps) => {
           maxSize={maxSize}
           disabled={disabled}
           handleImageLoading={handleImageLoading}
-        />
+        />}
 
         {files && (
           <FileViewer filesData={files} removeFile={handleRemoveFile} loading={loading} handleError={handleError}  disabled={disabled}/>

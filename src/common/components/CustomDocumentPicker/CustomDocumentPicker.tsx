@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppTheme } from 'src/common/context/AppTheme';
 
 import { IErrorsMsg, generateIntialErrorMsg } from 'src/common/components/CustomDocumentPicker/DocumentPickerUtil';
-import { ALLOW_FILE_SIZE_BYTES, SIZE_VALIDATION } from 'src/constants';
+import { ALLOW_FILE_SIZE_BYTES } from 'src/constants';
 export interface IFilesData {
   uri: string;
   fileName: string;
@@ -59,6 +59,11 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
     handleError,
     handleImageLoading,
   } = props;
+
+  // Use caller-supplied maxSize (in bytes) when provided, otherwise fall back to the global default
+  const fileSizeLimitBytes = maxSize ?? ALLOW_FILE_SIZE_BYTES;
+  // Label shown in error messages — convert bytes to MB, round to nearest whole number
+  const fileSizeLimitMB = Math.round(fileSizeLimitBytes / (1024 * 1024));
 
   const pickerOptions: DocumentPickerOptions = {
     multiple,
@@ -106,12 +111,12 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
 
           // Individual file size validation
           const isTooLarge = result.assets.some(
-            (asset) => (asset.size ?? 0) > ALLOW_FILE_SIZE_BYTES,
+            (asset) => (asset.size ?? 0) > fileSizeLimitBytes,
           );
           if (isTooLarge) {
             handleError(
               TranslateMessage('Admin.Delivery.App.Upload.Item.Size', {
-                size: SIZE_VALIDATION,
+                size: fileSizeLimitMB,
               }),
             );
             handleImageLoading(false);
@@ -123,12 +128,12 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
             (sum, asset) => sum + (asset.size ?? 0),
             0,
           );
-          if (totalSize > ALLOW_FILE_SIZE_BYTES) {
+          if (totalSize > fileSizeLimitBytes) {
             handleError(
               TranslateMessage(
                 'Admin.Delivery.App.Upload.Multiple.Items.Size',
                 {
-                  size: SIZE_VALIDATION,
+                  size: fileSizeLimitMB,
                 },
               ),
             );
@@ -154,10 +159,10 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
           fetch(result.assets[0].uri)
             .then((response) => response.blob())
             .then((blob) => {
-              if (blob.size > ALLOW_FILE_SIZE_BYTES) {
+              if (blob.size > fileSizeLimitBytes) {
                 handleError(
                   TranslateMessage('Admin.Delivery.App.Upload.Item.Size', {
-                    size: SIZE_VALIDATION,
+                    size: fileSizeLimitMB,
                   }),
                 );
                 handleImageLoading(false);

@@ -7,8 +7,6 @@ import { getProfileDetail } from 'src/common/service/profile/action';
 import { setNotificationCount } from 'src/common/service/profile/slice';
 import { useOrderWebSocket } from 'src/common/service/websocket/useBookingWebSocket';
 import { getUserToken } from 'src/common/utils/tokenUtils';
-import NewIntercityBookingRequestPopup from 'src/components/NewBooking/NewIntercityBookingRequestPopup';
-import { IS_INTERCITY } from 'src/constants';
 import { updateUserLang } from 'src/i18n/i18nUtils';
 import { setMomentLocale } from 'src/i18n/setMomentLocale';
 import { Routes } from 'src/routing/paths';
@@ -85,7 +83,7 @@ const getUnreadNotification = useCallback(() => {
   return (
     <>
       <LayoutContainer />
-      {IS_INTERCITY ? <NewIntercityBookingRequestPopup /> : null}
+      {/* {IS_INTERCITY ? <NewIntercityBookingRequestPopup /> : null} */}
     </>
   );
 };

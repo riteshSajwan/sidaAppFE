@@ -7,6 +7,7 @@ export enum Routes {
   USER = '/user',
   REPORTS = '/reports',
   DASHBOARD = '/dashboard',
+  SCRUTINYREPORT = '/scrutinyReport',
 
 
   CHANGE_PASSWORD = '/changePassword',

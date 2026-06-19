@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import Header from 'src/common/layouts/Header/Header';
-import CustomDrawerContent from 'src/common/layouts/SideMenu/CustomDrawerContent/CustomDrawerContent';
 import { getHeaderTitle } from 'src/common/layouts/Header/HeaderTitle';
+import CustomDrawerContent from 'src/common/layouts/SideMenu/CustomDrawerContent/CustomDrawerContent';
 
 const SideMenu = () => {
   const { theme } = useAppTheme();
@@ -23,11 +23,10 @@ const SideMenu = () => {
       borderLeftColor: theme.colors.borderLow,
       borderRightColor: theme.colors.borderLow,
     },
-    // drawerType: 'front',
-    drawerType: 'back',
+    drawerType: isDesktop ? 'permanent' : 'front',
     drawerPosition: 'left',
     drawerActiveBackgroundColor: theme.colors.surfaceBase,
-    headerShown: true,
+    headerShown: !isDesktop,
     swipeEdgeWidth: 0,
     header: (props) => <Header {...props} headerTitle={headerTitle} />,
   };

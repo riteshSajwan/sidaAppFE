@@ -84,40 +84,21 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     },
     {
       label: TranslateMessage('Admin.Sida.App.Reports'),
-      path: Routes.REPORT,
+      path: Routes.SCRUTINYREPORT,
       icon: 'statsDownSquare',
     },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Orders'),
-    //   path: Routes.ORDER,
-    //   icon: 'food',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Tags.Tags'),
-    //   path: Routes.TAGS,
-    //   icon: 'tag',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Coupon'),
-    //   path: Routes.COUPON,
-    //   icon: 'discount',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Banner'),
-    //   path: Routes.BANNER,
-    //   icon: 'image-size-select-actual',
-    // },
+
 
     {
       label: TranslateMessage('Admin.Delivery.App.Ticket'),
       path: Routes.TICKET,
       icon: 'ticketLine',
     },
-    {
-      label: TranslateMessage('Admin.Delivery.App.Reports'),
-      path: Routes.REPORT,
-      icon: 'statsDownSquare',
-    },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Reports'),
+    //   path: Routes.REPORT,
+    //   icon: 'statsDownSquare',
+    // },
     {
       label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
       path: Routes.PROFILE,
@@ -138,11 +119,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: Routes.BUSINESS,
       icon: 'statsDownSquare',
     },
-    {
-      label: TranslateMessage('Admin.Delivery.App.Cabs.Title'),
-      path: Routes.CABS,
-      icon: 'car',
-    },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Cabs.Title'),
+    //   path: Routes.CABS,
+    //   icon: 'car',
+    // },
     {
       label: TranslateMessage('Admin.Delivery.App.InvoiceManagement'),
       path: Routes.INVOICING,
@@ -249,18 +230,18 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     <DrawerContentScrollView {...props} scrollEnabled={true}>
       {
         <View style={layout.sideBarLogo}>
-          <View style={{ width: '100%' }}>
+          {/* <View style={{ width: '100%' }}>
             <Pressable onPress={onCloseDrawerHandler}>
               <Icon name='closeAlt' size={20} color={theme.colors.iconBase} />
             </Pressable>
-          </View>
-          <RenderImage
+          </View> */}
+          {/* <RenderImage
               uri={userDetails?.profileUrl}
               style={styles.avatarImage}
-            />
+            /> */}
           <Pressable onPress={pageRedirectHandle}>
             <Typography variant='subTitle'>
-              {TranslateMessage('Admin.Delivery.App.Brand.Name')}
+              {TranslateMessage('Admin.Sida.App.Sida')}
             </Typography>
           </Pressable>
           {/* <Pressable onPress={pageRedirectHandle}>

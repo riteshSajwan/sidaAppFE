@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import Header from 'src/common/layouts/Header/Header';
 import SideMenu from 'src/common/layouts/SideMenu/SideMenu';
+import Header from './Header/Header';
 
 const LayoutContainer = () => {
   const layout = useLayoutStyle();
@@ -21,7 +21,7 @@ const LayoutContainer = () => {
   
   return (
     <View style={layout.flexCol}>
-      {/* {isDesktop && <Header />} */}
+      {isDesktop && <Header />}
       <SideMenu />
     </View>
   );
