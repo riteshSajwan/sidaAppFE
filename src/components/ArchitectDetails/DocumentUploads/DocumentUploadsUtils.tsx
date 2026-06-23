@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
 import { IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import { ALLOW_FILE_SIZE_BYTES } from 'src/constants';
+import { translateMessage } from 'src/i18n/createTranslation';
 
 // ─── MIME helpers ─────────────────────────────────────────────────────────────
 
@@ -19,13 +19,18 @@ export function formatBytes(bytes: number): string {
   return `${bytes} B`;
 }
 
+/** Resolved MIME → extension label, e.g. "application/pdf" → "PDF" */
+export function mimeToExtLabel(mime: string): string {
+  return mime.split('/').pop()?.toUpperCase() ?? mime;
+}
+
 // ─── Document field definition ────────────────────────────────────────────────
 
 export interface IDocumentField {
   /** Unique key used as the state map key */
   key: string;
-  /** Human-readable label shown in the row */
-  label: string;
+  /** i18n translation key for the label shown in the row */
+  labelKey: string;
   /** Whether the user MUST upload this document before submitting */
   required?: boolean;
   /**
@@ -49,56 +54,56 @@ export const DEFAULT_ACCEPTED_TYPES: string[] = [
 export const DOCUMENT_FIELDS: IDocumentField[] = [
   {
     key:          'aadhar',
-    label:        'Aadhar Card Details',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Aadhar',
     required:     true,
     allowedTypes: [...FORMAT.IMAGE, ...FORMAT.PDF],
     maxSizeBytes: 5 * 1024 * 1024,   // 5 MB
   },
   {
     key:          'pan',
-    label:        'PAN Card',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Pan',
     required:     true,
     allowedTypes: [...FORMAT.IMAGE, ...FORMAT.PDF],
     maxSizeBytes: 5 * 1024 * 1024,   // 5 MB
   },
   {
     key:          'class10',
-    label:        '10th Certificate',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Class10',
     required:     true,
     allowedTypes: [...FORMAT.PDF, ...FORMAT.DOCX],
     maxSizeBytes: 10 * 1024 * 1024,  // 10 MB
   },
   {
     key:          'class12',
-    label:        '12th Certificate',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Class12',
     required:     true,
     allowedTypes: [...FORMAT.PDF, ...FORMAT.DOCX],
     maxSizeBytes: 10 * 1024 * 1024,  // 10 MB
   },
   {
     key:          'btech',
-    label:        'B.Tech Certificate',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Btech',
     required:     true,
     allowedTypes: [...FORMAT.PDF, ...FORMAT.DOCX],
     maxSizeBytes: 10 * 1024 * 1024,  // 10 MB
   },
   {
     key:          'registration',
-    label:        'Architect Registration Certificate',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Registration',
     required:     true,
     allowedTypes: [...FORMAT.PDF, ...FORMAT.DOCX],
     maxSizeBytes: 10 * 1024 * 1024,  // 10 MB
   },
   {
     key:          'experience',
-    label:        'Experience Certificate',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Experience',
     required:     false,
     allowedTypes: [...FORMAT.PDF, ...FORMAT.DOCX],
     maxSizeBytes: 10 * 1024 * 1024,  // 10 MB
   },
   {
     key:          'portfolio',
-    label:        'Portfolio / Work Samples',
+    labelKey:     'Admin.Sida.App.DocumentUpload.Field.Portfolio',
     required:     false,
     allowedTypes: [...FORMAT.IMAGE, ...FORMAT.PDF],
     maxSizeBytes: 20 * 1024 * 1024,  // 20 MB
@@ -115,10 +120,6 @@ export interface IDocumentUploadsProps {
   /** Controlled file state (optional — component manages internally when omitted) */
   files?: IDocumentFilesState;
   onFilesChange?: (files: IDocumentFilesState) => void;
-}
-
-export interface IDocumentUploadsInternalProps extends IDocumentUploadsProps {
-  setErrors?: Dispatch<SetStateAction<IDocumentErrors>>;
 }
 
 // ─── Initial state factories ──────────────────────────────────────────────────
@@ -144,25 +145,38 @@ export function validateDocumentUploads(files: IDocumentFilesState): IValidation
   let isValid = true;
 
   for (const field of DOCUMENT_FIELDS) {
-    const file = files[field.key];
+    const file  = files[field.key];
+    const label = translateMessage(field.labelKey);
 
     // Required check
     if (field.required && !file) {
-      errors[field.key] = `${field.label} is required.`;
+      errors[field.key] = translateMessage(
+        'Admin.Sida.App.DocumentUpload.Error.Required',
+        { label },
+      );
       isValid = false;
       continue;
     }
 
     if (!file) continue;
 
-    // MIME type check
+    // MIME type check — also verify by extension when MIME is empty (browser quirk)
     const allowed = field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES;
-    if (file.fileType && !allowed.includes(file.fileType)) {
-      const exts = allowed
+    const mimeOk  = !!file.fileType && allowed.includes(file.fileType);
+    const extOk   = (() => {
+      const ext = file.fileName?.split('.').pop()?.toLowerCase() ?? '';
+      return allowed.some((t) => t.split('/').pop()?.toLowerCase() === ext);
+    })();
+
+    if (!mimeOk && !extOk) {
+      const formats = allowed
         .map((t) => t.split('/').pop()?.toUpperCase())
         .filter(Boolean)
         .join(', ');
-      errors[field.key] = `${field.label} must be one of: ${exts}.`;
+      errors[field.key] = translateMessage(
+        'Admin.Sida.App.DocumentUpload.Error.InvalidType',
+        { label, formats },
+      );
       isValid = false;
       continue;
     }
@@ -171,60 +185,13 @@ export function validateDocumentUploads(files: IDocumentFilesState): IValidation
     const maxBytes = field.maxSizeBytes ?? ALLOW_FILE_SIZE_BYTES;
     const fileSize = file.blob?.size ?? 0;
     if (fileSize > maxBytes) {
-      errors[field.key] =
-        `${field.label} exceeds the maximum size of ${formatBytes(maxBytes)}.`;
+      errors[field.key] = translateMessage(
+        'Admin.Sida.App.DocumentUpload.Error.SizeExceeded',
+        { label, size: formatBytes(maxBytes) },
+      );
       isValid = false;
     }
   }
 
   return { isValid, errors };
-}
-
-// ─── Picker helper ────────────────────────────────────────────────────────────
-
-import * as DocumentPicker from 'expo-document-picker';
-
-/**
- * Opens the OS document picker scoped to the field's allowed types.
- * Returns the picked file data or null if cancelled.
- */
-export async function pickDocumentForField(
-  field: IDocumentField,
-): Promise<IFilesData | null> {
-  const allowedTypes = field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES;
-
-  const result = await DocumentPicker.getDocumentAsync({
-    multiple: false,
-    type: allowedTypes,
-  });
-
-  if (result.canceled || !result.assets?.length) return null;
-
-  const asset = result.assets[0];
-
-  // Size pre-check before any blob work
-  const maxBytes = field.maxSizeBytes ?? ALLOW_FILE_SIZE_BYTES;
-  if (asset.size && asset.size > maxBytes) {
-    // Return the file but let validation surface the error
-  }
-
-  let blob: Blob | undefined;
-  try {
-    const nativeFile = (asset as unknown as { file?: File }).file;
-    if (nativeFile) {
-      blob = nativeFile;
-    } else {
-      const response = await fetch(asset.uri);
-      blob = await response.blob();
-    }
-  } catch {
-    blob = undefined;
-  }
-
-  return {
-    uri:      asset.uri,
-    fileName: asset.name,
-    blob,
-    fileType: asset.mimeType ?? '',
-  };
 }

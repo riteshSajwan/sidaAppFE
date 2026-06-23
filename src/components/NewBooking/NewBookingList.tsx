@@ -16,8 +16,6 @@ import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { assignBookingToRiderAction, cancelBookingByAdminAction, fetchNewBookingListingAction, fetchRiderMonthlyScheduleAction, unassignBookingFromRiderAction } from 'src/common/service/booking/action';
 import { resetNewBookingListing, resetRiderMonthlySchedule, setBookingAssignmentSnackbar, setBookingCancellationSnackbar } from 'src/common/service/booking/slice';
-import { IDriverForCabs } from 'src/components/Cabs/CabsUtil';
-import DriverListWithSearch from 'src/components/Cabs/DriverListWithSearch';
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { IDashboardProps } from 'src/components/DashboardPage/DashboardUtil';
 import AssignRideModal from 'src/components/NewBooking/AssignRideModal';
@@ -61,7 +59,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
   });
   const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
-  const [selectedDriver, setSelectedDriver] = useState<IDriverForCabs | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<any | null>(null);
   const [scheduleDriverId, setScheduleDriverId] = useState<number | null>(null);
   const [scheduleOpenSignal, setScheduleOpenSignal] = useState<number>(0);
   const [shouldOpenScheduleCalendar, setShouldOpenScheduleCalendar] = useState<boolean>(false);
@@ -92,7 +90,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
     setSelectedDriver(null);
     resetScheduleState();
   };
-  const buildSelectedDriver = (booking: IBooking): IDriverForCabs => ({
+  const buildSelectedDriver = (booking: IBooking): any => ({
     id: booking.riderId ?? 0,
     firstName: booking.riderName || TranslateMessage('Admin.Delivery.App.UnknownDriver'),
     email: '',
@@ -262,7 +260,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
     });
   };
 
-  const handleDriverSelectionChange = (driver: IDriverForCabs) => {
+  const handleDriverSelectionChange = (driver: any) => {
     resetScheduleState();
     setSelectedDriver(driver);
     setSelectedDriverId((currentDriverId) =>
@@ -283,7 +281,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
     resetScheduleState();
   };
 
-  const handleScheduleCalendarOpen = (driver: IDriverForCabs) => {
+  const handleScheduleCalendarOpen = (driver: any) => {
     if (!driver?.id || !selectedBooking?.scheduledTime) {
       return;
     }
@@ -293,7 +291,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
     dispatch(fetchRiderMonthlyScheduleAction(driver.id, selectedBooking.scheduledTime));
   };
 
-  const handleScheduleDateSelect = (driver: IDriverForCabs, date: string) => {
+  const handleScheduleDateSelect = (driver: any, date: string) => {
     if (!driver?.id || !date) {
       return;
     }
@@ -630,7 +628,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
         {selectedBookingId ? (
           <View style={layout.driverListContainer}>
             <View style={[layout.cardBox, layout.tableContainer, layout.driverInnerConatiner]}>
-              <DriverListWithSearch
+              {/* <DriverListWithSearch
                 onDriverSelect={handleDriverSelectionChange}
                 selectedDriverId={selectedDriverId}
                 pinnedDriver={selectedDriver}
@@ -655,7 +653,7 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
                 scheduleOpenSignal={scheduleOpenSignal}
                 selectedRideDate={scheduleCalendarDate}
                 onScheduleDateSelect={handleScheduleDateSelect}
-              />
+              /> */}
               {riderMonthlyScheduleError ? (
                 <ErrorMessageContainer message={riderMonthlyScheduleError} />
               ) : null}

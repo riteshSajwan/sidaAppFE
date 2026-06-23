@@ -36,6 +36,19 @@ interface ICustomImagePickerProps {
   maxImages?: number;
   maxSize?: number;
   disabled?: boolean;
+  /**
+   * Optional render-prop for a custom trigger UI.
+   * Receives `openPicker` — call it to open the OS document picker.
+   * When provided, the default dashed-border button is NOT rendered.
+   *
+   * @example
+   * renderTrigger={(openPicker) => (
+   *   <Pressable onPress={openPicker}>
+   *     <Text>Upload</Text>
+   *   </Pressable>
+   * )}
+   */
+  renderTrigger?: (openPicker: () => void) => React.ReactNode;
 }
 
 const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
@@ -58,6 +71,7 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
     disabled,
     handleError,
     handleImageLoading,
+    renderTrigger,
   } = props;
 
   // Use caller-supplied maxSize (in bytes) when provided, otherwise fall back to the global default
@@ -70,11 +84,32 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
     type,
   };
 
+  /**
+   * Returns true when the MIME type is acceptable.
+   * Passes through when type list is ['*\/*'] (no restriction) or when
+   * the resolved MIME matches one of the allowed entries.
+   * Also accepts a file whose MIME is empty but whose extension matches —
+   * browsers sometimes return '' for uncommon types.
+   */
+  const isMimeAllowed = (mimeType: string, fileName: string): boolean => {
+    // No restriction configured
+    if (type.length === 0 || type.includes('*/*')) return true;
+
+    // Direct MIME match
+    if (mimeType && type.includes(mimeType)) return true;
+
+    // Fallback: match by file extension against the allowed MIME list
+    const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
+    return type.some((allowed) => {
+      const allowedExt = allowed.split('/').pop()?.toLowerCase() ?? '';
+      return allowedExt === ext;
+    });
+  };
+
   function handleOnSelect(
     blobs: IBlobType,
     results: DocumentPickerSuccessResult,
   ) {
-    console.log("handleOnSelect",blobs)
     const newImages = results?.assets
       ? results.assets.map((result: DocumentPickerAsset, index: number) => ({
           uri: result.uri,
@@ -149,6 +184,21 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
             return;
           }
 
+          // MIME type validation (browser doesn't enforce accept attribute)
+          const disallowedAsset = assets.find(
+            (asset) => !isMimeAllowed(asset.mimeType ?? '', asset.name),
+          );
+          if (disallowedAsset) {
+            const formats = type
+              .filter((t) => t !== '*/*')
+              .map((t) => t.split('/').pop()?.toUpperCase())
+              .filter(Boolean)
+              .join(', ');
+            handleError(TranslateMessage('Admin.Delivery.App.Upload.InvalidType', { formats }));
+            handleImageLoading(false);
+            return;
+          }
+
           // Individual file size validation
           const isTooLarge = assets.some(
             (asset) => (asset.size ?? 0) > fileSizeLimitBytes,
@@ -196,6 +246,18 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
           // SINGLE FILE
           const asset = result.assets[0];
 
+          // MIME type validation (browser doesn't enforce accept attribute)
+          if (!isMimeAllowed(asset.mimeType ?? '', asset.name)) {
+            const formats = type
+              .filter((t) => t !== '*/*')
+              .map((t) => t.split('/').pop()?.toUpperCase())
+              .filter(Boolean)
+              .join(', ');
+            handleError(TranslateMessage('Admin.Delivery.App.Upload.InvalidType', { formats }));
+            handleImageLoading(false);
+            return;
+          }
+
           assetToBlob(asset)
             .then((blob) => {
               if (blob.size > fileSizeLimitBytes) {
@@ -224,6 +286,12 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
       });
   };
 
+  // ── Custom trigger: caller owns the UI, we just wire up pickImage ──────────
+  if (renderTrigger) {
+    return <>{renderTrigger(disabled ? () => {} : pickImage)}</>;
+  }
+
+  // ── Default dashed-border trigger ────────────────────────────────────────
   return (
     <View style={(formStyle.formRow, { marginBottom: 0 })}>
       <View style={layout.flexCol}>

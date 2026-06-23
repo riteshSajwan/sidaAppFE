@@ -54,8 +54,7 @@ import {
   getBookingStatusAppearance,
   IBookingType,
 } from "src/components/Booking/Table/BookingListTableUtil";
-import { IDriverForCabs } from "src/components/Cabs/CabsUtil";
-import DriverListWithSearch from "src/components/Cabs/DriverListWithSearch";
+// import { IDriverForCabs } from "src/components/Cabs/CabsUtil";
 import AssignRideModal from "src/components/NewBooking/AssignRideModal";
 import CancelBookingModal from "src/components/NewBooking/CancelBookingModal";
 import {
@@ -164,7 +163,7 @@ const TripDetailsContainer = () => {
       longitude: stop.longitude,
     }));
   const [selectedDriverId, setSelectedDriverId] = useState<number | null>(null);
-  const [selectedDriver, setSelectedDriver] = useState<IDriverForCabs | null>(
+  const [selectedDriver, setSelectedDriver] = useState<any | null>(
     null,
   );
   const [scheduleDriverId, setScheduleDriverId] = useState<number | null>(null);
@@ -275,7 +274,7 @@ const TripDetailsContainer = () => {
     setIsCompletionRequested(false);
   }, [completeLoading, isCompletionRequested, isCompletionSuccess]);
 
-  const handleDriverSelectionChange = (driver: IDriverForCabs) => {
+  const handleDriverSelectionChange = (driver: any) => {
     const bookingDate = activeAssignmentRide?.scheduledTime;
     const nextSelectedDriverId =
       selectedDriverId === driver.id ? null : driver.id;
@@ -408,7 +407,7 @@ const TripDetailsContainer = () => {
     setIsDriverSidebarVisible(true);
     dispatch(resetRiderMonthlySchedule());
   };
-  const handleScheduleCalendarOpen = (driver: IDriverForCabs) => {
+  const handleScheduleCalendarOpen = (driver: any) => {
     const bookingDate = activeAssignmentRide?.scheduledTime;
 
     if (!driver?.id || !bookingDate) {
@@ -420,7 +419,7 @@ const TripDetailsContainer = () => {
     dispatch(fetchRiderMonthlyScheduleAction(driver.id, bookingDate));
   };
 
-  const handleScheduleDateSelect = (driver: IDriverForCabs, date: string) => {
+  const handleScheduleDateSelect = (driver: any, date: string) => {
     if (!driver?.id || !date) {
       return;
     }
@@ -813,11 +812,11 @@ const TripDetailsContainer = () => {
                     onPress={() => setShowRoundTripOnMap((prev) => !prev)}
                     style={layout.roundTripBtn}
                   >
-                    <Icon
+                    {/* <Icon
                       name="dataTransferVertical"
                       size={14}
                       color={theme.colors.iconInverse}
-                    />
+                    /> */}
                     <Typography
                       variant="textLabel"
                       fontWeight="semiBold"
@@ -1669,7 +1668,7 @@ const TripDetailsContainer = () => {
                     : "Admin.Delivery.App.Driver.Assignment",
                 )}
               </Typography>
-              <DriverListWithSearch
+              {/* <DriverListWithSearch
                 onDriverSelect={handleDriverSelectionChange}
                 selectedDriverId={selectedDriverId}
                 pinnedDriver={selectedDriver}
@@ -1696,7 +1695,7 @@ const TripDetailsContainer = () => {
                 scheduleOpenSignal={scheduleOpenSignal}
                 selectedRideDate={selectedBookingDate}
                 onScheduleDateSelect={handleScheduleDateSelect}
-              />
+              /> */}
             </View>
           </View>
         ) : null}

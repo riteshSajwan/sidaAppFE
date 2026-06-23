@@ -972,6 +972,37 @@ const frenchLangTranslations: {
     'Admin.Delivery.App.DriversUploadedSuccessfully': 'Chauffeurs importés avec succès',
     'Admin.Delivery.App.NoFileToUpload': 'Aucun fichier à importer',
     'Admin.Delivery.App.FailedToFetchPreviewDrivers': 'Échec de l\'aperçu des chauffeurs',
+
+    // Document Uploads — labels
+    'Admin.Sida.App.DocumentUpload.Title': 'Téléchargements de documents', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Submit': 'Soumettre les documents', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Submitting': 'Envoi en cours…', //TODO translation
+    'Admin.Sida.App.DocumentUpload.ReUpload': '✓ Re-upload', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Upload': 'Télécharger', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Optional': 'Facultatif', //TODO translation
+    'Admin.Sida.App.DocumentUpload.ApiError': 'Une erreur est survenue. Veuillez réessayer.', //TODO translation
+
+    // Document Uploads — format hint
+    'Admin.Sida.App.DocumentUpload.Hint': '{{formats}} · max {{size}}', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Hint.Optional': '{{formats}} · max {{size}} · Facultatif', //TODO translation
+
+    // Document Uploads — field labels
+    'Admin.Sida.App.DocumentUpload.Field.Aadhar': 'Détails de la carte Aadhar', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Pan': 'Carte PAN', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Class10': 'Certificat de 10e', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Class12': 'Certificat de 12e', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Btech': 'Certificat B.Tech', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Registration': "Certificat d'enregistrement d'architecte", //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Experience': "Certificat d'expérience", //TODO translation
+    'Admin.Sida.App.DocumentUpload.Field.Portfolio': 'Portfolio / Exemples de travaux', //TODO translation
+
+    // Document Uploads — validation errors
+    'Admin.Sida.App.DocumentUpload.Error.Required': '{{label}} est requis.', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Error.InvalidType': '{{label}} doit être l\'un des formats suivants : {{formats}}.', //TODO translation
+    'Admin.Sida.App.DocumentUpload.Error.SizeExceeded': '{{label}} dépasse la taille maximale de {{size}}.', //TODO translation
+
+    // CustomDocumentPicker — type validation error
+    'Admin.Delivery.App.Upload.InvalidType': 'Type de fichier non autorisé. Formats acceptés : {{formats}}.', //TODO translation
   },
 };
 

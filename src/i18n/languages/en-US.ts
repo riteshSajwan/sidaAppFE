@@ -38,7 +38,35 @@ export default {
     'Admin.Sida.App.Upload.SubCategory.Required':'SubCategory is Required',
     'Admin.Sida.App.Upload.Terrain.Required':'Terrain is Required',
 
+ // Document Uploads — labels
+    'Admin.Sida.App.DocumentUpload.Title': 'Document Uploads',
+    'Admin.Sida.App.DocumentUpload.Submit': 'Submit Documents',
+    'Admin.Sida.App.DocumentUpload.Submitting': 'Submitting…',
+    'Admin.Sida.App.DocumentUpload.ReUpload': '✓ Re-upload',
+    'Admin.Sida.App.DocumentUpload.Upload': 'Upload',
+    'Admin.Sida.App.DocumentUpload.Optional': 'Optional',
+    'Admin.Sida.App.DocumentUpload.ApiError': 'Something went wrong. Please try again.',
 
+    // Document Uploads — format hint
+    'Admin.Sida.App.DocumentUpload.Hint': '{{formats}} · max {{size}}',
+    'Admin.Sida.App.DocumentUpload.Hint.Optional': '{{formats}} · max {{size}} · Optional',
+
+    // Document Uploads — field labels
+    'Admin.Sida.App.DocumentUpload.Field.Aadhar': 'Aadhar Card Details',
+    'Admin.Sida.App.DocumentUpload.Field.Pan': 'PAN Card',
+    'Admin.Sida.App.DocumentUpload.Field.Class10': '10th Certificate',
+    'Admin.Sida.App.DocumentUpload.Field.Class12': '12th Certificate',
+    'Admin.Sida.App.DocumentUpload.Field.Btech': 'B.Tech Certificate',
+    'Admin.Sida.App.DocumentUpload.Field.Registration': 'Architect Registration Certificate',
+    'Admin.Sida.App.DocumentUpload.Field.Experience': 'Experience Certificate',
+    'Admin.Sida.App.DocumentUpload.Field.Portfolio': 'Portfolio / Work Samples',
+
+    // Document Uploads — validation errors
+    'Admin.Sida.App.DocumentUpload.Error.Required': '{{label}} is required.',
+    'Admin.Sida.App.DocumentUpload.Error.InvalidType': '{{label}} must be one of: {{formats}}.',
+    'Admin.Sida.App.DocumentUpload.Error.SizeExceeded': '{{label}} exceeds the maximum size of {{size}}.',
+
+    // To be removed
 
     'Admin.Delivery.App.LogIn.Label': 'Log In',
     'Admin.Delivery.App.LogIn.PasswordLabel': 'Enter your Password',
@@ -1066,7 +1094,10 @@ export default {
     'Admin.Delivery.App.User.Email': 'User Email',
     'Admin.Delivery.App.Booking.Payment.Awaited': 'Payment Awaited',
     // Drawer menu translations
-    
+
+   
+    // CustomDocumentPicker — type validation error
+    'Admin.Delivery.App.Upload.InvalidType': 'File type not allowed. Accepted formats: {{formats}}.',
     
   },
 };

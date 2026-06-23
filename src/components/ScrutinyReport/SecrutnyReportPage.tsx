@@ -1,7 +1,5 @@
-import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
@@ -9,15 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import CustomDataTable from 'src/common/components/CustomDataTable/CustomDataTable';
-import { DEFAULT_TABLE_SIZE } from 'src/common/components/CustomDataTable/CustomDataTableUtil';
 import CustomModal from 'src/common/components/CustomModal/CustomModal';
 import { Loader } from 'src/common/components/Loader/Loader';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { usePermission } from 'src/common/hooks/usePermission';
-import { fetchRolesListAction, toggleRoleStatusAction } from 'src/common/service/role/action';
-import { resetRoleList, resetRoleToggleStatus } from 'src/common/service/role/slice';
 import { MenuType } from 'src/common/utils/permissionUtils';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import {
@@ -26,9 +20,7 @@ import {
   IRoleListFilter,
   IRoleListTempFilter,
 } from 'src/components/Role/RoleListUtil';
-import RoleListTable from 'src/components/Role/Table/RoleListTable';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
-import { DEBOUNCE_TIME } from 'src/constants';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
@@ -62,55 +54,10 @@ const SecrutnyReportPage = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  const debouncedSearch = useCallback(
-    debounce((searchKey: string) => {
-      setFilter({ ...filter, searchKey });
-    }, DEBOUNCE_TIME),
-    []
-  );
 
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(fetchRolesListAction(page, DEFAULT_TABLE_SIZE));
-
-      return () => {
-        dispatch(resetRoleList());
-      };
-    }, [dispatch, page])
-  );
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
-
-  const handleSearch = (searchKey: string) => {
-    setTempFilter({ ...tempFilter, searchKey });
-    debouncedSearch(searchKey);
-    setTempFilter({
-      ...tempFilter,
-      searchKey,
-      createdAt: null,
-    });
-  };
-
-  const handleSort = (sortField: string) => {
-    const sortOrder =
-      sortField === filter.sortField
-        ? filter.sortOrder === 'asc'
-          ? 'desc'
-          : 'asc'
-        : 'asc';
-    setFilter({ ...filter, sortField, sortOrder });
-  };
 
   const handleAddNewPress = () => {
     router.push(`${Routes.ROLES}${Routes.ADD}`);
-  };
-
-  const handleEditPress = (id: number) => () => {
-    router.push(`${Routes.ROLES}/${id}`);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -118,69 +65,28 @@ const SecrutnyReportPage = () => {
   };
 
 
-  const reset = () => {
-    setFilter({ ...generateInitialFilterData() });
-    setTempFilter({ ...generateInitialTempFilterData() });
-    setPage(0);
-    dispatch(fetchRolesListAction(0, DEFAULT_TABLE_SIZE));
-  };
 
-  const handleToggleStatus = (id: number, currentStatus: boolean) => () => {
-    setSelectedRole({ id, activeStatus: !currentStatus });
-    // Show confirmation only when deactivating
-    if (currentStatus) {
-      setConfirmModalVisible(true);
-    } else {
-      // Activate directly without confirmation
-      dispatch(toggleRoleStatusAction(id, true));
-    }
-  };
 
   const handleConfirmToggle = () => {
-    if (selectedRole) {
-      dispatch(toggleRoleStatusAction(selectedRole.id, selectedRole.activeStatus));
-    }
+    // if (selectedRole) {
+    //   dispatch(toggleRoleStatusAction(selectedRole.id, selectedRole.activeStatus));
+    // }
     setConfirmModalVisible(false);
   };
 
   const handleCancelToggle = () => {
     setConfirmModalVisible(false);
     setSelectedRole(null);
-    dispatch(resetRoleToggleStatus()); // Reset error when closing modal
   };
 
-  useEffect(() => {
-    if (toggleSuccess) {
-      dispatch(fetchRolesListAction(page, DEFAULT_TABLE_SIZE));
-      dispatch(resetRoleToggleStatus());
-      setSelectedRole(null);
-      setConfirmModalVisible(false); // Close modal on success
-    }
-  }, [toggleSuccess, dispatch, page]);
-
-  // Filter roles based on search key (client-side filtering for now)
-  const filteredData = useMemo(() => {
-    if (!data) return null;
-
-    let filteredRoles = [...data.data];
-
-    if (filter.searchKey) {
-      const searchLower = filter.searchKey.toLowerCase();
-      filteredRoles = filteredRoles.filter(
-        (role) =>
-          role.name.toLowerCase().includes(searchLower) ||
-          role.description?.toLowerCase().includes(searchLower) ||
-          role.createdByUser?.username.toLowerCase().includes(searchLower)
-      );
-    }
-
-   
-    return {
-      ...data,
-      data: filteredRoles,
-      total: filteredRoles.length,
-    };
-  }, [data, filter.searchKey, filter.sortField, filter.sortOrder]);
+  // useEffect(() => {
+  //   if (toggleSuccess) {
+  //     dispatch(fetchRolesListAction(page, DEFAULT_TABLE_SIZE));
+  //     dispatch(resetRoleToggleStatus());
+  //     setSelectedRole(null);
+  //     setConfirmModalVisible(false); // Close modal on success
+  //   }
+  // }, [toggleSuccess, dispatch, page]);
 
   function renderFilters() {
     return (
