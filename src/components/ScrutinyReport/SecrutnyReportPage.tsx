@@ -1,13 +1,12 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import CustomModal from 'src/common/components/CustomModal/CustomModal';
 import { Loader } from 'src/common/components/Loader/Loader';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
@@ -23,7 +22,6 @@ import {
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
-import { Icon } from 'src/submodules/iconlibrary/src';
 import ReportListingPage from './table/ReportListingPage';
 import { IPreviewDriverRow } from './table/ReportListingUtils';
 
@@ -67,53 +65,8 @@ const SecrutnyReportPage = () => {
 
 
 
-  const handleConfirmToggle = () => {
-    // if (selectedRole) {
-    //   dispatch(toggleRoleStatusAction(selectedRole.id, selectedRole.activeStatus));
-    // }
-    setConfirmModalVisible(false);
-  };
 
-  const handleCancelToggle = () => {
-    setConfirmModalVisible(false);
-    setSelectedRole(null);
-  };
 
-  // useEffect(() => {
-  //   if (toggleSuccess) {
-  //     dispatch(fetchRolesListAction(page, DEFAULT_TABLE_SIZE));
-  //     dispatch(resetRoleToggleStatus());
-  //     setSelectedRole(null);
-  //     setConfirmModalVisible(false); // Close modal on success
-  //   }
-  // }, [toggleSuccess, dispatch, page]);
-
-  function renderFilters() {
-    return (
-      <View style={[styles.filterContainer, layout.containerPadding]}>
-        <View style={[styles.searchFilterContainer, layout.justifyEnd]}>
-          {canEdit && (
-            <Pressable onPress={handleAddNewPress}>
-              <Text
-                style={[
-                  button.btn,
-                  button.btnOutlineDefault,
-                ]}
-              >
-                <Icon
-                  name='addLargeLine'
-                  color={theme.colors.iconBase}
-                  size={10}
-                  spacing={theme.spacing.xs}
-                />
-                {TranslateMessage('Admin.Delivery.App.Restaurants.AddNewTitle')}
-              </Text>
-            </Pressable>
-          )}
-        </View>
-      </View>
-    );
-  }
 
   function renderHeading() {
     return (
@@ -152,31 +105,10 @@ const SecrutnyReportPage = () => {
   return (
     <>
       <Loader loading={loading || toggleLoading} />
-      <CustomModal
-        visible={confirmModalVisible}
-        dismissOutside={false}
-        title={TranslateMessage('Admin.Delivery.App.Confirmation.Required')}
-        bodyContent={[]}
-        onCancel={handleCancelToggle}
-        onSave={handleConfirmToggle}
-        error={toggleError || undefined}
-        confirmBtnTitle={TranslateMessage('Admin.Delivery.App.Yes')}
-        cancelBtnTitle={TranslateMessage('Admin.Delivery.App.CancelBtnTitle')}
-        isCloseRequired={false}
-      >
-        <View> 
-         <Typography variant='body' spacing={{top:theme.spacing.sm, bottom:theme.spacing.xs}}>
-          {TranslateMessage('Admin.Delivery.App.Role.Deactivate.Title')}
-        </Typography>
-        <Typography variant='body' spacing={{top:theme.spacing.xs, bottom:theme.spacing.sm}}>
-          {TranslateMessage('Admin.Delivery.App.Role.Deactivate.Message')}
-        </Typography>
-        </View>
-      </CustomModal>
+      
       <ScrollView>
         <View style={[layout.containerPadding]}>
           {renderHeading()}
-          {renderFilters()}
           <View style={[layout.cardBox, layout.tableContainer]}>
             <View style={[tablestyle.container]}>
               <View style={layout.flexCol}>
@@ -194,19 +126,7 @@ const SecrutnyReportPage = () => {
                         onPageChange={handlePageChange}
                       />
                     )
-                    // filteredData && filteredData.data.length > 0 ? (
-                    //   <RoleListTable
-                    //     roleListData={filteredData}
-                    //     page={page}
-                    //     handleSort={handleSort}
-                    //     filter={filter}
-                    //     handlePageChange={handlePageChange}
-                    //     error={error ?? ''}
-                    //     handleEditPress={handleEditPress}
-                    //     handleToggleStatus={handleToggleStatus}
-                    //     canEdit={canEdit}
-                    //   />
-                    // )
+                    
                      : (
                       <Text
                         style={[
@@ -215,7 +135,7 @@ const SecrutnyReportPage = () => {
                         ]}
                       >
                         {TranslateMessage(
-                          'Admin.Delivery.App.Driver.No.Data.Found'
+                          'Admin.Sida.APP.No.Data.Found'
                         )}
                       </Text>
                     )
