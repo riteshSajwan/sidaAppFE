@@ -24,8 +24,6 @@ export const getHeaderTitle = (path: string): string => {
       return translateMessage('Admin.Delivery.App.Roles.Label');
     case cleanPath.includes(Routes.USERS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Users.Label');
-    case cleanPath.includes(Routes.CHAT.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.Support');
     case cleanPath.includes(Routes.REQUESTS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Request.Title');
     case cleanPath.includes(Routes.RESTAURANT.toLowerCase()):

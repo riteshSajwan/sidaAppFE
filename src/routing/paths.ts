@@ -8,6 +8,7 @@ export enum Routes {
   REPORTS = '/reports',
   DASHBOARD = '/dashboard',
   SCRUTINYREPORT = '/scrutinyReport',
+  ARCHITECTDETAILS = '/architectDetail',
 
 
   CHANGE_PASSWORD = '/changePassword',
@@ -46,7 +47,6 @@ export enum Routes {
   TICKET = '/ticket',
   COUPON = '/coupon',
   BANNER = '/banner',
-  CHAT = '/chat',
   RESTAURANTWALLET = '/restaurantWallet',
   DRIVERWALLET = '/driverWallet',
   REPORT = '/report',

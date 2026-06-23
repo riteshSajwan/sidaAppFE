@@ -1,10 +1,10 @@
 import {
-    Action,
-    AnyAction,
-    combineReducers,
-    configureStore,
-    ThunkAction,
-    ThunkDispatch,
+  Action,
+  AnyAction,
+  combineReducers,
+  configureStore,
+  ThunkAction,
+  ThunkDispatch,
 } from '@reduxjs/toolkit';
 
 // IMPORT SLICES:--
@@ -12,7 +12,6 @@ import { loginReducer } from 'src/common/service/auth/slice';
 import { BookingReducer } from 'src/common/service/booking/slice';
 import { BusinessReducer } from 'src/common/service/business/slice';
 import { CabReducer } from 'src/common/service/cab/slice';
-import { SupportReducer } from 'src/common/service/chat/slice';
 import { CityReducer } from 'src/common/service/city/slice';
 import { CountryReducer } from 'src/common/service/country/slice';
 import { CouponReducer } from 'src/common/service/coupon/slice';
@@ -41,7 +40,6 @@ const combinedReducer = combineReducers({
   coupon: CouponReducer,
   ticket: TicketReducer,
   report: ReportReducer,
-  support: SupportReducer,
   booking: BookingReducer,
   notification: NotificationReducer,
   newBookingNotification: NewBookingNotificationReducer,

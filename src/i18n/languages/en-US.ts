@@ -10,20 +10,35 @@ export default {
     'Admin.Sida.App.Sida':'Sida',
     'Admin.Sida.App.ScrutinyReport':'ScrutinyReport',
     'Admin.Sida.APP.No.Data.Found':'No Data Found',
-
+    'Admin.Sida.APP.API.Error':'Something went wrong! Please try later',
+    // 'Admin.Sida.APP.API.Error':'Something went wrong! Please try later',
     // Report Listing
     'Admin.Sida.APP.ScrutinyReport.Parameter':'Parameter',
     'Admin.Sida.APP.ScrutinyReport.Permissable':'Required / Permissable',
     'Admin.Sida.APP.ScrutinyReport.Provided':'Provided',
     'Admin.Sida.APP.ScrutinyReport.ComplianceCheck':'ComplianceCheck',
+    //
+    'Admin.Sida.APP.ArchitectDetails.Details':'Architect Details',
+
+
+
+
     //upload
     'Admin.Sida.App.Upload.FileDetails':'Details',
     'Admin.Sida.App.Upload.Category':'Category',
     'Admin.Sida.App.Upload.SubCategory':'SubCategory',
-    'Admin.Sida.App.Upload.FileType':'Terrian',
+    'Admin.Sida.App.Upload.FileType':'Terrain',
     'Admin.Sida.App.Upload.btn':'Upload',
     'Admin.Sida.App.Upload.UploadFile':'Upload CAD file',
     'Admin.Sida.App.Upload.UploadFileSubtitle':'Only DXF file allowed',
+
+    // Form inputs
+    'Admin.Sida.App.Upload.File.Required':'File is Required',
+    'Admin.Sida.App.Upload.Category.Required':'Category is Required',
+    'Admin.Sida.App.Upload.SubCategory.Required':'SubCategory is Required',
+    'Admin.Sida.App.Upload.Terrain.Required':'Terrain is Required',
+
+
 
     'Admin.Delivery.App.LogIn.Label': 'Log In',
     'Admin.Delivery.App.LogIn.PasswordLabel': 'Enter your Password',

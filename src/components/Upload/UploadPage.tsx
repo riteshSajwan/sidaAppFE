@@ -1,123 +1,95 @@
-import { useFocusEffect } from '@react-navigation/native';
-import { router } from 'expo-router';
-import { debounce } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
-import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import { DEFAULT_TABLE_SIZE } from 'src/common/components/CustomDataTable/CustomDataTableUtil';
+import { IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import { Loader } from 'src/common/components/Loader/Loader';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
-import { fetchRolesDropdownAction } from 'src/common/service/role/action';
-import { resetRoleDropdown } from 'src/common/service/role/slice';
-import { fetchUsersListAction } from 'src/common/service/user/action';
-import { resetUserList } from 'src/common/service/user/slice';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
-import UserListTable from 'src/components/User/Table/UserListTable';
-import {
-  generateInitialFilterData,
-  generateInitialTempFilterData,
-  IUserListFilter,
-  IUserListTempFilter,
-} from 'src/components/User/UserListUtil';
-import { DEBOUNCE_TIME } from 'src/constants';
 
 import { AppDispatch, RootState } from 'src/store';
-
-import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
 import UploadContainer from './Upload/UploadContainer';
+import { generateInitialState, IUploadFormState ,  generateInitialUploadContainerErrorsData,
+  IUploadErrors,
+  validateUpload,
+  getFileName,
+  getMimeType,} from './Upload/UploadContainerUtils';
 
 const Upload = () => {
   const { t: TranslateMessage } = useTranslation();
   const layout = useLayoutStyle();
-  const formStyle = useFormStyle();
   const button = useButtonStyle();
   const tablestyle = useTableStyle();
   const styles = useRestroStyle();
 
-  const [page, setPage] = useState<number>(0);
-  const [filter, setFilter] = useState<IUserListFilter>({
-    ...generateInitialFilterData(),
+  const [form, setForm] = useState<IUploadFormState>(generateInitialState());
+  const [loading,setLoading] = useState<boolean>(false)
+  const [uploadedFiles, setUploadedFiles] = useState<IFilesData[]>([]);
+   const [infoError, setInfoError] = useState<IUploadErrors>({
+    ...generateInitialUploadContainerErrorsData(),
   });
-  const [tempFilter, setTempFilter] = useState<IUserListTempFilter>({
-    ...generateInitialTempFilterData(),
-  });
-  const [visible, setVisible] = useState<boolean>(false);
-  const showModal = () => {
-    setVisible(true);
-    setTempFilter({ ...tempFilter, roleId: filter.roleId ?? null });
-  };
-  const hideModal = () => setVisible(false);
+
 
   const { theme } = useAppTheme();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.user.userList
-  );
-  const { data: roles, loading: rolesLoading } = useSelector(
-    (state: RootState) => state.role.roleDropdown
-  );
+  // const { loading, loading: rolesLoading } = useSelector(
+  //   (state: RootState) => state.user.userList
+  // );
   const dispatch = useDispatch<AppDispatch>();
 
-  const debouncedSearch = useCallback(
-    debounce((searchKey: string) => {
-      setFilter({ ...filter, searchKey });
-    }, DEBOUNCE_TIME),
-    []
-  );
-
-  useEffect(() => {
-    if (filter || page >= 0) {
-      fetchRequestList(page === 0);
-    }
-  }, [filter, page]);
-
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(fetchRolesDropdownAction());
-      fetchRequestList(true);
-
-      return () => {
-        dispatch(resetUserList());
-        dispatch(resetRoleDropdown());
-      };
-    }, [dispatch])
-  );
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
-
-  const fetchRequestList = async (isFilterChanged: boolean) => {
-    const newPage = isFilterChanged ? 0 : page;
-    dispatch(
-      fetchUsersListAction(
-        newPage,
-        DEFAULT_TABLE_SIZE,
-        filter.roleId ?? undefined
-      )
-    );
-
-    if (isFilterChanged) {
-      setPage(0);
-    }
-  };
 
 
 
 
 
-  const onChangeRoleDropdown = (item: IMinuteOption) => {
-    const roleId = item.value ? Number(item.value) : null;
-    setTempFilter({ ...tempFilter, roleId });
-  };
+
+
+  const handleUploadSubmit = ()=>{
+
+     
+    try {
+
+   const { isValid, errors } = validateUpload(form,uploadedFiles);
+    setInfoError(errors);
+    console.log("errors",errors)
+    if (!isValid) return;
+
+    const payLoad = {
+     };
+
+    setLoading(true);
+    const formData = new FormData();
+    uploadedFiles.forEach((image) => {
+      if (!image?.id && image.blob) {
+        const fileName = getFileName(image?.uri) ?? image?.fileName;      
+        const blobType = image.blob.type ? image.blob.type : getMimeType(image.fileName);
+        const file = new Blob([image.blob], { type: blobType });
+        formData.append('file', file, fileName);
+      }
+    });
+
+    
+    // formData.append('bannerName', payLoad.bannerName.trim());
+    // formData.append('sellerId', payLoad.sellerId.toString());
+    // formData.append('expirationDate', payLoad.expirationDate.toString());
+
+    // const result = await saveBanner(formData);
+    // setSnackbarVisible(true);
+    
+  } catch (err) {
+    setInfoError((prevState) => ({
+      ...prevState,
+      apiError: TranslateMessage('Admin.Sida.APP.API.Error'),
+    }));
+  } finally {
+    setLoading(false);
+  }
+  }
 
 
 
@@ -144,20 +116,14 @@ const Upload = () => {
             </Text>
           </View>
         </View>
-        <Divider
-          style={[
-            layout.DividerSperator, layout.marBottom30
-          ]}
-        />
+        <Divider style={[layout.DividerSperator, layout.marBottom30]} />
       </>
     );
   }
 
-
-
   return (
     <>
-      <Loader loading={loading || rolesLoading} />
+      {/* <Loader loading={loading || rolesLoading} /> */}
       <ScrollView>
         <View style={[layout.containerPadding]}>
           {renderHeading()}
@@ -169,16 +135,20 @@ const Upload = () => {
                   style={layout.flexCol}
                   contentContainerStyle={layout.flexCol}
                 >
-                  <UploadContainer />
+                  <UploadContainer
+                    form={form}
+                    setForm={setForm}
+                    uploadedFiles={uploadedFiles}
+                    setUploadedFiles={setUploadedFiles}
+                    infoError={infoError}
+                    setInfoError={setInfoError}
+                  />
                 </ScrollView>
               </View>
-              <Pressable onPress={()=>{}}>
+              <Pressable onPress={handleUploadSubmit}>
                 {false ? (
                   <View style={[button.btnBase, button.btnPrimary]}>
-                    <Loader
-                      loading={true}
-                      color={theme.colors.textInverse}
-                    />
+                    <Loader loading={true} color={theme.colors.textInverse} />
                   </View>
                 ) : (
                   <Text style={[button.btnBase, button.btnPrimary]}>
@@ -190,7 +160,6 @@ const Upload = () => {
           </View>
         </View>
       </ScrollView>
-
     </>
   );
 };

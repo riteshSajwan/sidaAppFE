@@ -87,13 +87,18 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: Routes.SCRUTINYREPORT,
       icon: 'statsDownSquare',
     },
-
+    {
+      label: TranslateMessage('Admin.Sida.APP.ArchitectDetails.Details'),
+      path: Routes.ARCHITECTDETAILS,
+      icon: 'architect',
+    },
 
     {
       label: TranslateMessage('Admin.Delivery.App.Ticket'),
       path: Routes.TICKET,
       icon: 'ticketLine',
     },
+    
     // {
     //   label: TranslateMessage('Admin.Delivery.App.Reports'),
     //   path: Routes.REPORT,

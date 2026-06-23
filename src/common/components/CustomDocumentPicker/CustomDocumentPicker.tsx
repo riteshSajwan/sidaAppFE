@@ -74,6 +74,7 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
     blobs: IBlobType,
     results: DocumentPickerSuccessResult,
   ) {
+    console.log("handleOnSelect",blobs)
     const newImages = results?.assets
       ? results.assets.map((result: DocumentPickerAsset, index: number) => ({
           uri: result.uri,
@@ -85,6 +86,44 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
 
     onSelect(blobs, newImages);
   }
+
+  /**
+   * Ensures the blob carries the correct MIME type.
+   * For files like DXF, browsers/React Native may return a blob typed as
+   * `application/octet-stream` or `""`. We rebuild the blob with the MIME
+   * type the document picker reported so upstream upload logic is not broken.
+   */
+  const normalizeBlobType = (blob: Blob, mimeType?: string): Blob => {
+    const effectiveMime = mimeType ?? '';
+    if (!effectiveMime) return blob;
+    // Rebuild whenever the blob type is empty or doesn't match what the picker reported
+    if (blob.type === '' || blob.type !== effectiveMime) {
+      return new Blob([blob], { type: effectiveMime });
+    }
+    return blob;
+  };
+
+  /**
+   * Fetches a URI and returns a correctly-typed Blob.
+   * expo-document-picker on web exposes a `file` property on each asset
+   * (a native File object). We use that directly when available — this is
+   * the most reliable path for non-standard file types such as DXF, because
+   * `fetch()` on a blob/file URI can return `application/octet-stream` or
+   * fail entirely depending on the browser/platform.
+   */
+  const assetToBlob = (asset: DocumentPickerAsset): Promise<Blob> => {
+    // Use the native File object when the picker exposes it (web platform)
+    const file = (asset as unknown as { file?: File }).file;
+    if (file) {
+      // The File object is already a Blob; ensure it carries the right type
+      return Promise.resolve(normalizeBlobType(file, asset.mimeType ?? file.type));
+    }
+
+    // Fallback: fetch the URI and fix up the MIME type
+    return fetch(asset.uri)
+      .then((response) => response.blob())
+      .then((blob) => normalizeBlobType(blob, asset.mimeType ?? ''));
+  };
 
   const pickImage = () => {
     DocumentPicker.getDocumentAsync(pickerOptions)
@@ -99,10 +138,10 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
         handleError('');
 
         if (multiple) {
-          const newImages = result.assets.map((asset) => asset.uri);
+          const assets = result.assets;
 
           // MAX images validation
-          if (images && images.length + newImages.length > maxImages) {
+          if (images && images.length + assets.length > maxImages) {
             handleError(
               `You can only upload a maximum of ${maxImages} images.`,
             );
@@ -111,7 +150,7 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
           }
 
           // Individual file size validation
-          const isTooLarge = result.assets.some(
+          const isTooLarge = assets.some(
             (asset) => (asset.size ?? 0) > fileSizeLimitBytes,
           );
           if (isTooLarge) {
@@ -125,7 +164,7 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
           }
 
           // Total size validation
-          const totalSize = result.assets.reduce(
+          const totalSize = assets.reduce(
             (sum, asset) => sum + (asset.size ?? 0),
             0,
           );
@@ -142,23 +181,22 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
             return;
           }
 
-          // Convert URIs → Blobs
-          Promise.all(
-            newImages.map((uri) =>
-              fetch(uri).then((response) => response.blob()),
-            ),
-          )
+          // Convert assets → correctly-typed Blobs
+          Promise.all(assets.map(assetToBlob))
             .then((blobs) => {
               handleOnSelect(blobs, result);
               handleImageLoading(false);
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error('CustomDocumentPicker: blob conversion failed', err);
+              handleError(TranslateMessage('Admin.Delivery.App.SomethingWentWrong'));
               handleImageLoading(false);
             });
         } else {
           // SINGLE FILE
-          fetch(result.assets[0].uri)
-            .then((response) => response.blob())
+          const asset = result.assets[0];
+
+          assetToBlob(asset)
             .then((blob) => {
               if (blob.size > fileSizeLimitBytes) {
                 handleError(
@@ -173,12 +211,15 @@ const CustomDocumentPicker = (props: ICustomImagePickerProps) => {
               handleOnSelect(blob, result);
               handleImageLoading(false);
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error('CustomDocumentPicker: blob conversion failed', err);
+              handleError(TranslateMessage('Admin.Delivery.App.SomethingWentWrong'));
               handleImageLoading(false);
             });
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('CustomDocumentPicker: getDocumentAsync failed', err);
         handleImageLoading(false);
       });
   };

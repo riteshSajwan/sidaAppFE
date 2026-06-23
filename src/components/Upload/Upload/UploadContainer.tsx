@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
@@ -10,8 +10,12 @@ import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { DXF_FILE_SIZE_BYTES } from 'src/constants';
 import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
-import { IUploadFormState, IOption } from './UploadContainerUtils';
+import {
+  IOption,
+  IUploadContainerProps,
 
+} from './UploadContainerUtils';
+import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 
 // ─── Static option lists (replace with API-driven data as needed) ────────────
 const CATEGORY_OPTIONS: IOption[] = [
@@ -36,51 +40,39 @@ const FILE_TYPE_OPTIONS: IOption[] = [
   { label: 'Image', value: 'image' },
 ];
 
-// ─── Initial state ────────────────────────────────────────────────────────────
-const generateInitialState = (): IUploadFormState => ({
-  category: { label: 'Select Category', value: '' },
-  subCategory: { label: 'Select Sub-Category', value: '' },
-  fileType: { label: 'Select File Type', value: '' },
-});
-
 // ─── Component ────────────────────────────────────────────────────────────────
-const UploadContainer = () => {
+const UploadContainer = ({
+  form,
+  setForm,
+  uploadedFiles,
+  setUploadedFiles,
+  infoError,
+  setInfoError,
+}: IUploadContainerProps) => {
   const { t: TranslateMessage } = useTranslation();
   const layout = useLayoutStyle();
   const formStyle = useFormStyle();
   const { theme } = useAppTheme();
 
-  const [form, setForm] = useState<IUploadFormState>(generateInitialState());
-  const [uploadedFiles, setUploadedFiles] = useState<IFilesData[]>([]);
-  const [uploadError, setUploadError] = useState<string>('');
+  const resetErrorMsg = (fieldName: string = '') => {
+    if (fieldName) {
+      setInfoError((prevState) => ({
+        ...prevState,
+        [fieldName]: '',
+      }));
+    } 
+  };
+ 
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
-  // const onSelectImage = (blobs: IBlobType, results: IFilesData[]) => {
-  //   resetErrorMsg('imageUplodFieldError');
-  //   const selectedImage = results[0];
-  //   setImages(results)
-  
-  //   setSelectedBanner((prevState) => ({
-  //     ...prevState,
-  //     images: [selectedImage],
-  //     file: selectedImage.fileName,
-  //   }));
-  // };
   const handleFileSelect = (_blobs: IBlobType, results: IFilesData[]) => {
+    resetErrorMsg('file');
+
     console.log("results",results)
-    alert()
-    setUploadedFiles(results)
-  };
-
-  const handleFileError = (error: string) => {
-    setUploadError(error);
-  };
-
-  const handleFileLoading = (_loading: boolean) => {
-    // extend with a Loader state if needed
+    setUploadedFiles(results);
   };
 
   const handleCategoryChange = (item: IMinuteOption) => {
+    resetErrorMsg('category');
     setForm((prev) => ({
       ...prev,
       category: { label: item.label ?? '', value: String(item.value ?? '') },
@@ -88,16 +80,18 @@ const UploadContainer = () => {
   };
 
   const handleSubCategoryChange = (item: IMinuteOption) => {
+    resetErrorMsg('subCategory');
     setForm((prev) => ({
       ...prev,
       subCategory: { label: item.label ?? '', value: String(item.value ?? '') },
     }));
   };
 
-  const handleFileTypeChange = (item: IMinuteOption) => {
+  const handleTerrainChange = (item: IMinuteOption) => {
+    resetErrorMsg('terrain');
     setForm((prev) => ({
       ...prev,
-      fileType: { label: item.label ?? '', value: String(item.value ?? '') },
+      terrain: { label: item.label ?? '', value: String(item.value ?? '') },
     }));
   };
 
@@ -106,10 +100,16 @@ const UploadContainer = () => {
   };
 
   // ── Render helpers ────────────────────────────────────────────────────────
+  function renderErrorMsg(error: string) {
+    if (error) {
+      return <ErrorMessageContainer message={error} />;
+    }
+    return null;
+  }
 
   function renderUploadSection() {
     return (
-      <View style={[uploadSectionStyle.container]}>
+      <View style={uploadSectionStyle.container}>
         <Typography variant="subHeading" spacing={{ bottom: 4 }}>
           {TranslateMessage('Admin.Sida.App.Upload.UploadFile')}
         </Typography>
@@ -122,16 +122,20 @@ const UploadContainer = () => {
           files={uploadedFiles}
           handleRemoveFile={handleRemoveFile}
           multiple={false}
-          // type = {}
+          maxImages={1}
+          type={
+            [
+            ".dxf",
+            "application/dxf",
+            "image/vnd.dxf",
+            "application/x-dxf",
+            "drawing/x-dxf",
+          ]
+          }
           maxSize={DXF_FILE_SIZE_BYTES}
         />
+        {renderErrorMsg(infoError.file)}
 
-        {/* Error message */}
-        {uploadError !== '' && (
-          <Text style={[formStyle.errorMessage, { marginTop: 8 }]}>
-            {uploadError}
-          </Text>
-        )}
       </View>
     );
   }
@@ -158,7 +162,7 @@ const UploadContainer = () => {
 
   function renderDropdownSection() {
     return (
-      <View style={[dropdownSectionStyle.container]}>
+      <View style={dropdownSectionStyle.container}>
         <Typography variant="subHeading" spacing={{ bottom: 16 }}>
           {TranslateMessage('Admin.Sida.App.Upload.FileDetails')}
         </Typography>
@@ -169,50 +173,54 @@ const UploadContainer = () => {
           form.category,
           handleCategoryChange,
         )}
-
+        {renderErrorMsg(infoError.category)}
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.SubCategory'),
           SUB_CATEGORY_OPTIONS,
           form.subCategory,
           handleSubCategoryChange,
         )}
-
+        {renderErrorMsg(infoError.subCategory)}
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.FileType'),
           FILE_TYPE_OPTIONS,
-          form.fileType,
-          handleFileTypeChange,
+          form.terrain,
+          handleTerrainChange,
         )}
+
+        {renderErrorMsg(infoError.terrain)}
       </View>
     );
   }
 
   // ── Main render ───────────────────────────────────────────────────────────
   return (
-    <View style={[layout.flexDirectionRow, { gap: 24, flexWrap: 'wrap' }]}>
-      {/* Left — file upload */}
-      <View style={{ flex: 1, minWidth: 280 }}>
-        {renderUploadSection()}
-      </View>
+    <ScrollView>
+      <View style={[layout.flexDirectionRow, { gap: 24, flexWrap: 'wrap' }]}>
+        {/* Left — file upload */}
+        <View style={{ flex: 1, minWidth: 280 }}>
+          {renderUploadSection()}
+        </View>
 
-      {/* Vertical divider (visible on wide screens) */}
-      <View
-        style={{
-          width: 1,
-          backgroundColor: theme.colors.borderDisabled,
-          alignSelf: 'stretch',
-        }}
-      />
+        {/* Vertical divider (visible on wide screens) */}
+        <View
+          style={{
+            width: 1,
+            backgroundColor: theme.colors.borderDisabled,
+            alignSelf: 'stretch',
+          }}
+        />
 
-      {/* Right — dropdowns */}
-      <View style={{ flex: 1, minWidth: 280 }}>
-        {renderDropdownSection()}
+        {/* Right — dropdowns */}
+        <View style={{ flex: 1, minWidth: 280 }}>
+          {renderDropdownSection()}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
-// ─── Inline section wrappers (thin, avoids extra style file) ─────────────────
+// ─── Inline section wrappers ──────────────────────────────────────────────────
 const uploadSectionStyle = {
   container: {
     flex: 1,

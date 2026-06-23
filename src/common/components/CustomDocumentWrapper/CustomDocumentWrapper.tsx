@@ -29,21 +29,22 @@ const CustomDocumentWrapper = (props: ICustomDocumentWrapperProps) => {
     disabled =false,
     onSelect,
     multiple = false,
-type = [
-  "image/png",
-  "image/jpeg",
-  "image/jpg",
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-
-  // DXF formats
-  ".dxf",
-  "application/dxf",
-  "image/vnd.dxf",
-  "application/x-dxf",
-  "drawing/x-dxf"
-],
- maxImages = 5,
+    type = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      // DXF MIME types — do NOT include extension strings like ".dxf";
+      // expo-document-picker only accepts MIME types in this array.
+      "application/dxf",
+      "image/vnd.dxf",
+      "application/x-dxf",
+      "drawing/x-dxf",
+      // Fallback: some OS/browsers report DXF as plain binary
+      "application/octet-stream",
+    ],
+    maxImages = 5,
     handleRemoveFile,
     maxSize
   } = props;
@@ -59,12 +60,12 @@ type = [
   };
   const formStyle = useFormStyle();
   const uploadimage = useUploadImageStyle();
-
+  console.log("Ritesh2")
   return (
     <View>
       <Text style={formStyle.labelTitle}>{label}</Text>
       <View style={[uploadimage.uploadImageContainer,]}>
-        {files.length ==0 &&<CustomDocumentPicker
+        {files.length ==0 && <CustomDocumentPicker
           onSelect={onSelect}
           type={type}
           maxImages={maxImages}
