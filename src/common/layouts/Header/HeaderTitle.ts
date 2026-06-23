@@ -52,10 +52,7 @@ export const getHeaderTitle = (path: string): string => {
       return translateMessage('Admin.Delivery.App.Bookings.Title');
     case cleanPath.includes(Routes.TRIPDETAILS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Trip.Details');
-    case cleanPath.includes(Routes.CABS.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.Cabs.Title');
-    case cleanPath.includes(Routes.CABS.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.Cabs.Title');
+
     case cleanPath.includes(Routes.BUSINESS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Business');
     case cleanPath.includes(Routes.INVOICING.toLowerCase()):

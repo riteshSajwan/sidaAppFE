@@ -54,7 +54,7 @@ export enum Routes {
   BOOKING = '/booking',
   BOOKINGDETAILS = '/bookingdetails',
   TRIPDETAILS = '/tripDetails',
-  CABS = '/cabs',
+
   ROLES = '/roles',
   USERS = '/users',
   BUSINESS = '/business',
