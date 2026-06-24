@@ -7,6 +7,7 @@ import {
   MediaIconName,
   openPdfDocument,
 } from 'src/common/components/FilesViewer/FilesViewerUtil';
+import { RenderImage } from 'src/common/components/Image/Image';
 import { Loader } from 'src/common/components/Loader/Loader';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { useTenantId } from 'src/common/hooks/useTenantId';
@@ -14,7 +15,6 @@ import ImageModal from 'src/components/Restaurant/ProfilePreview/ImagePreviewer'
 import { useProfilePreview } from 'src/components/Restaurant/ProfilePreview/ProfilePreviewStyle';
 import { checkIfEmpty } from 'src/components/Restaurant/ProfilePreview/ProfilePreviewUtil';
 import { Icon } from 'src/submodules/iconlibrary/src';
-import { RenderImage } from 'src/common/components/Image/Image';
 
 interface IFileViewerProps {
   filesData: IFilesData[];
@@ -84,7 +84,7 @@ const FileViewer: FunctionComponent<IFileViewerProps> = (props) => {
     return (
       <View key={index} style={uploadimage.pdfborder}>
         <Pressable onPress={onClickPdfFile}>
-          <Icon name={iconName} size={100} color={iconColor} />
+          <Icon name={iconName as unknown as 'pdf'} size={100} color={iconColor} />
           {/* <Text>{fileName}</Text> */}
         </Pressable>
         {removeFile && (
@@ -108,7 +108,7 @@ const FileViewer: FunctionComponent<IFileViewerProps> = (props) => {
     return (
       <View key={index} style={uploadimage.pdfborder}>
         <Pressable onPress={onClickDocFile}>
-          <Icon name={MediaIconName.DOCUMENT} size={100} color='#007bff' />
+          <Icon name={MediaIconName.DOCUMENT as unknown as 'word'} size={100} color='#007bff' />
           {/* <Text>{fileName}</Text> */}
         </Pressable>
         {removeFile && (
@@ -124,13 +124,15 @@ const FileViewer: FunctionComponent<IFileViewerProps> = (props) => {
   }
 
   function renderDxfFile(index: number, dxfURI: string, fileName: string) {
+    // DXF cannot be previewed inline — clicking downloads the file instead
     function onClickDxfFile() {
       openPdfDocument(dxfURI, fileName, tenantId);
     }
     return (
       <View key={index} style={uploadimage.pdfborder}>
         <Pressable onPress={onClickDxfFile}>
-          <Icon name={MediaIconName.DOCUMENT} size={100} color='#E67E22' />
+          {/* MediaIconName.DXF = 'page' — distinct orange colour identifies DXF files */}
+          <Icon name={MediaIconName.DXF} size={100} color='#E67E22' />
         </Pressable>
         {removeFile && (
           <Pressable

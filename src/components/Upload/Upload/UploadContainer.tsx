@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View, ScrollView } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
-import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
 import CustomDocumentWrapper from 'src/common/components/CustomDocumentWrapper/CustomDocumentWrapper';
+// import CustomDocumentPicker from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
+import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
+import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
-import { DXF_FILE_SIZE_BYTES } from 'src/constants';
 import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
+import { DXF_FILE_SIZE_BYTES } from 'src/constants';
 import {
   IOption,
   IUploadContainerProps,
-
 } from './UploadContainerUtils';
-import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 
-// ─── Static option lists (replace with API-driven data as needed) ────────────
+// ─── Static option lists ──────────────────────────────────────────────────────
 const CATEGORY_OPTIONS: IOption[] = [
   { label: 'Select Category', value: '' },
   { label: 'Finance', value: 'finance' },
@@ -40,6 +41,13 @@ const FILE_TYPE_OPTIONS: IOption[] = [
   { label: 'Image', value: 'image' },
 ];
 
+const DXF_TYPES = [
+  'application/dxf',
+  'image/vnd.dxf',
+  'application/x-dxf',
+  'drawing/x-dxf',
+];
+
 // ─── Component ────────────────────────────────────────────────────────────────
 const UploadContainer = ({
   form,
@@ -50,26 +58,37 @@ const UploadContainer = ({
   setInfoError,
 }: IUploadContainerProps) => {
   const { t: TranslateMessage } = useTranslation();
-  const layout = useLayoutStyle();
+  const layout    = useLayoutStyle();
   const formStyle = useFormStyle();
+  const button    = useButtonStyle();
   const { theme } = useAppTheme();
+
+  // Picker-level error is now managed inside CustomDocumentWrapper
+
+  // ── File handlers ─────────────────────────────────────────────────────────
 
   const resetErrorMsg = (fieldName: string = '') => {
     if (fieldName) {
-      setInfoError((prevState) => ({
-        ...prevState,
-        [fieldName]: '',
-      }));
-    } 
+      setInfoError((prev) => ({ ...prev, [fieldName]: '' }));
+    }
   };
- 
 
   const handleFileSelect = (_blobs: IBlobType, results: IFilesData[]) => {
     resetErrorMsg('file');
-
-    console.log("results",results)
     setUploadedFiles(results);
   };
+
+  // handleRemoveFile receives the index from FileViewer; we clear all files
+  const handleRemoveFile = (_index: number) => {
+    setUploadedFiles([]);
+  };
+
+  // Separate handler for the Remove Pressable button (no index needed)
+  const handleRemoveAll = () => {
+    setUploadedFiles([]);
+  };
+
+  // ── Dropdown handlers ─────────────────────────────────────────────────────
 
   const handleCategoryChange = (item: IMinuteOption) => {
     resetErrorMsg('category');
@@ -95,19 +114,17 @@ const UploadContainer = ({
     }));
   };
 
-  const handleRemoveFile = (_index: number) => {
-    setUploadedFiles([]);
-  };
+  // ── Render helpers ────────────────────────────────────────────────name────
 
-  // ── Render helpers ────────────────────────────────────────────────────────
   function renderErrorMsg(error: string) {
-    if (error) {
-      return <ErrorMessageContainer message={error} />;
-    }
+    if (error) return <ErrorMessageContainer message={error} />;
     return null;
   }
 
   function renderUploadSection() {
+    const uploaded   = uploadedFiles.length > 0;
+    const fieldError = infoError.file;
+
     return (
       <View style={uploadSectionStyle.container}>
         <Typography variant="subHeading" spacing={{ bottom: 4 }}>
@@ -117,25 +134,51 @@ const UploadContainer = ({
           {TranslateMessage('Admin.Sida.App.Upload.UploadFileSubtitle')}
         </Typography>
 
+        {/*
+         * CustomDocumentWrapper wraps CustomDocumentPicker + FileViewer together.
+         * renderTrigger replaces the default dashed-border UI with a styled
+         * Upload / Re-upload button; the FileViewer preview renders below it
+         * automatically when files are present.
+         */}
         <CustomDocumentWrapper
-          onSelect={handleFileSelect}
           files={uploadedFiles}
+          onSelect={handleFileSelect}
           handleRemoveFile={handleRemoveFile}
           multiple={false}
           maxImages={1}
-          type={
-            [
-            ".dxf",
-            "application/dxf",
-            "image/vnd.dxf",
-            "application/x-dxf",
-            "drawing/x-dxf",
-          ]
-          }
+          type={DXF_TYPES}
           maxSize={DXF_FILE_SIZE_BYTES}
-        />
-        {renderErrorMsg(infoError.file)}
+          renderTrigger={(openPicker) => (
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+              <Pressable
+                onPress={openPicker}
+                style={[
+                  button.btnBase,
+                  uploaded ? button.btnOutlinePrimary : button.btnPrimary,
+                ]}
+              >
+                <Text style={uploaded ? button.btnOutlinePrimary : button.btnPrimary}>
+                  {uploaded
+                    ? TranslateMessage('Admin.Sida.App.DocumentUpload.ReUpload')
+                    : TranslateMessage('Admin.Sida.App.DocumentUpload.Upload')}
+                </Text>
+              </Pressable>
 
+              {uploaded && (
+                <Pressable
+                  onPress={handleRemoveAll}
+                  style={[button.btnBase, button.btnOutlineDanger]}
+                >
+                  <Text style={button.btnOutlineDanger}>
+                    {TranslateMessage('Admin.Delivery.App.Remove')}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+        />
+
+        {renderErrorMsg(fieldError)}
       </View>
     );
   }
@@ -174,6 +217,7 @@ const UploadContainer = ({
           handleCategoryChange,
         )}
         {renderErrorMsg(infoError.category)}
+
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.SubCategory'),
           SUB_CATEGORY_OPTIONS,
@@ -181,13 +225,13 @@ const UploadContainer = ({
           handleSubCategoryChange,
         )}
         {renderErrorMsg(infoError.subCategory)}
+
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.FileType'),
           FILE_TYPE_OPTIONS,
           form.terrain,
           handleTerrainChange,
         )}
-
         {renderErrorMsg(infoError.terrain)}
       </View>
     );
@@ -202,7 +246,7 @@ const UploadContainer = ({
           {renderUploadSection()}
         </View>
 
-        {/* Vertical divider (visible on wide screens) */}
+        {/* Vertical divider */}
         <View
           style={{
             width: 1,
@@ -222,17 +266,11 @@ const UploadContainer = ({
 
 // ─── Inline section wrappers ──────────────────────────────────────────────────
 const uploadSectionStyle = {
-  container: {
-    flex: 1,
-    padding: 16,
-  },
+  container: { flex: 1, padding: 16 },
 } as const;
 
 const dropdownSectionStyle = {
-  container: {
-    flex: 1,
-    padding: 16,
-  },
+  container: { flex: 1, padding: 16 },
 } as const;
 
 export default UploadContainer;

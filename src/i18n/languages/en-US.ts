@@ -46,7 +46,7 @@ export default {
     'Admin.Sida.App.DocumentUpload.Upload': 'Upload',
     'Admin.Sida.App.DocumentUpload.Optional': 'Optional',
     'Admin.Sida.App.DocumentUpload.ApiError': 'Something went wrong. Please try again.',
-
+    'Admin.Delivery.App.Remove':'Remove File',
     // Document Uploads — format hint
     'Admin.Sida.App.DocumentUpload.Hint': '{{formats}} · max {{size}}',
     'Admin.Sida.App.DocumentUpload.Hint.Optional': '{{formats}} · max {{size}} · Optional',

@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import CustomDocumentPicker, {
-  IBlobType,
-  IFilesData,
-} from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
+import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
+import CustomDocumentWrapper from 'src/common/components/CustomDocumentWrapper/CustomDocumentWrapper';
+// import CustomDocumentPicker from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { ALLOW_FILE_SIZE_BYTES } from 'src/constants';
 import { useDocumentUploadStyle } from './DocumentUpload';
@@ -60,7 +59,7 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
     }
   };
 
-  /* ── Called by CustomDocumentPicker after a successful pick ── */
+  /* ── Called by CustomDocumentWrapper after a successful pick ── */
   const handleSelect = (key: string) => (_blobs: IBlobType, results: IFilesData[]) => {
     if (!results.length) return;
     setErrors((prev) => ({ ...prev, [key]: '' }));
@@ -68,7 +67,13 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
     setFiles({ ...files, [key]: results[0] });
   };
 
-  /* ── Called by CustomDocumentPicker when it rejects a file ── */
+  /* ── Remove a file for a specific field ── */
+  const handleRemove = (key: string) => (_index: number) => {
+    setPickerErrors((prev) => ({ ...prev, [key]: '' }));
+    setFiles({ ...files, [key]: null });
+  };
+
+  /* ── Called by CustomDocumentWrapper when it rejects a file ── */
   const handlePickerError = (key: string) => (msg: string) => {
     setPickerErrors((prev) => ({ ...prev, [key]: msg }));
   };
@@ -138,17 +143,16 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
           {hasError && <ErrorMessageContainer message={fieldError} />}
         </View>
 
-        {/* Right — CustomDocumentPicker with renderTrigger */}
+        {/* Right — CustomDocumentWrapper with renderTrigger + built-in FileViewer */}
         <View style={styles.rowRight}>
-          <CustomDocumentPicker
+          <CustomDocumentWrapper
+            files={file ? [file] : []}
             onSelect={handleSelect(field.key)}
-            handleError={handlePickerError(field.key)}
-            handleImageLoading={() => {}}
-            images={file ? [file] : []}
+            handleRemoveFile={handleRemove(field.key)}
             multiple={false}
             maxImages={1}
-            type={field.allowedTypes}
-            maxSize={field.maxSizeBytes}
+            type={field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES}
+            maxSize={field.maxSizeBytes ?? ALLOW_FILE_SIZE_BYTES}
             renderTrigger={(openPicker) => (
               <Pressable
                 onPress={openPicker}

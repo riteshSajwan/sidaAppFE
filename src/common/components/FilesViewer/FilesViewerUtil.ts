@@ -7,6 +7,7 @@ export enum MediaIconName {
   DOCUMENT = 'word',
   FILE = 'word',
   EXCEL = 'excel',
+  DXF = 'page',   // 'page' is the closest available icon; no dedicated DXF icon in the library
 }
 
 function getFileType(fileName: string, fileType?: string) {
@@ -90,3 +91,4 @@ function getFileName(fileURL: string): string {
 }
 
 export { getFileName, getFileType, openPdfDocument };
+
