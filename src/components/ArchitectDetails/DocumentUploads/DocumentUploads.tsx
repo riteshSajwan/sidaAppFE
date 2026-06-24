@@ -13,14 +13,13 @@ import {
   DEFAULT_ACCEPTED_TYPES,
   DOCUMENT_FIELDS,
   formatBytes,
-  generateInitialErrors,
   generateInitialFilesState,
   IDocumentErrors,
   IDocumentField,
   IDocumentFilesState,
   IDocumentUploadsProps,
   mimeToExtLabel,
-  validateDocumentUploads,
+  validateDocumentUploads
 } from './DocumentUploadsUtils';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -34,19 +33,25 @@ function buildFormatHint(types: string[]): string {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploadsProps) => {
+const DocumentUploads = ({
+  errors,
+  setErrors,
+  loading,
+  setLoading,
+  pickerErrors,
+  setPickerErrors,
+  files: externalFiles,
+  onFilesChange
+}: IDocumentUploadsProps) => {
   const { t: T } = useTranslation();
-  const styles   = useDocumentUploadStyle();
-  const layout   = useLayoutStyle();
-  const button   = useButtonStyle();
+  const styles = useDocumentUploadStyle();
+  const layout = useLayoutStyle();
+  const button = useButtonStyle();
 
-  /* ── State ── */
+  /* ── State — all owned internally ── */
   const [internalFiles, setInternalFiles] = useState<IDocumentFilesState>(
     generateInitialFilesState,
   );
-  const [errors, setErrors]         = useState<IDocumentErrors>(generateInitialErrors);
-  const [loading, setLoading]       = useState(false);
-  const [pickerErrors, setPickerErrors] = useState<Record<string, string>>({});
 
   const files = externalFiles ?? internalFiles;
 
@@ -62,20 +67,20 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
   /* ── Called by CustomDocumentWrapper after a successful pick ── */
   const handleSelect = (key: string) => (_blobs: IBlobType, results: IFilesData[]) => {
     if (!results.length) return;
-    setErrors((prev) => ({ ...prev, [key]: '' }));
-    setPickerErrors((prev) => ({ ...prev, [key]: '' }));
+    setErrors((prev: IDocumentErrors) => ({ ...prev, [key]: '' }));
+    setPickerErrors((prev: Record<string, string>) => ({ ...prev, [key]: '' }));
     setFiles({ ...files, [key]: results[0] });
   };
 
   /* ── Remove a file for a specific field ── */
   const handleRemove = (key: string) => (_index: number) => {
-    setPickerErrors((prev) => ({ ...prev, [key]: '' }));
+    setPickerErrors((prev: Record<string, string>) => ({ ...prev, [key]: '' }));
     setFiles({ ...files, [key]: null });
   };
 
   /* ── Called by CustomDocumentWrapper when it rejects a file ── */
   const handlePickerError = (key: string) => (msg: string) => {
-    setPickerErrors((prev) => ({ ...prev, [key]: msg }));
+    setPickerErrors((prev: Record<string, string>) => ({ ...prev, [key]: msg }));
   };
 
   /* ── Submit ── */
@@ -89,7 +94,7 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
       // TODO: wire up API call
       console.log('Submit documents', files);
     } catch {
-      setErrors((prev) => ({
+      setErrors((prev: IDocumentErrors) => ({
         ...prev,
         apiError: T('Admin.Sida.App.DocumentUpload.ApiError'),
       }));
@@ -101,9 +106,9 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
   /* ── Render helpers ── */
 
   function renderFormatHint(field: IDocumentField) {
-    const types    = field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES;
+    const types = field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES;
     const maxBytes = field.maxSizeBytes ?? ALLOW_FILE_SIZE_BYTES;
-    const hintKey  = field.required
+    const hintKey = field.required
       ? 'Admin.Sida.App.DocumentUpload.Hint'
       : 'Admin.Sida.App.DocumentUpload.Hint.Optional';
 
@@ -115,10 +120,10 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
   }
 
   function renderDocumentRow(field: IDocumentField) {
-    const file       = files[field.key];
-    const uploaded   = !!file;
+    const file = files[field.key];
+    const uploaded = !!file;
     const fieldError = errors[field.key] || pickerErrors[field.key] || '';
-    const hasError   = !!fieldError;
+    const hasError = !!fieldError;
 
     return (
       <View
@@ -153,6 +158,7 @@ const DocumentUploads = ({ files: externalFiles, onFilesChange }: IDocumentUploa
             maxImages={1}
             type={field.allowedTypes ?? DEFAULT_ACCEPTED_TYPES}
             maxSize={field.maxSizeBytes ?? ALLOW_FILE_SIZE_BYTES}
+            onError={handlePickerError(field.key)}
             renderTrigger={(openPicker) => (
               <Pressable
                 onPress={openPicker}

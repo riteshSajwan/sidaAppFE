@@ -1,9 +1,8 @@
-
-import React, { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
@@ -12,14 +11,16 @@ import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
-
-import { AppDispatch, RootState } from 'src/store';
 import UploadContainer from './Upload/UploadContainer';
-import { generateInitialState, IUploadFormState ,  generateInitialUploadContainerErrorsData,
-  IUploadErrors,
-  validateUpload,
+import {
+  generateInitialState,
+  generateInitialUploadContainerErrorsData,
   getFileName,
-  getMimeType,} from './Upload/UploadContainerUtils';
+  getMimeType,
+  IUploadErrors,
+  IUploadFormState,
+  validateUpload,
+} from './Upload/UploadContainerUtils';
 
 const Upload = () => {
   const { t: TranslateMessage } = useTranslation();
@@ -35,15 +36,21 @@ const Upload = () => {
     ...generateInitialUploadContainerErrorsData(),
   });
 
+  const reset = useCallback(() => {
+    setInfoError({ ...generateInitialUploadContainerErrorsData() });
+    setForm({ ...generateInitialState() });
+    setUploadedFiles([]);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        reset();
+      };
+    }, [reset]),
+  );
 
   const { theme } = useAppTheme();
-  // const { loading, loading: rolesLoading } = useSelector(
-  //   (state: RootState) => state.user.userList
-  // );
-  const dispatch = useDispatch<AppDispatch>();
-
-
-
 
 
 

@@ -19,19 +19,8 @@ export interface ICustomDocumentWrapperProps {
   maxImages?: number;
   maxSize?: number;
   disabled?: boolean;
-  /**
-   * Optional render-prop for a custom trigger button.
-   * Receives `openPicker` — call it to open the OS document picker.
-   * When provided, the default dashed-border picker UI is NOT shown;
-   * the FileViewer preview is always rendered alongside it when files exist.
-   *
-   * @example
-   * renderTrigger={(openPicker) => (
-   *   <Pressable onPress={openPicker}>
-   *     <Text>{files.length ? 'Re-upload' : 'Upload'}</Text>
-   *   </Pressable>
-   * )}
-   */
+  /** Called whenever the picker rejects a file (MIME/size). Forwarded from CustomDocumentPicker. */
+  onError?: (message: string) => void;
   renderTrigger?: (openPicker: () => void) => React.ReactNode;
 }
 
