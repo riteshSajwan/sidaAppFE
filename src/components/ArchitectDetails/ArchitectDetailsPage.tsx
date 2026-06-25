@@ -1,7 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
@@ -13,6 +13,7 @@ import {
   IFormErrors,
   validateArchitectDetailsForm,
 } from './ArchitectDetailsPageUtils';
+import { useDocumentUploadStyle } from './DocumentUploads/DocumentUpload';
 import DocumentUploads from './DocumentUploads/DocumentUploads';
 import {
   generateInitialErrors,
@@ -27,9 +28,9 @@ const ArchitectDetailsPage = () => {
   const { t: T } = useTranslation();
   const layout = useLayoutStyle();
   const button = useButtonStyle();
-
-  const [errors, setErrors]             = useState<IDocumentErrors>(generateInitialErrors);
-  const [loading, setLoading]           = useState<boolean>(false);
+  const styles = useDocumentUploadStyle();
+  const [errors, setErrors] = useState<IDocumentErrors>(generateInitialErrors);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pickerErrors, setPickerErrors] = useState<Record<string, string>>({});
   const [documentFiles, setDocumentFiles] = useState<IDocumentFilesState>(generateInitialFilesState);
   const [form, setForm] = useState<IFormData>(generateInitialForm);
@@ -63,14 +64,19 @@ const ArchitectDetailsPage = () => {
   }, [T, validateFormInputs, documentFiles, form]);
 
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        // intentional no-op — DocumentUploads resets itself on blur
-      };
-    }, []),
-  );
-
+   const reset = useCallback(() => {
+     setErrors({ ...generateInitialErrors() });
+     setFormErrors({ ...generateInitialFormErrors() });
+     setDocumentFiles(generateInitialFilesState());
+   }, []);
+ 
+   useFocusEffect(
+     useCallback(() => {
+       return () => {
+         reset();
+       };
+     }, [reset]),
+   );
   return (
     <ScrollView>
       <View style={layout.containerPadding}>
@@ -79,14 +85,14 @@ const ArchitectDetailsPage = () => {
           <Typography variant="subHeading">Architect Details</Typography>
         </View>
         <Divider style={[layout.DividerSperator, layout.marBottom30]} />
-        <FormInputs 
-          form={form} 
+        <FormInputs
+          form={form}
           setForm={setForm}
           errors={formErrors}
           setErrors={setFormErrors}
         />
         {/* Document uploads section — owns all form state internally */}
-<DocumentUploads
+        <DocumentUploads
           errors={errors}
           setErrors={setErrors}
           pickerErrors={pickerErrors}
@@ -94,21 +100,17 @@ const ArchitectDetailsPage = () => {
           files={documentFiles}
           onFilesChange={setDocumentFiles}
         />
-
-        <View style={{ marginTop: 24, alignItems: 'flex-end' }}>
+        <View style={styles.submitWrap}>
           <Pressable
             onPress={handleSubmit}
             disabled={loading}
             style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}
           >
-            <Typography
-              variant="btnText"
-              style={loading ? button.btnDisabled : undefined}
-            >
+            <Text style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}>
               {loading
                 ? T('Admin.Sida.App.DocumentUpload.Submitting')
                 : T('Admin.Sida.App.DocumentUpload.Submit')}
-            </Typography>
+            </Text>
           </Pressable>
         </View>
       </View>
