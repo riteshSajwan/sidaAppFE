@@ -18,8 +18,7 @@ import {
   IDocumentField,
   IDocumentFilesState,
   IDocumentUploadsProps,
-  mimeToExtLabel,
-  validateDocumentUploads
+  mimeToExtLabel
 } from './DocumentUploadsUtils';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -36,12 +35,10 @@ function buildFormatHint(types: string[]): string {
 const DocumentUploads = ({
   errors,
   setErrors,
-  loading,
-  setLoading,
   pickerErrors,
   setPickerErrors,
   files: externalFiles,
-  onFilesChange
+  onFilesChange,
 }: IDocumentUploadsProps) => {
   const { t: T } = useTranslation();
   const styles = useDocumentUploadStyle();
@@ -83,25 +80,6 @@ const DocumentUploads = ({
     setPickerErrors((prev: Record<string, string>) => ({ ...prev, [key]: msg }));
   };
 
-  /* ── Submit ── */
-  const handleSubmit = async () => {
-    const { isValid, errors: validationErrors } = validateDocumentUploads(files);
-    setErrors(validationErrors);
-    if (!isValid) return;
-
-    setLoading(true);
-    try {
-      // TODO: wire up API call
-      console.log('Submit documents', files);
-    } catch {
-      setErrors((prev: IDocumentErrors) => ({
-        ...prev,
-        apiError: T('Admin.Sida.App.DocumentUpload.ApiError'),
-      }));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   /* ── Render helpers ── */
 
@@ -192,21 +170,6 @@ const DocumentUploads = ({
           <ErrorMessageContainer message={errors.apiError} />
         </View>
       )}
-
-      {/* Submit */}
-      <View style={styles.submitWrap}>
-        <Pressable
-          onPress={handleSubmit}
-          disabled={loading}
-          style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}
-        >
-          <Text style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}>
-            {loading
-              ? T('Admin.Sida.App.DocumentUpload.Submitting')
-              : T('Admin.Sida.App.DocumentUpload.Submit')}
-          </Text>
-        </Pressable>
-      </View>
     </View>
   );
 };

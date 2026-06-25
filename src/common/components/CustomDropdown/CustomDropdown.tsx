@@ -5,7 +5,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { useAppTheme } from 'src/common/context/AppTheme';
-import { IMinuteOption } from 'src/components/Restaurant/utils/RestaurantUtil';
+// import { IMinuteOption } from 'src/components/Restaurant/utils/RestaurantUtil';
 
 interface IOption {
   label: string;
@@ -17,7 +17,7 @@ interface IDropDownProps {
   selectedValue: IOption;
   disabled?:boolean;
   error?:string;
-  onChange: (item: IMinuteOption) => void;
+  onChange: (item: IOption) => void;
   style?:StyleProp<ViewStyle>;
  
 }

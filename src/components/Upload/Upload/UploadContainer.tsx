@@ -11,7 +11,6 @@ import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown'
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
-import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
 import { DXF_FILE_SIZE_BYTES } from 'src/constants';
 import {
   IOption,
@@ -90,7 +89,7 @@ const UploadContainer = ({
 
   // ── Dropdown handlers ─────────────────────────────────────────────────────
 
-  const handleCategoryChange = (item: IMinuteOption) => {
+  const handleCategoryChange = (item: IOption) => {
     resetErrorMsg('category');
     setForm((prev) => ({
       ...prev,
@@ -98,7 +97,7 @@ const UploadContainer = ({
     }));
   };
 
-  const handleSubCategoryChange = (item: IMinuteOption) => {
+  const handleSubCategoryChange = (item: IOption) => {
     resetErrorMsg('subCategory');
     setForm((prev) => ({
       ...prev,
@@ -106,7 +105,7 @@ const UploadContainer = ({
     }));
   };
 
-  const handleTerrainChange = (item: IMinuteOption) => {
+  const handleTerrainChange = (item: IOption) => {
     resetErrorMsg('terrain');
     setForm((prev) => ({
       ...prev,
@@ -187,7 +186,7 @@ const UploadContainer = ({
     label: string,
     data: IOption[],
     selectedValue: IOption,
-    onChange: (item: IMinuteOption) => void,
+    onChange: (item: IOption) => void,
   ) {
     return (
       <View style={{ marginBottom: 16 }}>

@@ -28,25 +28,13 @@ export function mimeToExtLabel(mime: string): string {
 // ─── Document field definition ────────────────────────────────────────────────
 
 export interface IDocumentField {
-  /** Unique key used as the state map key */
   key: string;
-  /** i18n translation key for the label shown in the row */
   labelKey: string;
-  /** Whether the user MUST upload this document before submitting */
   required?: boolean;
-  /**
-   * Accepted MIME types for this specific field.
-   * Falls back to DEFAULT_ACCEPTED_TYPES when omitted.
-   */
   allowedTypes?: string[];
-  /**
-   * Maximum file size in bytes for this specific field.
-   * Falls back to ALLOW_FILE_SIZE_BYTES (10 MB) when omitted.
-   */
   maxSizeBytes?: number;
 }
 
-/** Default accepted MIME types used when a field doesn't define its own */
 export const DEFAULT_ACCEPTED_TYPES: string[] = [
   ...FORMAT.IMAGE,
   ...FORMAT.PDF,
@@ -111,6 +99,33 @@ export const DOCUMENT_FIELDS: IDocumentField[] = [
   },
 ];
 
+export const FormInputs = [{
+  key: 'district',
+  labelKey: 'Admin.Sida.App.DocumentUpload.Field.District',
+  required: true,
+  options: [
+    { label: 'Select District', value: '' },
+    { label: 'District 1', value: 'district1' },
+    { label: 'District 2', value: 'district2' },
+  ]
+},
+
+{
+  key: 'tehsil',
+  labelKey: 'Admin.Sida.App.DocumentUpload.Field.Tehsil',
+  required: true,
+  options: [
+    { label: 'Select Tehsil', value: '' },
+    { label: 'Tehsil 1', value: 'tehsil1' },
+    { label: 'Category 2', value: 'category2' },
+  ]
+},{
+  key: 'khasra',
+  labelKey: 'Admin.Sida.App.DocumentUpload.Field.Khasra',
+  required: true, 
+}
+]
+
 // ─── State types ──────────────────────────────────────────────────────────────
 
 export type IDocumentFilesState = Record<string, IFilesData | null>;
@@ -120,8 +135,6 @@ export type IDocumentErrors = Record<string, string> & { apiError: string };
 export interface IDocumentUploadsProps {
   errors: IDocumentErrors;
   setErrors: Dispatch<SetStateAction<IDocumentErrors>>;
-  loading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
   pickerErrors: Record<string, string>;
   setPickerErrors: Dispatch<SetStateAction<Record<string, string>>>;
   files?: IDocumentFilesState;

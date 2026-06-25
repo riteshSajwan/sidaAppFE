@@ -1,18 +1,67 @@
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Divider } from 'react-native-paper';
+import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import Typography from 'src/common/components/Typography/Typography';
+import {
+  generateInitialForm,
+  generateInitialFormErrors,
+  IFormData,
+  IFormErrors,
+  validateArchitectDetailsForm,
+} from './ArchitectDetailsPageUtils';
 import DocumentUploads from './DocumentUploads/DocumentUploads';
-import { generateInitialErrors, IDocumentErrors } from './DocumentUploads/DocumentUploadsUtils';
+import {
+  generateInitialErrors,
+  generateInitialFilesState,
+  IDocumentErrors,
+  IDocumentFilesState,
+  validateDocumentUploads,
+} from './DocumentUploads/DocumentUploadsUtils';
+import FormInputs from './FormInputs/FormInputs';
 
 const ArchitectDetailsPage = () => {
+  const { t: T } = useTranslation();
   const layout = useLayoutStyle();
+  const button = useButtonStyle();
 
   const [errors, setErrors]             = useState<IDocumentErrors>(generateInitialErrors);
   const [loading, setLoading]           = useState<boolean>(false);
   const [pickerErrors, setPickerErrors] = useState<Record<string, string>>({});
+  const [documentFiles, setDocumentFiles] = useState<IDocumentFilesState>(generateInitialFilesState);
+  const [form, setForm] = useState<IFormData>(generateInitialForm);
+  const [formErrors, setFormErrors] = useState<IFormErrors>(generateInitialFormErrors);
+
+  const validateFormInputs = useCallback(() => {
+    const { isValid, errors } = validateArchitectDetailsForm(form);
+    setFormErrors(errors);
+    return isValid;
+  }, [form]);
+
+  const handleSubmit = useCallback(async () => {
+    const isFormValid = validateFormInputs();
+    const { isValid, errors: documentValidationErrors } = validateDocumentUploads(documentFiles);
+    setErrors(documentValidationErrors);
+
+    if (!isFormValid || !isValid) return;
+
+    setLoading(true);
+    try {
+      // TODO: wire up API call
+      console.log('Submit architect details and documents', { form, documentFiles });
+    } catch {
+      setErrors((prev: IDocumentErrors) => ({
+        ...prev,
+        apiError: T('Admin.Sida.App.DocumentUpload.ApiError'),
+      }));
+    } finally {
+      setLoading(false);
+    }
+  }, [T, validateFormInputs, documentFiles, form]);
+
 
   useFocusEffect(
     useCallback(() => {
@@ -30,16 +79,38 @@ const ArchitectDetailsPage = () => {
           <Typography variant="subHeading">Architect Details</Typography>
         </View>
         <Divider style={[layout.DividerSperator, layout.marBottom30]} />
-
-        {/* Document uploads section — owns all form state internally */}
-        <DocumentUploads 
-        errors={errors}
-        setErrors={setErrors}
-        loading={loading}
-        setLoading={setLoading}
-        pickerErrors={pickerErrors}
-        setPickerErrors={setPickerErrors}
+        <FormInputs 
+          form={form} 
+          setForm={setForm}
+          errors={formErrors}
+          setErrors={setFormErrors}
         />
+        {/* Document uploads section — owns all form state internally */}
+<DocumentUploads
+          errors={errors}
+          setErrors={setErrors}
+          pickerErrors={pickerErrors}
+          setPickerErrors={setPickerErrors}
+          files={documentFiles}
+          onFilesChange={setDocumentFiles}
+        />
+
+        <View style={{ marginTop: 24, alignItems: 'flex-end' }}>
+          <Pressable
+            onPress={handleSubmit}
+            disabled={loading}
+            style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}
+          >
+            <Typography
+              variant="btnText"
+              style={loading ? button.btnDisabled : undefined}
+            >
+              {loading
+                ? T('Admin.Sida.App.DocumentUpload.Submitting')
+                : T('Admin.Sida.App.DocumentUpload.Submit')}
+            </Typography>
+          </Pressable>
+        </View>
       </View>
     </ScrollView>
   );
