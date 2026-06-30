@@ -2,14 +2,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    Pressable,
-    TextInput as RNTextInput,
-    Text,
-    View
+  Pressable,
+  TextInput as RNTextInput,
+  Text,
+  View
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import BrandLogo from 'src/common/assets/images/brandLogo.svg';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useUserStyle } from 'src/common/assets/styles/user';
@@ -226,18 +225,18 @@ const LoginContainer = () => {
 
         <View style={userStyle.loginMain}>
           <View style={userStyle.logoHeader}>
-          <BrandLogo width={500} height={100} color={theme.colors.iconBase} />
+          {/* <BrandLogo width={500} height={100} color={theme.colors.iconBase} /> */}
           </View>
           <View style={userStyle.formLayout}>
             <View>
               <Text style={userStyle.heading}>
-                {TranslateMessage('Admin.Delivery.App.LogIn.Label')}
+                {TranslateMessage('Admin.Sida.App.LogIn.Label')}
               </Text>
 
               <View style={[formStyle.formRow, {marginBottom: theme.spacing.xxl}]}>
                 <View style={formStyle.formCol}>
                   <Text style={formStyle.labelTitle}>
-                    {TranslateMessage('Admin.Delivery.App.LogIn.UserEmail')}
+                    {TranslateMessage('Admin.Sida.App.LogIn.UserEmail')}
                   </Text>
                   <TextInput
                     style={[
@@ -258,7 +257,7 @@ const LoginContainer = () => {
                     mode="outlined"
                     activeOutlineColor={theme.colors.borderErrorInverse}
                     outlineColor={theme.colors.borderMedium}
-                    placeholder={TranslateMessage('Admin.Delivery.App.Example', {
+                    placeholder={TranslateMessage('Admin.Sida.App.LogIn.UserEmailPlaceholder', {
                       type: 'johndoe@example.com',
                     })}
                     contentStyle={[
@@ -273,7 +272,7 @@ const LoginContainer = () => {
               <View style={[formStyle.formRow, formStyle.noMargin]}>
                 <View style={formStyle.formCol}>
                   <Text style={formStyle.labelTitle}>
-                    {TranslateMessage('Admin.Delivery.App.LogIn.PasswordLabel')}
+                    {TranslateMessage('Admin.Sida.App.LogIn.PasswordLabel')}
                   </Text>
                   <View style={{ position: 'relative' }}>
                     <TextInput
@@ -297,7 +296,7 @@ const LoginContainer = () => {
                       mode="outlined"
                     activeOutlineColor={theme.colors.borderErrorInverse}
                     outlineColor={theme.colors.borderMedium}
-                      placeholder={TranslateMessage('Admin.Delivery.App.Example', {
+                      placeholder={TranslateMessage('Admin.Sida.App.LogIn.PasswordPlaceholder', {
                         type: 'YourSecurePassword123',
                       })}
                       contentStyle={[
@@ -319,7 +318,7 @@ const LoginContainer = () => {
             <View style={userStyle.loginBtn}>
               <Pressable onPress={handleSubmit}>
                 <Text style={[button.btnBase, button.btnPrimary]}>
-                  {TranslateMessage('Admin.Delivery.App.LogIn.Continue')}
+                  {TranslateMessage('Admin.Sida.App.LogIn.Continue')}
                 </Text>
               </Pressable>
             </View>

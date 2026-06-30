@@ -2,8 +2,8 @@ import { DrawerHeaderProps } from '@react-navigation/drawer';
 import { router } from 'expo-router';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dimensions, FlatList, Image, Pressable, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { Appbar, Badge, Button, Menu } from 'react-native-paper';
+import { Dimensions, FlatList, Pressable, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Appbar, Badge } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { useUserStyle } from 'src/common/assets/styles/user';
@@ -11,11 +11,11 @@ import CustomIconButton from 'src/common/components/CustomIconButton/CustomIconB
 import CustomModal from 'src/common/components/CustomModal/CustomModal';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { RenderImage } from 'src/common/components/Image/Image';
-import LangaugeSelectorDropdown from 'src/common/components/LangaugeSelector/LangaugeSelector';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { usePermission } from 'src/common/hooks/usePermission';
 import { useTenantId } from 'src/common/hooks/useTenantId';
+import Breadcrumbs from 'src/common/layouts/Header/Breadcrumbs';
 import { useHeaderStyle } from 'src/common/layouts/Header/HeaderStyle';
 import { INotificationTitile, MenuColor } from 'src/common/layouts/Header/HeaderUtil';
 import { logout } from 'src/common/service/auth/action';
@@ -28,17 +28,18 @@ import { getRefreshToken } from 'src/common/utils/refreshTokenUtils';
 import { removeTenantId } from 'src/common/utils/tenantUtils';
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { DEFAULT_SIZE } from 'src/constants';
-import { translateMessage } from 'src/i18n/createTranslation';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
 
 interface IHeaderProps extends Partial<DrawerHeaderProps> { 
   headerTitle?: string;
+  /** When true, renders breadcrumbs instead of the back-button + title pattern */
+  showBreadcrumbs?: boolean;
 }
 
 const Header: FunctionComponent<IHeaderProps> = (
-  { headerTitle, ...props }
+  { headerTitle, showBreadcrumbs = false, ...props }
 ) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const { t: TranslateMessage } = useTranslation();
@@ -205,37 +206,28 @@ useEffect(() => {
       : require('src/common/assets/images/avatar.png');
   }
 
-  function renderMenu() {
+function renderProfilePill() {
     return (
-      <Menu
-        anchorPosition='bottom'
-        theme={{ colors: { primary: MenuColor.PRIMARY } }}
-        visible={menuVisible}
-        onDismiss={closeMenu}
-        contentStyle={styles.color_black}
-        anchor={
-          <Button rippleColor={'transparent'} onPress={openDrawer}>
-            <RenderImage
-              uri={userDetails?.profileUrl}
-              style={[styles.avatar]}
-            />
-          </Button>
-        }
+      <Pressable
+        onPress={profile}
+        style={styles.profilePill}
+        accessibilityRole="button"
+        accessibilityLabel="Open profile"
       >
-        <Menu.Item
-          leadingIcon={profileButton}
-          titleStyle={styles.item_style}
-          onPress={profile}
-          title={translateMessage('Admin.Delivery.App.Profile.Label')}
-        />
-        <Menu.Item
-          leadingIcon={logoutButton}
-          titleStyle={styles.item_style}
-          onPress={handleLogOut}
-          title={translateMessage('Admin.Delivery.App.LogOut.Label')}
-        />
-
-      </Menu>
+        {/* Avatar circle — shows profile image or initials fallback */}
+        {userDetails?.profileUrl ? (
+          <RenderImage uri={userDetails.profileUrl} style={styles.avatar} />
+        ) : (
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarInitials}>AD</Text>
+          </View>
+        )}
+        <View>
+          <Text style={styles.profileName}>Admin</Text>
+          <Text style={styles.profileRole}>Administrator</Text>
+        </View>
+        <Icon name="chevronDown" size={14} color={theme.colors.iconBase} />
+      </Pressable>
     );
   }
   const loadMore = () => {
@@ -374,24 +366,34 @@ useEffect(() => {
         )} */}
         <Icon name='phone' size={0}/>
 
-        {
-          headerTitle !=='Dashboard'?
-          <CustomIconButton
-            icon='chevronLeft'
-            size={30}
-            spacing={10}
-            iconColor={theme.colors.iconInverse}
-            onPress={() => {
-              if (router.canGoBack()) {
-                router.back();
-              } else {
-                router.replace(Routes.DASHBOARD);
-              }
-            }}
-          />
-          :null
-        }
-        <Typography variant='subHeading' color={theme.colors.textInverse} style={{paddingLeft:  headerTitle ==='Dashboard' ? 18:0}}>{headerTitle}</Typography>
+        {showBreadcrumbs ? (
+          /* Desktop mode — show breadcrumbs */
+          <Breadcrumbs />
+        ) : (
+          /* Mobile / drawer header mode — show back-button + title */
+          <>
+            {
+              headerTitle !== 'Dashboard' ?
+              <CustomIconButton
+                icon='chevronLeft'
+                size={30}
+                spacing={10}
+                iconColor={theme.colors.iconInverse}
+                onPress={() => {
+                  if (router.canGoBack()) {
+                    router.back();
+                  } else {
+                    router.replace(Routes.DASHBOARD);
+                  }
+                }}
+              />
+              : null
+            }
+            <Typography variant='subHeading' color={theme.colors.textInverse} style={{paddingLeft: headerTitle === 'Dashboard' ? 18 : 0}}>
+              {headerTitle}
+            </Typography>
+          </>
+        )}
         {/* <Pressable onPress={pageRedirectHandle}>
           <BrandLogo width={200} height={40} color={theme.colors.iconInverse} />
         </Pressable> */}
@@ -407,14 +409,16 @@ useEffect(() => {
             </View>
           </Pressable>
         )}
-        <LangaugeSelectorDropdown />
-        {renderMenu()}
-        <Pressable onPress={handleNotification} style={{ position: 'relative' }}>
+        {/* Language selector — commented out to match design */}
+        {/* <LangaugeSelectorDropdown /> */}
+
+        {/* Bell notification button */}
+        <Pressable onPress={handleNotification} style={styles.notificationBtn}>
           <CustomIconButton
             icon='bell'
-            size={24}
-            spacing={5}
-            iconColor={theme.colors.iconInverse}
+            size={22}
+            spacing={0}
+            iconColor={theme.colors.iconBase}
             onPress={handleNotification}
           />
           {count > 0 ? (
@@ -423,6 +427,9 @@ useEffect(() => {
             </Badge>
           ) : null}
         </Pressable>
+
+        {/* Profile pill: avatar + name + role */}
+        {renderProfilePill()}
       </View>
       <CustomModal
         visible={showNotifications}

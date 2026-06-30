@@ -3,6 +3,15 @@ import { LOCALES } from 'src/i18n/locales';
 export default {
   [LOCALES['English']]: {
 
+    // login
+    'Admin.Sida.App.LogIn.Label': 'Log In',
+    'Admin.Sida.App.LogIn.PasswordLabel': 'Enter your Password',
+    'Admin.Sida.App.LogIn.UserEmail': 'Enter Username or Email Address',
+    'Admin.Sida.App.LogIn.UserEmailPlaceholder': 'Enter your Email',
+    'Admin.Sida.App.LogIn.PasswordPlaceholder': 'Enter your Password',
+    'Admin.Sida.App.LogIn.Continue': 'Continue',
+    'Admin.Sida.App.Dasboard':'Dashboard',
+
     'Admin.Sida.App.Layout.Upload': 'Upload',
     'Admin.Sida.App.Reports': 'Reports',
     'Admin.Sida.App.Users': 'Users',
@@ -85,8 +94,8 @@ export default {
 
     // To be removed
 
-    'Admin.Delivery.App.LogIn.Label': 'Log In',
-    'Admin.Delivery.App.LogIn.PasswordLabel': 'Enter your Password',
+    // 'Admin.Delivery.App.LogIn.Label': 'Log In',
+    // 'Admin.Delivery.App.LogIn.PasswordLabel': 'Enter your Password',
     'Admin.Delivery.App.LogIn.Continue': 'Continue',
     'Admin.Delivery.App.Profile.Label': 'Profile',
     'Admin.Delivery.App.SearchLabel': 'Search',

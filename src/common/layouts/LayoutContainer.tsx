@@ -1,27 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import SideMenu from 'src/common/layouts/SideMenu/SideMenu';
-import Header from './Header/Header';
 
+/**
+ * LayoutContainer
+ *
+ * Desktop (>1199px):
+ *   ┌──────────┬─────────────────────────────┐
+ *   │          │  Header (with breadcrumbs)  │
+ *   │ Sidebar  ├─────────────────────────────┤
+ *   │ (full    │  Page content               │
+ *   │  height) │                             │
+ *   └──────────┴─────────────────────────────┘
+ *
+ * Mobile (≤1199px):
+ *   ┌──────────────────────────────────────┐
+ *   │  Header (back-button + title)        │
+ *   ├──────────────────────────────────────┤
+ *   │  Page content (drawer overlay)       │
+ *   └──────────────────────────────────────┘
+ *
+ * On desktop the Drawer is set to `drawerType="permanent"` with `headerShown:true`.
+ * This means the drawer renders the sidebar on the left and the header + content
+ * on the right — the sidebar naturally stretches to the full height and the
+ * header spans only the content column (to the right of the sidebar).
+ */
 const LayoutContainer = () => {
   const layout = useLayoutStyle();
-  const [isDesktop, setIsDesktop] = useState(
-    Dimensions.get('window').width > 1199
-  );
 
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ window }) => {
-      setIsDesktop(window.width > 1199);
-    });
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
-  
   return (
     <View style={layout.flexCol}>
-      {isDesktop && <Header />}
       <SideMenu />
     </View>
   );

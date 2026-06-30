@@ -1,7 +1,7 @@
 import {
-    DrawerContentComponentProps,
-    DrawerContentScrollView,
-    DrawerItem,
+  DrawerContentComponentProps,
+  DrawerContentScrollView,
+  DrawerItem,
 } from '@react-navigation/drawer';
 import { Href, router, usePathname } from 'expo-router';
 import React from 'react';
@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
-import { RenderImage } from 'src/common/components/Image/Image';
 import ThemeToggle from 'src/common/components/ThemeToggle/ThemeToggle';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
@@ -68,7 +67,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   Routes.ROLES,
   Routes.USERS,
   Routes.BUSINESS,
-  Routes.CABS,
+  // Routes.CABS,
 ];
   const drawerOptions = [
     // {
@@ -76,6 +75,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     //   path: Routes.RESTAURANTS,
     //   icon: 'silverware-fork-knife',
     // },
+    {
+      label: TranslateMessage('Admin.Sida.App.Dasboard'),
+      path: `${Routes.DASHBOARD}`,
+      icon: 'dashboard',
+    },
     
     {
       label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
@@ -98,12 +102,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: Routes.TICKET,
       icon: 'ticketLine',
     },
-    
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Reports'),
-    //   path: Routes.REPORT,
-    //   icon: 'statsDownSquare',
-    // },
+
     {
       label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
       path: Routes.PROFILE,
@@ -124,11 +123,6 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: Routes.BUSINESS,
       icon: 'statsDownSquare',
     },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Cabs.Title'),
-    //   path: Routes.CABS,
-    //   icon: 'car',
-    // },
     {
       label: TranslateMessage('Admin.Delivery.App.InvoiceManagement'),
       path: Routes.INVOICING,
@@ -140,55 +134,12 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       icon: 'logout',
       onPress: handleLogOut,
     },
-
-    //Required in Future
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Trip.Details'),
-    //   path: Routes.TRIPDETAILS,
-    //   icon: 'earth',
-    // },
-    //  {
-    //   label: TranslateMessage('Admin.Delivery.App.Order.Detail'),
-    //   path:   Routes.ORDERDETAILS,
-    //   icon: 'cart',
-    // },
-    // {
-    //   label: 'Wallet',
-    //   path: Routes.WALLET,
-    //   icon: 'wallet',
-    // },
-    // this code required in future
-    // {
-    //   label: 'Internal Users',
-    //   path: Routes.DEFAULT,
-    //   icon: 'account-multiple',
-    // },
-    // {
-    //   label: 'Delivery Partner',
-    //   path: Routes.DEFAULT,
-    //   icon: 'bike',
-    // },
-    // {
-    //   label: 'Support Staff',
-    //   path: Routes.DEFAULT,
-    //   icon: 'account-group',
-    // },
-    // {
-    //   label: 'Customer Master',
-    //   path: Routes.DEFAULT,
-    //   icon: 'account-star',
-    // },
-    // {
-    //   label: 'Offers & Promos',
-    //   path: Routes.DEFAULT,
-    //   icon: 'ticket-percent',
-    // },
   ];
   const visibleForProductAdmin: string[] = [
     Routes.PROFILE,
-  Routes.BUSINESS,
-  Routes.LOGIN,
-];
+    Routes.BUSINESS,
+    Routes.LOGIN,
+  ];
 
  const hiddenFromTenant: string[] = [
   Routes.BUSINESS,
