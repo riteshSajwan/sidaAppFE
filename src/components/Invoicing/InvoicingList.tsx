@@ -3,29 +3,32 @@ import { debounce } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { Divider, Searchbar } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { DEFAULT_TABLE_SIZE } from 'src/common/components/CustomDataTable/CustomDataTableUtil';
+import CustomSnackbar, { SnackbarType } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import { openPdfDocument } from 'src/common/components/FilesViewer/FilesViewerUtil';
 import { Loader } from 'src/common/components/Loader/Loader';
-import CustomSnackbar, { SnackbarType } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { usePermission } from 'src/common/hooks/usePermission';
+import { useTenantId } from 'src/common/hooks/useTenantId';
 import { fetchInvoiceListingAction, resendInvoiceAction, settleInvoiceListingAction } from 'src/common/service/invoicing/action';
 import { resetInvoiceListing, setInvoiceSnackbar } from 'src/common/service/invoicing/slice';
+import { MenuType } from 'src/common/utils/permissionUtils';
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { IDashboardProps } from 'src/components/DashboardPage/DashboardUtil';
 import {
-  generateInitialFilterData,
-  getInvoiceFileName,
-  IInvoice,
-  IInvoiceListFilter,
-  invoiceStatusOptions,
-  InvoiceStatusType,
-  normalizeInvoiceUrl,
+    generateInitialFilterData,
+    getInvoiceFileName,
+    IInvoice,
+    IInvoiceListFilter,
+    invoiceStatusOptions,
+    InvoiceStatusType,
+    normalizeInvoiceUrl,
 } from 'src/components/Invoicing/InvoicingListUtil';
 import InvoicingListTable from 'src/components/Invoicing/Table/InvoicingListTable';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
@@ -33,9 +36,6 @@ import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import { DEBOUNCE_TIME } from 'src/constants';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
-import { useTenantId } from 'src/common/hooks/useTenantId';
-import { MenuType } from 'src/common/utils/permissionUtils';
-import { usePermission } from 'src/common/hooks/usePermission';
 
 const InvoicingList = ({ isDashboard }: IDashboardProps) => {
   const { t: TranslateMessage } = useTranslation();
@@ -258,13 +258,6 @@ const InvoicingList = ({ isDashboard }: IDashboardProps) => {
           <Typography variant='subHeading'>
             {TranslateMessage('Admin.Delivery.App.InvoiceManagement.Heading')}
           </Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>{TranslateMessage('Admin.Delivery.App.Home')}</Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Delivery.App.InvoiceManagement.Heading')}
-            </Text>
-          </View>
         </View>
         <Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.xxl }]} />
       </>

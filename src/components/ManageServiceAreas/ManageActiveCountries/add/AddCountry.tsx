@@ -497,19 +497,6 @@ const AddCountry = () => {
             layout.flexWrap,
           ]}>
           <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.Country.Heading')}</Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb]}>
-              {TranslateMessage('Admin.Delivery.App.Country.Heading')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Delivery.App.Restaurants.AddNewTitle')}
-            </Text>
-          </View>
         </View>
         <Divider style={[layout.DividerSperator, layout.marBottom30]} />
         <View style={[layout.cardBox,]}>

@@ -2,20 +2,20 @@ import { useIsFocused } from '@react-navigation/native';
 import { router, useFocusEffect } from 'expo-router';
 import { debounce } from 'lodash';
 import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Image,
-  ImageStyle,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
+    Image,
+    ImageStyle,
+    Pressable,
+    ScrollView,
+    Text,
+    View,
 } from 'react-native';
 import { Divider, Searchbar } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,7 +31,7 @@ import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { usePermission } from 'src/common/hooks/usePermission';
 import { fetchAllActiveCountriesAction } from 'src/common/service/country/action';
-import { checkOnboardingLimitAction, fetchDriverListingAction, uploadDriverFilePreviewAction } from 'src/common/service/driver/action';
+import { fetchDriverListingAction, uploadDriverFilePreviewAction } from 'src/common/service/driver/action';
 import { resetDriverFileUpload, resetDriverListing } from 'src/common/service/driver/slice';
 import { resetOnboardingStepAction } from 'src/common/service/onboarding/action';
 import { MenuType } from 'src/common/utils/permissionUtils';
@@ -39,24 +39,24 @@ import { customerStatus } from 'src/components/CustomerDetailPage/Table/Customer
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { IDashboardProps } from 'src/components/DashboardPage/DashboardUtil';
 import {
-  generateInitialFilterData,
-  generateInitialTempFilterData,
-  IDriverListFilter,
-  IDriverListTempFilter,
+    generateInitialFilterData,
+    generateInitialTempFilterData,
+    IDriverListFilter,
+    IDriverListTempFilter,
 } from 'src/components/DriverDetailPage/DriverListUtil';
 import DriverListTable from 'src/components/DriverDetailPage/Table/DriverListTable';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 
+import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
+import CustomDocumentWrapper from 'src/common/components/CustomDocumentWrapper/CustomDocumentWrapper';
+import CustomModal from 'src/common/components/CustomModal/CustomModal';
+import { IAddressSelected, IMinuteOption } from 'src/components/Business/add/addBusinessUtils';
+import { DateType } from 'src/components/Business/BusinessListUtils';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import { DEBOUNCE_TIME } from 'src/constants';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
-import { IAddressSelected, IMinuteOption } from 'src/components/Business/add/addBusinessUtils';
-import { DateType } from 'src/components/Business/BusinessListUtils';
-import CustomModal from 'src/common/components/CustomModal/CustomModal';
-import CustomDocumentWrapper from 'src/common/components/CustomDocumentWrapper/CustomDocumentWrapper';
-import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 
 const DriverList = ({ isDashboard }: IDashboardProps) => {
   const { t: TranslateMessage } = useTranslation();
@@ -504,15 +504,6 @@ const DriverList = ({ isDashboard }: IDashboardProps) => {
         >
           <View style={styles.filterrow}>
             <Text style={[layout.Adminh1Title, layout.serviceTopHeader]}>
-              {TranslateMessage('Admin.Delivery.App.DriverManagement.Heading')}
-            </Text>
-          </View>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
               {TranslateMessage('Admin.Delivery.App.DriverManagement.Heading')}
             </Text>
           </View>

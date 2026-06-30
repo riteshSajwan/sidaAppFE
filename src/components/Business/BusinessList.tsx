@@ -283,17 +283,6 @@ const BusinessList = ({ isDashboard }: IDashboardProps) => {
         ]}
       >
         <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.BusinessManagement.Heading')}</Typography>
-        <View style={styles.breadcrumbContainer}>
-          <Text style={styles.breadcrumb}>{TranslateMessage(
-            'Admin.Delivery.App.Home'
-          )}</Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-            {TranslateMessage(
-              'Admin.Delivery.App.Business.BusinessManager'
-            )}
-          </Text>
-        </View>
       </View><Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.xxl }]} /></>
     )
   }

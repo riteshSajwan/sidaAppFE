@@ -20,6 +20,7 @@ import { usePermission } from 'src/common/hooks/usePermission';
 import { fetchCouponListingAction, updateCouponStatusAction } from 'src/common/service/coupon/action';
 import { resetCouponListing, setCouponSnackbar } from 'src/common/service/coupon/slice';
 import { MenuType } from 'src/common/utils/permissionUtils';
+import { DateType, IMinuteOption } from 'src/components/Business/BusinessListUtils';
 import { couponStatusOptions, generateInitialFilterData, generateInitialTempFilterData, ICouponListFilter, ICouponListTempFilter } from 'src/components/CouponPage/CouponListUtil';
 import CouponListTable from 'src/components/CouponPage/Table/CouponListTable';
 import { IDashboardProps } from 'src/components/DashboardPage/DashboardUtil';
@@ -29,7 +30,6 @@ import { DEBOUNCE_TIME } from 'src/constants';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
-import { DateType, IMinuteOption } from 'src/components/Business/BusinessListUtils';
 
 
 const CouponList = ({ isDashboard }: IDashboardProps) => {
@@ -274,17 +274,6 @@ const CouponList = ({ isDashboard }: IDashboardProps) => {
         ]}
       >
         <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.CouponManagement.Heading')}</Typography>
-        <View style={styles.breadcrumbContainer}>
-          <Text style={styles.breadcrumb}>{TranslateMessage(
-            'Admin.Delivery.App.Home'
-          )}</Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-            {TranslateMessage(
-              'Admin.Delivery.App.Coupon.CouponManager'
-            )}
-          </Text>
-        </View>
       </View><Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.xxl }]} /></>
     )
   }

@@ -11,7 +11,6 @@ import { Routes } from 'src/routing/paths';
  *
  * Structure: Home / <section> / <subsection>
  * "Home" is always the root crumb and links to the Dashboard.
- * On the dashboard itself: Home / Dashboard
  */
 function buildBreadcrumbs(pathname: string): { label: string; path: string }[] {
   const crumbs: { label: string; path: string }[] = [];
@@ -19,31 +18,33 @@ function buildBreadcrumbs(pathname: string): { label: string; path: string }[] {
   // Root is always "Home" → navigates to Dashboard
   crumbs.push({ label: 'Home', path: Routes.DASHBOARD });
 
-  if (pathname.toLowerCase().includes(Routes.DASHBOARD.toLowerCase())) {
+  // Strip Expo route group prefixes like (admin), (sideMenu), (tabs) and
+  // trailing /index segments — they are filesystem conventions, not URL parts
+  const cleanedPathname = pathname
+    .replace(/\/\([^)]+\)/g, '') // remove (groupName) segments
+    .replace(/\/index$/, '')     // remove trailing /index
+    .replace(/\/$/, '');         // remove trailing slash
+
+  if (cleanedPathname.toLowerCase().includes(Routes.DASHBOARD.toLowerCase())) {
     const dashboardLabel = getHeaderTitle(Routes.DASHBOARD) ?? 'Dashboard';
     crumbs.push({ label: dashboardLabel, path: Routes.DASHBOARD });
     return crumbs;
   }
 
-  // Split path into segments, skip empty strings and pure numeric IDs
-  const parts = pathname.split('/').filter(Boolean);
+  // Split into segments, skip empty strings and pure numeric IDs
+  const parts = cleanedPathname.split('/').filter(Boolean);
 
+  // Build accumulated paths so each crumb links to the correct nested route
   let accumulated = '';
   for (const part of parts) {
     if (/^\d+$/.test(part)) continue; // skip dynamic IDs
 
-    accumulated = `/${part}`;
+    accumulated = `${accumulated}/${part}`;
     const label = getHeaderTitle(accumulated);
 
     if (label && !crumbs.some((c) => c.label === label)) {
       crumbs.push({ label, path: accumulated });
     }
-  }
-
-  // If the full path resolves to a label not yet added, push it
-  const fullLabel = getHeaderTitle(pathname);
-  if (fullLabel && !crumbs.some((c) => c.label === fullLabel)) {
-    crumbs.push({ label: fullLabel, path: pathname });
   }
 
   return crumbs;

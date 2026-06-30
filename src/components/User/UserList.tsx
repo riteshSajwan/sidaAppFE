@@ -19,20 +19,20 @@ import { fetchRolesDropdownAction } from 'src/common/service/role/action';
 import { resetRoleDropdown } from 'src/common/service/role/slice';
 import { fetchUsersListAction } from 'src/common/service/user/action';
 import { resetUserList } from 'src/common/service/user/slice';
+import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import UserListTable from 'src/components/User/Table/UserListTable';
 import {
-  generateInitialFilterData,
-  generateInitialTempFilterData,
-  IUserListFilter,
-  IUserListTempFilter,
+    generateInitialFilterData,
+    generateInitialTempFilterData,
+    IUserListFilter,
+    IUserListTempFilter,
 } from 'src/components/User/UserListUtil';
 import { DEBOUNCE_TIME } from 'src/constants';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
-import { IMinuteOption } from 'src/components/Business/BusinessListUtils';
 
 const UserList = () => {
   const { t: TranslateMessage } = useTranslation();
@@ -279,15 +279,6 @@ const UserList = () => {
           <Typography variant="subHeading">
             {TranslateMessage('Admin.Delivery.App.Dashboard.UserManagement')}
           </Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Delivery.App.Dashboard.UserManagement')}
-            </Text>
-          </View>
         </View>
         <Divider
           style={[

@@ -14,10 +14,10 @@ import { usePermission } from 'src/common/hooks/usePermission';
 import { MenuType } from 'src/common/utils/permissionUtils';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import {
-  generateInitialFilterData,
-  generateInitialTempFilterData,
-  IRoleListFilter,
-  IRoleListTempFilter,
+    generateInitialFilterData,
+    generateInitialTempFilterData,
+    IRoleListFilter,
+    IRoleListTempFilter,
 } from 'src/components/Role/RoleListUtil';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import { Routes } from 'src/routing/paths';
@@ -81,15 +81,6 @@ const SecrutnyReportPage = () => {
           <Typography variant='subHeading'>
             {TranslateMessage('Admin.Sida.App.Reports')}
           </Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Sida.App.Reports')}
-            </Text>
-          </View>
         </View>
         <Divider
           style={[

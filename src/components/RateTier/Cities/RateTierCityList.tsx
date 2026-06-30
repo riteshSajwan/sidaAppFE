@@ -139,16 +139,6 @@ const RateTierCityList = () => {
                 {TranslateMessage('Admin.Delivery.App.Configure.Service')}
               </Text>
             </View>
-            {/* Breadcrumbs */}
-            <View style={styles.breadcrumbContainer}>
-              <Text style={styles.breadcrumb}>
-                {TranslateMessage('Admin.Delivery.App.Add.RateTier')}
-              </Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-                {TranslateMessage('Admin.Delivery.App.City.List')}
-              </Text>
-            </View>
           </View>
           <Divider style={[layout.DividerSperator, { marginBottom: 30 }]} />
           {/* Main Section */}

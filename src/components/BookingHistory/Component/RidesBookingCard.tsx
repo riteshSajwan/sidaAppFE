@@ -402,15 +402,6 @@ const RidesBookingPage = ({ isDashboard }: IDashboardProps) => {
 			{TranslateMessage(userRole==='RIDER'?'Admin.Delivery.App.Driver.Booking.Heading.Title':'Admin.Delivery.App.Customer.Booking.Heading.Title')}
 		  </Text>
 		</View>
-		<View style={styles.breadcrumbContainer}>
-		  <Text style={styles.breadcrumb}>{TranslateMessage(
-			'Admin.Delivery.App.Home'
-		  )}</Text>
-		  <Text style={styles.breadcrumb}>/</Text>
-		  <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-		  	{TranslateMessage(userRole==='RIDER'?'Admin.Delivery.App.Driver.Booking.Heading.Title':'Admin.Delivery.App.Customer.Booking.Heading.Title')}
-		  </Text>
-		</View>
 	  </View><Divider style={[layout.DividerSperator, { marginBottom: 30 }]} /></>
 	)
   }

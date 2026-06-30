@@ -113,15 +113,6 @@ const Upload = () => {
           <Typography variant="subHeading">
             {TranslateMessage('Admin.Sida.App.Layout.Upload')}
           </Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Sida.App.Layout.Upload')}
-            </Text>
-          </View>
         </View>
         <Divider style={[layout.DividerSperator, layout.marBottom30]} />
       </>

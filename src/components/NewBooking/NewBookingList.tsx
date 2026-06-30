@@ -21,13 +21,13 @@ import { IDashboardProps } from 'src/components/DashboardPage/DashboardUtil';
 import AssignRideModal from 'src/components/NewBooking/AssignRideModal';
 import CancelBookingModal from 'src/components/NewBooking/CancelBookingModal';
 import {
-  cancellationReasons,
-  generateInitialFilterData,
-  generateScheduleMarkedDatesDto,
-  getScheduledDate,
-  IBooking,
-  IBookingListFilter,
-  rideStatusOptions,
+    cancellationReasons,
+    generateInitialFilterData,
+    generateScheduleMarkedDatesDto,
+    getScheduledDate,
+    IBooking,
+    IBookingListFilter,
+    rideStatusOptions,
 } from 'src/components/NewBooking/NewBookingListUtil';
 import NewBookingListTable from 'src/components/NewBooking/Table/NewBookingListTable';
 import { IBookingType } from 'src/components/NewBooking/Table/NewBookingListTableUtil';
@@ -558,15 +558,6 @@ const NewBookingList = ({ isDashboard }: IDashboardProps) => {
     return (
       <><View style={[layout.container,styles.headerContainer,layout.paddingTop26,]}>
         <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.New.Booking.Heading.Title')}</Typography>
-        <View style={styles.breadcrumbContainer}>
-          <Text style={styles.breadcrumb}>{TranslateMessage(
-            'Admin.Delivery.App.Home'
-          )}</Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-            {TranslateMessage('Admin.Delivery.App.New.Booking.Heading.Title')}
-          </Text>
-        </View>
       </View>
         <Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.xxl }]} /></>
     )

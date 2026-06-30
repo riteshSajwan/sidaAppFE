@@ -2,8 +2,8 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GestureResponderEvent, Pressable, ScrollView, View } from 'react-native';
-import { Divider, TextInput } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
+import { Divider, TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
@@ -179,13 +179,6 @@ export const Plans: React.FC = () => {
                 <View style={[layout.container,style.headerContainer,layout.paddingTop26,{ marginHorizontal: theme.spacing.md }]}>
                     <View style={style.filterrow}>
                         <Typography variant='subHeading'>
-                            {TranslateMessage('Admin.Delivery.App.BusinessManagement.Heading')}
-                        </Typography>
-                    </View>
-                    <View style={style.breadcrumbContainer}>
-                        <Typography variant='body' style={style.breadcrumb}>{TranslateMessage('Admin.Delivery.App.Home')}</Typography>
-                        <Typography variant='body' style={style.breadcrumb}>/</Typography>
-                        <Typography variant='body' style={[style.breadcrumb, style.bredcrumActive]}>
                             {TranslateMessage('Admin.Delivery.App.BusinessManagement.Heading')}
                         </Typography>
                     </View>

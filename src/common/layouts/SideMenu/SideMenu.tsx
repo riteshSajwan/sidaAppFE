@@ -26,9 +26,6 @@ const SideMenu = () => {
     drawerType: isDesktop ? 'permanent' : 'front',
     drawerPosition: 'left',
     drawerActiveBackgroundColor: theme.colors.surfaceBase,
-    // Always show the header — on desktop the header renders in the content
-    // column (to the right of the permanent sidebar). On mobile it renders
-    // as the standard drawer header above the page.
     headerShown: true,
     swipeEdgeWidth: 0,
     header: (props) => (

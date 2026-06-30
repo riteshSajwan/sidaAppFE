@@ -448,25 +448,6 @@ const AddUser = () => {
                 ? TranslateMessage('Admin.Delivery.App.Edit.User.Details')
                 : TranslateMessage('Admin.Delivery.App.Dashboard.AddNewUser')}
             </Typography>
-            <View style={styles.breadcrumbContainer}>
-              <Text style={styles.breadcrumb}>
-                {TranslateMessage('Admin.Delivery.App.Home')}
-              </Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb]}>
-                {TranslateMessage(
-                  'Admin.Delivery.App.Dashboard.UserManagement',
-                )}
-              </Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-                {userId
-                  ? TranslateMessage('Admin.Delivery.App.Edit')
-                  : TranslateMessage(
-                      'Admin.Delivery.App.Restaurants.AddNewTitle',
-                    )}
-              </Text>
-            </View>
           </View>
           <Divider style={[layout.DividerSperator, layout.marBottom30]} />
           <View style={layout.cardBox}>

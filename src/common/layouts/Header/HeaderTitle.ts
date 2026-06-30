@@ -1,11 +1,14 @@
 import { translateMessage } from 'src/i18n/createTranslation';
 import { Routes } from 'src/routing/paths';
 
-export const getHeaderTitle = (path: string): string => {
+export const getHeaderTitle = (path: string): string | undefined => {
   const normalizedPath = path.toLowerCase();
 
-  // Handle dynamic IDs — remove trailing numbers or slugs if present
-  const cleanPath = normalizedPath.replace(/\/\d+$/, '').replace(/\/$/, '');
+  // Remove trailing /index, trailing slashes, and dynamic IDs
+  const cleanPath = normalizedPath
+    .replace(/\/index$/, '')
+    .replace(/\/\d+$/, '')
+    .replace(/\/$/, '');
 
   switch (true) {
     case cleanPath.includes(Routes.DASHBOARD.toLowerCase()):
@@ -16,6 +19,8 @@ export const getHeaderTitle = (path: string): string => {
       return translateMessage('Admin.Delivery.App.Driver.Title');
     case cleanPath.includes(`${Routes.DRIVER}${Routes.ONBOARDING}`.toLowerCase()):
       return translateMessage('Admin.Delivery.Driver.Onboarding');
+    case cleanPath.includes(Routes.DRIVER_ONBOARRDING.toLowerCase()):
+      return translateMessage('Admin.Delivery.App.DriverManagement.Heading');
     case cleanPath.split('/').includes(Routes.DRIVER.toLowerCase().replace('/', '')):
       return translateMessage('Admin.Delivery.App.Drivers');
     case cleanPath.includes(Routes.CUSTOMER.toLowerCase()):
@@ -42,22 +47,29 @@ export const getHeaderTitle = (path: string): string => {
       return translateMessage('Admin.Delivery.App.BannerManagement.Heading');
     case cleanPath.includes(Routes.TICKET.toLowerCase()):
       return translateMessage('Admin.Delivery.App.TicketManagement.Heading');
-    case cleanPath.includes(Routes.REPORT.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.Reports');
-    case cleanPath.includes(Routes.DRIVER_ONBOARRDING.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.DriverManagement.Heading');
-    case cleanPath.includes(Routes.DRIVER_ONBOARRDING.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.DriverManagement.Heading');
-    case cleanPath.includes(Routes.BOOKING.toLowerCase()):
-      return translateMessage('Admin.Delivery.App.Bookings.Title');
     case cleanPath.includes(Routes.TRIPDETAILS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Trip.Details');
-
+    case cleanPath.includes(Routes.REPORT.toLowerCase()):
+      return translateMessage('Admin.Delivery.App.Reports');
+    case cleanPath.includes(Routes.BOOKING.toLowerCase()):
+      return translateMessage('Admin.Delivery.App.Bookings.Title');
     case cleanPath.includes(Routes.BUSINESS.toLowerCase()):
       return translateMessage('Admin.Delivery.App.Business');
     case cleanPath.includes(Routes.INVOICING.toLowerCase()):
-        return translateMessage('Admin.Delivery.App.InvoiceManagement');
+      return translateMessage('Admin.Delivery.App.InvoiceManagement');
     case cleanPath.includes(Routes.NEWBOOKING.toLowerCase()):
-    return translateMessage('Admin.Delivery.App.New.Booking.Heading');
+      return translateMessage('Admin.Delivery.App.New.Booking.Heading');
+    case cleanPath.includes(Routes.RATE_TIERS.toLowerCase()):
+      return translateMessage('Admin.Delivery.App.Rate.Tiers.Management');
+    case cleanPath.includes(Routes.PROFILE.toLowerCase()):
+      return translateMessage('Admin.Delivery.App.Profile.Label');
+    case cleanPath.includes(Routes.UPLOAD.toLowerCase()):
+      return translateMessage('Admin.Sida.App.Layout.Upload');
+    case cleanPath.includes(Routes.SCRUTINYREPORT.toLowerCase()):
+      return translateMessage('Admin.Sida.App.Reports');
+    case cleanPath.includes(Routes.ARCHITECTDETAILS.toLowerCase()):
+      return translateMessage('Admin.Sida.APP.ArchitectDetails.Details');
+    default:
+      return undefined;
   }
 };

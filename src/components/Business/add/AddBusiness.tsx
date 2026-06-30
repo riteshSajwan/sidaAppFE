@@ -22,7 +22,7 @@ import { useAppTheme } from 'src/common/context/AppTheme';
 import { addBusiness, clearAddBusiness, fetchBusinessDataDetailsAction } from 'src/common/service/business/action';
 import { IAddBusinessPayload } from 'src/common/service/business/api';
 import { resetBusinessDetails } from 'src/common/service/business/slice';
-import { fetchAllCountriesListAction, fetchAllCountriesListingAction } from 'src/common/service/country/action';
+import { fetchAllCountriesListAction } from 'src/common/service/country/action';
 import { generateBusinessInitiaData, generateBusinessInitialErrorsData, IAddBusiness, ICountryOption, IErrorInfo, validateBusinessInfo } from 'src/components/Business/add/addBusinessUtils';
 import SaveAndProceedBtn from 'src/components/Business/add/SaveAndProceedBtn/SaveAndProceedBtn';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
@@ -497,13 +497,6 @@ const AddBusinessPage = () => {
             >
                 <View style={style.filterrow}>
                     <Typography variant='subHeading'>
-                        {TranslateMessage('Admin.Delivery.App.BusinessManagement.Heading')}
-                    </Typography>
-                </View>
-                <View style={style.breadcrumbContainer}>
-                    <Typography variant='body' style={style.breadcrumb}>{TranslateMessage('Admin.Delivery.App.Home')}</Typography>
-                    <Typography variant='body' style={style.breadcrumb}>/</Typography>
-                    <Typography variant='body' style={[style.breadcrumb, style.bredcrumActive]}>
                         {TranslateMessage('Admin.Delivery.App.BusinessManagement.Heading')}
                     </Typography>
                 </View>

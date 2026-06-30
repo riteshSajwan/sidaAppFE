@@ -97,11 +97,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       icon: 'architect',
     },
 
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Ticket'),
-    //   path: Routes.TICKET,
-    //   icon: 'ticketLine',
-    // },
+    {
+      label: TranslateMessage('Admin.Delivery.App.Ticket'),
+      path: Routes.TICKET,
+      icon: 'ticketLine',
+    },
 
     // {
     //   label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
@@ -128,12 +128,12 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     //   path: Routes.INVOICING,
     //   icon: 'userCircle',
     // },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
-    //   path: Routes.LOGIN,
-    //   icon: 'logout',
-    //   onPress: handleLogOut,
-    // },
+    {
+      label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
+      path: Routes.LOGIN,
+      icon: 'logout',
+      onPress: handleLogOut,
+    },
   ];
   const visibleForProductAdmin: string[] = [
     Routes.PROFILE,

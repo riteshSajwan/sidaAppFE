@@ -14,12 +14,12 @@ import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { fetchDriverPreviewPageAction, uploadDriverFileAction } from 'src/common/service/driver/action';
 import { resetDriverFileUpload, resetDriverPreviewListing } from 'src/common/service/driver/slice';
+import DriverUploadPreviewTable from 'src/components/DriverDetailPage/DriverUploadPreview/DriverUploadPreviewTable';
+import { IPreviewDriverRow } from 'src/components/DriverDetailPage/DriverUploadPreview/DriverUploadPreviewUtil';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
-import DriverUploadPreviewTable from 'src/components/DriverDetailPage/DriverUploadPreview/DriverUploadPreviewTable';
-import { IPreviewDriverRow } from 'src/components/DriverDetailPage/DriverUploadPreview/DriverUploadPreviewUtil';
 
 interface ISnackbarState {
   visible: boolean;
@@ -115,15 +115,6 @@ const DriverUploadPreview = () => {
             <View style={styles.filterrow}>
               <Text style={[layout.Adminh1Title, layout.serviceTopHeader]}>
                 {TranslateMessage('Admin.Delivery.App.DriverUploadPreview')}
-              </Text>
-            </View>
-            <View style={styles.breadcrumbContainer}>
-              <Text style={styles.breadcrumb}>{TranslateMessage('Admin.Delivery.App.Home')}</Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={styles.breadcrumb}>{TranslateMessage('Admin.Delivery.App.DriverManagement.Heading')}</Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-                {TranslateMessage('Admin.Delivery.App.Preview')}
               </Text>
             </View>
           </View>

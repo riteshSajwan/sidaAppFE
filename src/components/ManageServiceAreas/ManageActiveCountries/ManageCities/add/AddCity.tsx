@@ -11,7 +11,7 @@ import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { useTimingStyle } from 'src/common/assets/styles/timing';
 import CustomGooglePlacesAutocomplete from 'src/common/components/CustomGooglePlacesAutocomplete/CustomGooglePlacesAutocomplete';
 import CustomSnackbar, {
-  SnackbarType,
+    SnackbarType,
 } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { Loader } from 'src/common/components/Loader/Loader';
@@ -21,12 +21,12 @@ import { resetCityDetails } from 'src/common/service/city/slice';
 import { fetchCountryDetailsAction } from 'src/common/service/country/action';
 import { checkIfEmpty } from 'src/components/Business/add/addBusinessUtils';
 import {
-  generateInitialCityData,
-  generateInitialErrorsData,
-  IAddCity,
-  ICityErrors,
-  ITaxInfo,
-  validateCity
+    generateInitialCityData,
+    generateInitialErrorsData,
+    IAddCity,
+    ICityErrors,
+    ITaxInfo,
+    validateCity
 } from 'src/components/ManageServiceAreas/ManageActiveCountries/ManageCities/add/AddCityUtil';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { MAX_CHECK_LENGTH } from 'src/constants';
@@ -519,21 +519,6 @@ const AddCity = () => {
           </View>
         </View>
         {/* Right Section (Breadcrumbs) */}
-        <View style={styles.breadcrumbContainer}>
-          <Text style={styles.breadcrumb}>
-            {TranslateMessage('Admin.Delivery.App.Home')}
-          </Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb]}>
-            {TranslateMessage('Admin.Delivery.App.Country.Heading')}
-          </Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb]}>{countryData.countryName}</Text>
-          <Text style={styles.breadcrumb}>/</Text>
-          <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-            {TranslateMessage('Admin.Delivery.App.Restaurants.AddNewTitle')}
-          </Text>
-        </View>
       </View>
       <Divider style={[layout.DividerSperator, layout.marBottom30]} />
       <View>

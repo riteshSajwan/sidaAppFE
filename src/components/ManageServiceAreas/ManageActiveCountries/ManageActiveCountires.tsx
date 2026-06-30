@@ -12,24 +12,24 @@ import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { useTimingStyle } from 'src/common/assets/styles/timing';
 import { DEFAULT_TABLE_SIZE } from 'src/common/components/CustomDataTable/CustomDataTableUtil';
 import CustomSnackbar, {
-  SnackbarType,
+    SnackbarType,
 } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import { Loader } from 'src/common/components/Loader/Loader';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { usePermission } from 'src/common/hooks/usePermission';
 import {
-  fetchRegisteredCountryListAction,
-  setActiveCountryStatusAction,
+    fetchRegisteredCountryListAction,
+    setActiveCountryStatusAction,
 } from 'src/common/service/country/action';
 import {
-  resetRegisteredCountryList,
-  resetUpdateCountryStatus,
+    resetRegisteredCountryList,
+    resetUpdateCountryStatus,
 } from 'src/common/service/country/slice';
 import { MenuType } from 'src/common/utils/permissionUtils';
 import {
-  generateInitialTempFilterData,
-  ICountryListTempFilter,
+    generateInitialTempFilterData,
+    ICountryListTempFilter,
 } from 'src/components/ManageServiceAreas/ManageActiveCountries/ManageActiveCountriesUtil';
 import ActiveCountryListTable from 'src/components/ManageServiceAreas/ManageActiveCountries/table/ManageActiveCountiresTable';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
@@ -161,17 +161,6 @@ const ManageActiveCountries = () => {
           >
             <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.Country.CountryManager')}</Typography>
             {/* Breadcrumbs */}
-            <View style={styles.breadcrumbContainer}>
-              <Text style={styles.breadcrumb}>
-                {TranslateMessage(
-                  'Admin.Delivery.App.Country.ServiceArea&FeeConfiguration'
-                )}
-              </Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-                {TranslateMessage('Admin.Delivery.App.Country.CountryManager')}
-              </Text>
-            </View>
           </View>
           <Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.lg }]} />
           {/* Main Section */}

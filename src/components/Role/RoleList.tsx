@@ -20,10 +20,10 @@ import { resetRoleList, resetRoleToggleStatus } from 'src/common/service/role/sl
 import { MenuType } from 'src/common/utils/permissionUtils';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import {
-  generateInitialFilterData,
-  generateInitialTempFilterData,
-  IRoleListFilter,
-  IRoleListTempFilter,
+    generateInitialFilterData,
+    generateInitialTempFilterData,
+    IRoleListFilter,
+    IRoleListTempFilter,
 } from 'src/components/Role/RoleListUtil';
 import RoleListTable from 'src/components/Role/Table/RoleListTable';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
@@ -219,15 +219,6 @@ const RoleList = () => {
           <Typography variant='subHeading'>
             {TranslateMessage('Admin.Delivery.App.Dashboard.RoleManagement')}
           </Typography>
-          <View style={styles.breadcrumbContainer}>
-            <Text style={styles.breadcrumb}>
-              {TranslateMessage('Admin.Delivery.App.Home')}
-            </Text>
-            <Text style={styles.breadcrumb}>/</Text>
-            <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-              {TranslateMessage('Admin.Delivery.App.Dashboard.RoleManagement')}
-            </Text>
-          </View>
         </View>
         <Divider
           style={[

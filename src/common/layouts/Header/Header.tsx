@@ -355,15 +355,8 @@ function renderProfilePill() {
   }
 
   return (
-    <Appbar.Header style={styles.header}>
+    <Appbar.Header style={styles.header} elevated={false}>
       <View style={styles.leftSide}>
-        {/* {!isDesktop && (
-          <CustomIconButton
-            icon='menu'
-            onPress={openDrawer}
-            iconColor={theme.colors.iconInverse}
-          />
-        )} */}
         <Icon name='phone' size={0}/>
 
         {showBreadcrumbs ? (

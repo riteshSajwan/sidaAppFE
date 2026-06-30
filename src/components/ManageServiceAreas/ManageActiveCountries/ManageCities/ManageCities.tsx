@@ -5,8 +5,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import {
-  Divider,
-  Searchbar
+    Divider,
+    Searchbar
 } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
@@ -15,7 +15,7 @@ import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { useTimingStyle } from 'src/common/assets/styles/timing';
 import { DEFAULT_TABLE_SIZE } from 'src/common/components/CustomDataTable/CustomDataTableUtil';
 import CustomSnackbar, {
-  SnackbarType,
+    SnackbarType,
 } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { Loader } from 'src/common/components/Loader/Loader';
@@ -26,8 +26,8 @@ import { fetchCityListAction, setActiveCityStatusAction } from 'src/common/servi
 import { resetCityList, resetUpdateCityStatus } from 'src/common/service/city/slice';
 import { MenuType } from 'src/common/utils/permissionUtils';
 import {
-  generateInitialTempFilterData,
-  ICityListTempFilter
+    generateInitialTempFilterData,
+    ICityListTempFilter
 } from 'src/components/ManageServiceAreas/ManageActiveCountries/ManageCities/ManageCitiesUtil';
 import ActiveCItyListTable from 'src/components/ManageServiceAreas/ManageActiveCountries/ManageCities/table/ManageCitiesTable';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
@@ -154,18 +154,6 @@ const ManageCities = () => {
             ]}
           >
             <Typography variant='subHeading'>{TranslateMessage('Admin.Delivery.App.City.Master')}</Typography>
-            {/* Breadcrumbs */}
-            <View style={styles.breadcrumbContainer}>
-              <Text style={styles.breadcrumb}>
-                {TranslateMessage('Admin.Delivery.App.Country.ServiceArea&FeeConfiguration')},
-              </Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={styles.breadcrumb}>{TranslateMessage('Admin.Delivery.App.Country.Heading')}</Text>
-              <Text style={styles.breadcrumb}>/</Text>
-              <Text style={[styles.breadcrumb, styles.bredcrumActive]}>
-                {TranslateMessage('Admin.Delivery.App.City.Master')}
-              </Text>
-            </View>
           </View>
           <Divider style={[layout.DividerSperator, { marginBottom: theme.spacing.lg }]} />
           {/* Main Section */}
