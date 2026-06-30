@@ -7,6 +7,7 @@ export enum Routes {
   USER = '/user',
   REPORTS = '/reports',
   DASHBOARD = '/dashboard',
+  NEWAPPLICATION = '/newApplication',
   SCRUTINYREPORT = '/scrutinyReport',
   ARCHITECTDETAILS = '/architectDetail',
 
