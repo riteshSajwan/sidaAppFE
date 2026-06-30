@@ -2,11 +2,14 @@ import { router } from 'expo-router';
 import { useTranslation } from 'node_modules/react-i18next';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import CustomLineChart from 'src/common/components/CustomChart/Web/LineGraph';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { Routes } from 'src/routing/paths';
 import { Icon } from 'src/submodules/iconlibrary/src';
+import DashboardCards from './DashboardCards';
+import NotificationCard from './NotificationCard';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -181,107 +184,107 @@ const DashboardPageMenu = () => {
   }
 
   // ── Bar Chart (static visual) ─────────────────────────────────────
-  function renderChart() {
-    const maxHeight = 140;
-    return (
-      <View style={styles.chartCard}>
-        <View style={styles.chartHeader}>
-          <View>
-            <Typography variant="subTitle" fontWeight="semiBold">
-              Application Trends
-            </Typography>
-            <Typography variant="textLabel" style={{ color: theme.colors.textNeutral }}>
-              Monthly overview · 2024
-            </Typography>
-          </View>
-          <View style={styles.chartLegend}>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#3B82F6' }]} />
-              <Text style={styles.legendLabel}>Submitted</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#22C55E' }]} />
-              <Text style={styles.legendLabel}>Approved</Text>
-            </View>
-          </View>
-        </View>
+  // function renderChart() {
+  //   const maxHeight = 140;
+  //   return (
+  //     <View style={styles.chartCard}>
+  //       <View style={styles.chartHeader}>
+  //         <View>
+  //           <Typography variant="subTitle" fontWeight="semiBold">
+  //             Application Trends
+  //           </Typography>
+  //           <Typography variant="textLabel" style={{ color: theme.colors.textNeutral }}>
+  //             Monthly overview · 2024
+  //           </Typography>
+  //         </View>
+  //         <View style={styles.chartLegend}>
+  //           <View style={styles.legendItem}>
+  //             <View style={[styles.legendDot, { backgroundColor: '#3B82F6' }]} />
+  //             <Text style={styles.legendLabel}>Submitted</Text>
+  //           </View>
+  //           <View style={styles.legendItem}>
+  //             <View style={[styles.legendDot, { backgroundColor: '#22C55E' }]} />
+  //             <Text style={styles.legendLabel}>Approved</Text>
+  //           </View>
+  //         </View>
+  //       </View>
 
-        {/* Simple bar chart */}
-        <View style={styles.chartArea}>
-          {CHART_DATA.map((d) => (
-            <View
-              key={d.month}
-              style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', gap: 2 }}
-            >
-              <View
-                style={[
-                  styles.chartBar,
-                  {
-                    height: d.submitted * maxHeight,
-                    backgroundColor: '#3B82F6',
-                    opacity: 0.85,
-                  },
-                ]}
-              />
-              <View
-                style={[
-                  styles.chartBar,
-                  {
-                    height: d.approved * maxHeight,
-                    backgroundColor: '#22C55E',
-                    opacity: 0.85,
-                  },
-                ]}
-              />
-            </View>
-          ))}
-        </View>
-        <View style={styles.chartXLabels}>
-          {CHART_DATA.map((d) => (
-            <Text key={d.month} style={styles.chartXLabel}>{d.month}</Text>
-          ))}
-        </View>
-      </View>
-    );
-  }
+  //       {/* Simple bar chart */}
+  //       <View style={styles.chartArea}>
+  //         {CHART_DATA.map((d) => (
+  //           <View
+  //             key={d.month}
+  //             style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', gap: 2 }}
+  //           >
+  //             <View
+  //               style={[
+  //                 styles.chartBar,
+  //                 {
+  //                   height: d.submitted * maxHeight,
+  //                   backgroundColor: '#3B82F6',
+  //                   opacity: 0.85,
+  //                 },
+  //               ]}
+  //             />
+  //             <View
+  //               style={[
+  //                 styles.chartBar,
+  //                 {
+  //                   height: d.approved * maxHeight,
+  //                   backgroundColor: '#22C55E',
+  //                   opacity: 0.85,
+  //                 },
+  //               ]}
+  //             />
+  //           </View>
+  //         ))}
+  //       </View>
+  //       <View style={styles.chartXLabels}>
+  //         {CHART_DATA.map((d) => (
+  //           <Text key={d.month} style={styles.chartXLabel}>{d.month}</Text>
+  //         ))}
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
   // ── Notifications ─────────────────────────────────────────────────
-  function renderNotifications() {
-    return (
-      <View style={styles.notifCard}>
-        <View style={styles.notifHeader}>
-          <Typography variant="subTitle" fontWeight="semiBold">
-            Notifications
-          </Typography>
-          <Pressable
-            onPress={() => router.push(Routes.TICKET as any)}
-            accessibilityRole="link"
-          >
-            <Text style={styles.viewAllText}>View all →</Text>
-          </Pressable>
-        </View>
+  // function renderNotifications() {
+  //   return (
+  //     <View style={styles.notifCard}>
+  //       <View style={styles.notifHeader}>
+  //         <Typography variant="subTitle" fontWeight="semiBold">
+  //           Notifications
+  //         </Typography>
+  //         <Pressable
+  //           onPress={() => router.push(Routes.TICKET as any)}
+  //           accessibilityRole="link"
+  //         >
+  //           <Text style={styles.viewAllText}>View all →</Text>
+  //         </Pressable>
+  //       </View>
 
-        {NOTIFICATIONS.map((n, index) => (
-          <View
-            key={n.id}
-            style={[
-              styles.notifItem,
-              index === NOTIFICATIONS.length - 1 && { borderBottomWidth: 0 },
-            ]}
-          >
-            <View style={[styles.notifIconWrap, { backgroundColor: n.iconBg }]}>
-              <Icon name={n.iconName as any} size={16} color={n.iconColor} />
-            </View>
-            <View style={styles.notifContent}>
-              <Text style={styles.notifTitle}>{n.title}</Text>
-              <Text style={styles.notifSub}>{n.sub}</Text>
-              <Text style={styles.notifTime}>{n.time}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
-    );
-  }
+  //       {NOTIFICATIONS.map((n, index) => (
+  //         <View
+  //           key={n.id}
+  //           style={[
+  //             styles.notifItem,
+  //             index === NOTIFICATIONS.length - 1 && { borderBottomWidth: 0 },
+  //           ]}
+  //         >
+  //           <View style={[styles.notifIconWrap, { backgroundColor: n.iconBg }]}>
+  //             <Icon name={n.iconName as any} size={16} color={n.iconColor} />
+  //           </View>
+  //           <View style={styles.notifContent}>
+  //             <Text style={styles.notifTitle}>{n.title}</Text>
+  //             <Text style={styles.notifSub}>{n.sub}</Text>
+  //             <Text style={styles.notifTime}>{n.time}</Text>
+  //           </View>
+  //         </View>
+  //       ))}
+  //     </View>
+  //   );
+  // }
 
   // ── Render ────────────────────────────────────────────────────────
   return (
@@ -291,10 +294,21 @@ const DashboardPageMenu = () => {
       showsVerticalScrollIndicator={false}
     >
       {renderBanner()}
-      {renderStatCards()}
+      {/* {renderStatCards()} */}
+      <DashboardCards/>
       <View style={styles.bottomRow}>
-        {renderChart()}
-        {renderNotifications()}
+        {/* {renderChart()} */}
+        <CustomLineChart
+         data={[]}
+          data2={[]}
+          frontColor={'red'}
+          secondaryColor={'blue'}
+          firstLabel={'Test1'}
+          secondLabel={'Test2'}
+          height={400}
+        />
+        {/* {renderNotifications()} */}
+        <NotificationCard/>
       </View>
     </ScrollView>
   );
