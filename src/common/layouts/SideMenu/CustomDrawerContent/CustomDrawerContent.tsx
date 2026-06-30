@@ -97,43 +97,43 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       icon: 'architect',
     },
 
-    {
-      label: TranslateMessage('Admin.Delivery.App.Ticket'),
-      path: Routes.TICKET,
-      icon: 'ticketLine',
-    },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Ticket'),
+    //   path: Routes.TICKET,
+    //   icon: 'ticketLine',
+    // },
 
-    {
-      label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
-      path: Routes.PROFILE,
-      icon: 'userCircle',
-    },
-    {
-      label: TranslateMessage('Admin.Delivery.App.Roles.Label'),
-      path: Routes.ROLES,
-      icon: 'communityOutline',
-    },
-     {
-      label: TranslateMessage('Admin.Delivery.App.Users.Label'),
-      path: Routes.USERS,
-      icon: 'userOutlineGroup',
-    },
-    {
-      label: TranslateMessage('Admin.Delivery.App.Business'),
-      path: Routes.BUSINESS,
-      icon: 'statsDownSquare',
-    },
-    {
-      label: TranslateMessage('Admin.Delivery.App.InvoiceManagement'),
-      path: Routes.INVOICING,
-      icon: 'userCircle',
-    },
-    {
-      label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
-      path: Routes.LOGIN,
-      icon: 'logout',
-      onPress: handleLogOut,
-    },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
+    //   path: Routes.PROFILE,
+    //   icon: 'userCircle',
+    // },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Roles.Label'),
+    //   path: Routes.ROLES,
+    //   icon: 'communityOutline',
+    // },
+    //  {
+    //   label: TranslateMessage('Admin.Delivery.App.Users.Label'),
+    //   path: Routes.USERS,
+    //   icon: 'userOutlineGroup',
+    // },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Business'),
+    //   path: Routes.BUSINESS,
+    //   icon: 'statsDownSquare',
+    // },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.InvoiceManagement'),
+    //   path: Routes.INVOICING,
+    //   icon: 'userCircle',
+    // },
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
+    //   path: Routes.LOGIN,
+    //   icon: 'logout',
+    //   onPress: handleLogOut,
+    // },
   ];
   const visibleForProductAdmin: string[] = [
     Routes.PROFILE,

@@ -6,7 +6,7 @@ export enum Routes {
   Payment = '/payment',
   USER = '/user',
   REPORTS = '/reports',
-  DASHBOARD = '/sidadashboard',
+  DASHBOARD = '/dashboard',
   SCRUTINYREPORT = '/scrutinyReport',
   ARCHITECTDETAILS = '/architectDetail',
 
