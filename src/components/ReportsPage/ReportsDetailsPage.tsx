@@ -9,8 +9,8 @@ import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessa
 import { Loader } from 'src/common/components/Loader/Loader';
 import { fetchCustomerLastMonthCountAction, fetchDashboardIndicatorsAction, fetchTotalWalletBalanceAction } from 'src/common/service/report/action';
 import { resetReport } from 'src/common/service/report/slice';
-import DashboardCard from 'src/components/DashboardPage/DashBoardCard';
-import WalletBalanceModal from 'src/components/DashboardPage/WalletBalanceModal';
+// import DashboardCard from 'src/components/DashboardPage/DashBoardCard';
+// import WalletBalanceModal from 'src/components/DashboardPage/WalletBalanceModal';
 import { generateInitialData, getDefaultStartAndEndMonth } from 'src/components/ReportsPage/ReportUtil';
 import { useReportStyle } from 'src/components/ReportsPage/ReportsDetailsStyle';
 import NewCustomersChart from 'src/components/ReportsPage/chart/NewCustomersChart';
@@ -129,18 +129,7 @@ const ReportsDetailsPage = () => {
               </Text>
             </Pressable>
           </View> */}
-          <View style={ReportStyle.reportCardBox}>
-            {reportData.map((item) => (
-              <DashboardCard
-                key={item.id}
-                id={item.id}
-                amount={item.amount}
-                currency={item.currency ?? ''}
-                messageKey={item.messageKey}
-                onPress={item.id === 1 ? () => setWalletModalVisible(true) : undefined}
-              />
-            ))}
-          </View>
+          
           <View style={[styles.filterContainer, layout.containerPadding, layout.justifyEnd]}>
             <View style={{width: 400}}>
               <CustomMonthYearRangePicker
@@ -170,11 +159,7 @@ const ReportsDetailsPage = () => {
           </View>
         </View>
       </ScrollView>
-      <WalletBalanceModal
-        visible={walletModalVisible}
-        available={totalWalletBalance.available}
-        onClose={() => setWalletModalVisible(false)}
-      />
+      
       {renderErrorMsg(customerLastMonthCount?.error || dashboardIndicators?.error || totalWalletBalance.error || customerGraph.error || driverGraph.error || saleProfitGraph.error || '')}
     </>
   );

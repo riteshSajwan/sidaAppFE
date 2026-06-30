@@ -10,7 +10,10 @@ export default {
     'Admin.Sida.App.LogIn.UserEmailPlaceholder': 'Enter your Email',
     'Admin.Sida.App.LogIn.PasswordPlaceholder': 'Enter your Password',
     'Admin.Sida.App.LogIn.Continue': 'Continue',
+
+
     'Admin.Sida.App.Dasboard':'Dashboard',
+    'Admin.Sida.App.Dasboard.Greeting':'Good morning, Admin! 👋',
 
     'Admin.Sida.App.Layout.Upload': 'Upload',
     'Admin.Sida.App.Reports': 'Reports',
