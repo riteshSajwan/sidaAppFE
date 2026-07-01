@@ -85,7 +85,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: `${Routes.NEWAPPLICATION}`,
       icon: 'application',
     },
-    
+     {
+      label: TranslateMessage('Admin.Sida.App.Registration.Label'),
+      path: `${Routes.REGISTRATION}`,
+      icon: 'registration',
+    },
     {
       label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
       path: `${Routes.UPLOAD}`,

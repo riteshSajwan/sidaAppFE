@@ -1,6 +1,7 @@
 export enum Routes {
   DEFAULT = '/home',
   LOGIN = '/login',
+  REGISTRATION = '/registration',
   PROFILE = '/profile',
   UPLOAD = '/upload',
   Payment = '/payment',
@@ -10,6 +11,7 @@ export enum Routes {
   NEWAPPLICATION = '/newApplication',
   SCRUTINYREPORT = '/scrutinyReport',
   ARCHITECTDETAILS = '/architectDetail',
+  
 
 
   CHANGE_PASSWORD = '/changePassword',

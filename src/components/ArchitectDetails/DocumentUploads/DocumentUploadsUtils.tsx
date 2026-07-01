@@ -139,6 +139,10 @@ export interface IDocumentUploadsProps {
   setPickerErrors: Dispatch<SetStateAction<Record<string, string>>>;
   files?: IDocumentFilesState;
   onFilesChange?: (files: IDocumentFilesState) => void;
+  /** Override the default DOCUMENT_FIELDS with a custom set */
+  fields?: IDocumentField[];
+  /** Override the section title; defaults to the i18n key */
+  sectionTitle?: string;
 }
 
 // ─── Initial state factories ──────────────────────────────────────────────────
@@ -149,6 +153,17 @@ export function generateInitialFilesState(): IDocumentFilesState {
 
 export function generateInitialErrors(): IDocumentErrors {
   const fieldErrors = Object.fromEntries(DOCUMENT_FIELDS.map((d) => [d.key, '']));
+  return { ...fieldErrors, apiError: '' };
+}
+
+/** Generate initial files state from a custom field list */
+export function generateInitialFilesStateFromFields(fields: IDocumentField[]): IDocumentFilesState {
+  return Object.fromEntries(fields.map((d) => [d.key, null]));
+}
+
+/** Generate initial errors from a custom field list */
+export function generateInitialErrorsFromFields(fields: IDocumentField[]): IDocumentErrors {
+  const fieldErrors = Object.fromEntries(fields.map((d) => [d.key, '']));
   return { ...fieldErrors, apiError: '' };
 }
 

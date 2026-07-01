@@ -11,6 +11,27 @@ export default {
     'Admin.Sida.App.LogIn.PasswordPlaceholder': 'Enter your Password',
     'Admin.Sida.App.LogIn.Continue': 'Continue',
 
+    
+    // registration
+    'Admin.Sida.App.Registration.Label': 'Registration',
+    'Admin.Sida.App.Registration.PasswordLabel': 'Enter your Password',
+    'Admin.Sida.App.Registration.UserEmail': 'Enter Username or Email Address',
+    'Admin.Sida.App.Registration.UserEmailPlaceholder': 'Enter your Email',
+    'Admin.Sida.App.Registration.PasswordPlaceholder': 'Enter your Password',
+    'Admin.Sida.App.Registration.Continue': 'Continue',
+    'Admin.Sida.App.Registration.FirstName': 'First Name',
+    'Admin.Sida.App.Registration.MiddleName': 'Middle Name',
+    'Admin.Sida.App.Registration.LastName': 'Last Name',
+    'Admin.Sida.App.Registration.FatherName': 'Father',
+    'Admin.Sida.App.Registration.SpouseName': 'Spouse',
+    'Admin.Sida.App.Registration.State': 'State',
+    'Admin.Sida.App.Registration.District': 'District',
+    'Admin.Sida.App.Registration.Thesil': 'Thesil',
+    'Admin.Sida.App.Registration.City': 'City/Village',
+    'Admin.Sida.App.Registration.Pincode': 'Pincode',
+    'Admin.Sida.App.Registration.Mobile': 'Mobile Number',
+    'Admin.Sida.App.Registration.Authority': 'Authority',
+
 
     'Admin.Sida.App.Dasboard':'Dashboard',
     'Admin.Sida.App.Dasboard.Greeting':'Good morning, Admin! 👋',
@@ -1128,6 +1149,36 @@ export default {
    
     // CustomDocumentPicker — type validation error
     'Admin.Delivery.App.Upload.InvalidType': 'File type not allowed. Accepted formats: {{formats}}.',
+
+    // Structural Engineer Registration — extended fields
+    'Admin.Sida.App.Registration.Title': 'Structural Engineer Registration',
+    'Admin.Sida.App.Registration.PersonalInfo': 'Personal Information',
+    'Admin.Sida.App.Registration.ContactInfo': 'Contact Information',
+    'Admin.Sida.App.Registration.MailingAddress': 'Mailing Address',
+    'Admin.Sida.App.Registration.Tehsil': 'Tehsil',
+    'Admin.Sida.App.Registration.OrgDetails': 'Organisation Details',
+    'Admin.Sida.App.Registration.OrgName': 'Organisation Name',
+    'Admin.Sida.App.Registration.ProfDetails': 'Professional Details',
+    'Admin.Sida.App.Registration.Qualification': 'Qualification',
+    'Admin.Sida.App.Registration.RegDetails': 'Registration Details',
+    'Admin.Sida.App.Registration.RegLicenseNo': 'Registration/License No.',
+    'Admin.Sida.App.Registration.Validity': 'Validity',
+    'Admin.Sida.App.Registration.YearsOfExperience': 'Years of experience',
+    'Admin.Sida.App.Registration.Grade': 'Grade',
+    'Admin.Sida.App.Registration.Attachments': 'Attachments',
+    'Admin.Sida.App.Registration.AttachNo': '#',
+    'Admin.Sida.App.Registration.AttachType': 'Type',
+    'Admin.Sida.App.Registration.AttachDesc': 'Attachment Description',
+    'Admin.Sida.App.Registration.Attach1': 'Aadhar Card/Passport/Driving License/Voter ID Card',
+    'Admin.Sida.App.Registration.Attach2': 'My Latest Photo (Face Should be clearly visible)',
+    'Admin.Sida.App.Registration.Attach3': 'Photo ID',
+    'Admin.Sida.App.Registration.Attach4': 'Your experience certificate',
+    'Admin.Sida.App.Registration.Attach5': 'Your work assignment',
+    'Admin.Sida.App.Registration.Declaration': 'I hereby declare that above information is correct.',
+    'Admin.Sida.App.Registration.Submit': 'Submit',
+    'Admin.Sida.App.Registration.UploadFile': 'Upload',
+    'Admin.Sida.App.Registration.Required': '{{field}} is required',
+    'Admin.Sida.App.Registration.Email': 'Email id',
     
   },
 };

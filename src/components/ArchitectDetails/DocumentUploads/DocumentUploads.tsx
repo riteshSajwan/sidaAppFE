@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { IBlobType, IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import CustomDocumentWrapper from 'src/common/components/CustomDocumentWrapper/CustomDocumentWrapper';
@@ -39,11 +38,15 @@ const DocumentUploads = ({
   setPickerErrors,
   files: externalFiles,
   onFilesChange,
+  fields: customFields,
+  sectionTitle,
 }: IDocumentUploadsProps) => {
   const { t: T } = useTranslation();
   const styles = useDocumentUploadStyle();
   const layout = useLayoutStyle();
-  const button = useButtonStyle();
+
+  // Use custom fields if provided, otherwise fall back to the default set
+  const fields = customFields ?? DOCUMENT_FIELDS;
 
   /* ── State — all owned internally ── */
   const [internalFiles, setInternalFiles] = useState<IDocumentFilesState>(
@@ -159,10 +162,10 @@ const DocumentUploads = ({
   return (
     <View style={[layout.cardBox, layout.tableContainer, styles.container]}>
       <Text style={styles.sectionTitle}>
-        {T('Admin.Sida.App.DocumentUpload.Title')}
+        {sectionTitle ?? T('Admin.Sida.App.DocumentUpload.Title')}
       </Text>
 
-      {DOCUMENT_FIELDS.map(renderDocumentRow)}
+      {fields.map(renderDocumentRow)}
 
       {/* API-level error */}
       {!!errors.apiError && (
