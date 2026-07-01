@@ -1,7 +1,7 @@
 export enum Routes {
   DEFAULT = '/home',
   LOGIN = '/login',
-  REGISTRATION = '/registration',
+  REGISTRATION = '/registrationSelection',
   PROFILE = '/profile',
   UPLOAD = '/upload',
   Payment = '/payment',
