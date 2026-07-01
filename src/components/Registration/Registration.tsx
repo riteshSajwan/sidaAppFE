@@ -77,14 +77,14 @@ const Field: React.FC<FieldProps> = ({
 
 // ─── Section heading ──────────────────────────────────────────────────────────
 
-const SectionHeading: React.FC<{ title: string }> = ({ title }) => {
-  const formStyle = useFormStyle();
-  return (
-    <Text style={[formStyle.labelHeadTitle, { marginTop: 20, marginBottom: 8 }]}>
-      {title}
-    </Text>
-  );
-};
+// const SectionHeading: React.FC<{ title: string }> = ({ title }) => {
+//   const formStyle = useFormStyle();
+//   return (
+//     <Text style={[formStyle.labelHeadTitle, { marginTop: 20, marginBottom: 8 }]}>
+//       {title}
+//     </Text>
+//   );
+// };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -160,6 +160,19 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
     return Object.keys(e).length === 0;
   };
 
+  function SectionHeading( title:string) {
+    return (
+      <Text
+        style={[
+          formStyle.labelHeadTitle,
+          { marginTop: 20, marginBottom: 8 },
+        ]}
+      >
+        {title}
+      </Text>
+    );
+  }
+    
   const handleSubmit = () => {
     if (!validate()) return;
     // TODO: dispatch registration action based on mode
@@ -209,7 +222,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         </Text>
 
         {/* ══ Personal Information (shared) ════════════════════════════════ */}
-        <SectionHeading title={tField('PersonalInfo')} />
+        {/* <SectionHeading title={tField('PersonalInfo')} /> */}
+        {SectionHeading('PersonalInfo')}
         <View style={formStyle.formRow}>
           <Field label={tField('FirstName')} value={form.firstName} onChange={set('firstName')} required error={errors.firstName} />
           <Field label={tField('MiddleName')} value={form.middleName} onChange={set('middleName')} />
@@ -236,7 +250,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         </View>
 
         {/* ══ Contact Information (shared) ══════════════════════════════════ */}
-        <SectionHeading title={tField('ContactInfo')} />
+        {/* <SectionHeading title={tField('ContactInfo')} /> */}
+        {SectionHeading('ContactInfo')}
         <View style={formStyle.formRow}>
           <Field label={tField('MailingAddress')} value={form.mailingAddress} onChange={set('mailingAddress')} />
         </View>
@@ -267,7 +282,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         {/* ══ Organisation Details (Structural only) ════════════════════════ */}
         {!isPrivateArch && (
           <>
-            <SectionHeading title={tReg('OrgDetails')} />
+            {/* <SectionHeading title={tReg('OrgDetails')} /> */}
+            {SectionHeading('OrgDetails')}
             <View style={formStyle.formRow}>
               <Field label={tReg('OrgName')} value={form.organisationName} onChange={set('organisationName')} required />
               <View style={formStyle.formCol} />
@@ -279,7 +295,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         {/* ══ Professional Details (Structural only) ════════════════════════ */}
         {!isPrivateArch && (
           <>
-            <SectionHeading title={tReg('ProfDetails')} />
+            {/* <SectionHeading title={tReg('ProfDetails')} /> */}
+            {SectionHeading('ProfDetails')}
             <View style={formStyle.formRow}>
               <Field label={tReg('Qualification')} value={form.qualification} onChange={set('qualification')} required error={errors.qualification} />
               <View style={formStyle.formCol} />
@@ -289,7 +306,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         )}
 
         {/* ══ Registration Details (shared, with mode-specific extra fields) ═ */}
-        <SectionHeading title={tField('RegDetails')} />
+        {/* <SectionHeading title={tField('RegDetails')} /> */}
+        {SectionHeading('RegDetails')}
         {isPrivateArch && (
           <View style={formStyle.formRow}>
             <Field label={tArch('AppType')} value={form.appType} onChange={set('appType')} required error={errors.appType} />
@@ -313,7 +331,8 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         {/* ══ Education Information (Private Arch only) ════════════════════ */}
         {isPrivateArch && (
           <>
-            <SectionHeading title={tArch('EduInfo')} />
+            {/* <SectionHeading title={tArch('EduInfo')} /> */}
+            {SectionHeading('EduInfo')}
             <View style={formStyle.formRow}>
               <Field label={tArch('InstituteName')} value={form.instituteName} onChange={set('instituteName')} required error={errors.instituteName} />
               <Field label={tArch('YearOfPassing')} value={form.yearOfPassing} onChange={set('yearOfPassing')} required keyboardType="numeric" error={errors.yearOfPassing} />
