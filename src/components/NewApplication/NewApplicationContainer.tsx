@@ -8,13 +8,6 @@ import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplica
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { IFormData, INITIAL_FORM, STEPS } from './NewApplicationUtils';
 
-// ─── Step definitions ──────────────────────────────────────────────────────────
-
-
-
-
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 const NewApplicationContainer = () => {
   const styles = useNewApplicationStyle();

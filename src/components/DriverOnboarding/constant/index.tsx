@@ -1,6 +1,0 @@
-export const ALLOW_NAME_INPUT_SIZE = 30;
-export const ALLOW_EMAIL_INPUT_SIZE = 40;
-export const ALLOW_ADDRESS_INPUT_SIZE = 100;
-export const ALLOW_MIN_INPUT_SIZE = 6;
-export const ALLOW_BANK_IFSC_INPUT_SIZE = 15;
-export const ALLOW_BANK_ACCOUNT_INPUT_SIZE = 20;

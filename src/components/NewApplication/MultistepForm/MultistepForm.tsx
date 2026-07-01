@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplication';
-import { IBuildingDetails, IFormData, IOwnerDetails, IPropertyDetails, MultistepFormProps } from '../NewApplicationUtils';
+import { IBuildingDetails, IFormData, IOwnerDetails, IPropertyDetails, MultistepFormProps, STEP_TITLES } from '../NewApplicationUtils';
 
 
 // ─── Reusable field ────────────────────────────────────────────────────────────
@@ -167,17 +167,7 @@ const ReviewForm: React.FC<{ formData: IFormData }> = ({ formData }) => {
   );
 };
 
-// ─── Step titles shown in the form card header ─────────────────────────────────
 
-export const STEP_TITLES = [
-  'Property Details',
-  'Owner Details',
-  'Architect / Engineer',
-  'Building Details',
-  'Documents',
-  'Fee Payment',
-  'Review & Submit',
-];
 
 // ─── Main MultistepForm ────────────────────────────────────────────────────────
 

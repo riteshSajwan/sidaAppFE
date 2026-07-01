@@ -68,5 +68,17 @@ const STEPS: IStep[] = [
   { key: 'review',    label: 'Review & Submit',      icon: 'tick' },
 ];
 
+// ─── Step titles shown in the form card header ─────────────────────────────────
+
+export const STEP_TITLES = [
+  'Property Details',
+  'Owner Details',
+  'Architect / Engineer',
+  'Building Details',
+  'Documents',
+  'Fee Payment',
+  'Review & Submit',
+];
+
 export { INITIAL_FORM, STEPS };
 
