@@ -10,7 +10,6 @@ import { ALLOW_FILE_SIZE_BYTES } from 'src/constants';
 import { useDocumentUploadStyle } from './DocumentUpload';
 import {
   DEFAULT_ACCEPTED_TYPES,
-  DOCUMENT_FIELDS,
   formatBytes,
   generateInitialFilesState,
   IDocumentErrors,
@@ -38,7 +37,7 @@ const DocumentUploads = ({
   setPickerErrors,
   files: externalFiles,
   onFilesChange,
-  fields: customFields,
+  fields,
   sectionTitle,
 }: IDocumentUploadsProps) => {
   const { t: T } = useTranslation();
@@ -46,7 +45,7 @@ const DocumentUploads = ({
   const layout = useLayoutStyle();
 
   // Use custom fields if provided, otherwise fall back to the default set
-  const fields = customFields ?? DOCUMENT_FIELDS;
+  // const fields = customFields ?? DOCUMENT_FIELDS;
 
   /* ── State — all owned internally ── */
   const [internalFiles, setInternalFiles] = useState<IDocumentFilesState>(

@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { TextInput as PaperInput } from 'react-native-paper';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useFormStyle } from 'src/common/assets/styles/form';
@@ -16,36 +11,46 @@ import {
   generateInitialFilesStateFromFields,
   IDocumentErrors,
   IDocumentFilesState,
+  validateDocumentUploadsForFields,
 } from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploadsUtils';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import {
+  CITY_OTHER_FIELD,
+  CITY_ROW_BASE,
+  IFormField,
   INITIAL_FORM,
   IRegistrationForm,
   PRIVATE_ARCH_ATTACHMENT_FIELDS,
+  PRIVATE_ARCH_AUTHORITY_FIELD,
+  PRIVATE_ARCH_ONLY_FIELDS,
   RegistrationMode,
+  SHARED_CONTACT_FIELDS,
+  SHARED_PERSONAL_FIELDS,
+  SHARED_REG_FIELDS,
+  STRUCTURAL_AUTHORITY_FIELD,
+  STRUCTURAL_ONLY_FIELDS,
   STRUCTURAL_REGISTRATION_ATTACHMENT_FIELDS,
 } from './RegistrationUtils';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface RegistrationContainerProps {
-  mode: RegistrationMode;
+  mode?: RegistrationMode;
 }
 
-// ─── Reusable field ───────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 interface FieldProps {
   label: string;
   value: string;
   onChange: (v: string) => void;
   required?: boolean;
-  placeholder?: string;
   keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
   error?: string;
 }
 
 const Field: React.FC<FieldProps> = ({
-  label, value, onChange, required, placeholder, keyboardType = 'default', error,
+  label, value, onChange, required, keyboardType = 'default', error,
 }) => {
   const formStyle = useFormStyle();
   const { theme } = useAppTheme();
@@ -59,7 +64,7 @@ const Field: React.FC<FieldProps> = ({
         mode="outlined"
         value={value}
         onChangeText={onChange}
-        placeholder={placeholder ?? label}
+        placeholder={label}
         placeholderTextColor={theme.colors.textNeutral}
         keyboardType={keyboardType}
         autoCapitalize="none"
@@ -75,21 +80,13 @@ const Field: React.FC<FieldProps> = ({
   );
 };
 
-// ─── Section heading ──────────────────────────────────────────────────────────
-
-// const SectionHeading: React.FC<{ title: string }> = ({ title }) => {
-//   const formStyle = useFormStyle();
-//   return (
-//     <Text style={[formStyle.labelHeadTitle, { marginTop: 20, marginBottom: 8 }]}>
-//       {title}
-//     </Text>
-//   );
-// };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) => {
-  const { t } = useTranslation();
+const RegistrationContainer: React.FC<RegistrationContainerProps> = ({
+  mode = 'structural',
+}) => {
+   const { t: TranslateMessage } = useTranslation();
   const { theme } = useAppTheme();
   const formStyle = useFormStyle();
   const button = useButtonStyle();
@@ -101,96 +98,131 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
 
   const [form, setForm] = useState<IRegistrationForm>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof IRegistrationForm, string>>>({});
-
   const [attachmentFiles, setAttachmentFiles] = useState<IDocumentFilesState>(
-    () => generateInitialFilesStateFromFields(attachmentFields)
+    () => generateInitialFilesStateFromFields(attachmentFields),
   );
   const [attachmentErrors, setAttachmentErrors] = useState<IDocumentErrors>(
-    () => generateInitialErrorsFromFields(attachmentFields)
+    () => generateInitialErrorsFromFields(attachmentFields),
   );
   const [attachmentPickerErrors, setAttachmentPickerErrors] = useState<Record<string, string>>({});
 
-  const set = (field: keyof IRegistrationForm) => (value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  // ── i18n prefix helpers ────────────────────────────────────────────────────
-  // Shared keys live under Registration.*; Private Arch extras under PrivateArchReg.*
+  // ── i18n helpers ──────────────────────────────────────────────────────────
+  // Structural keys live under Registration.*; Private Arch under PrivateArchReg.*
   const tReg = (key: string, opts?: Record<string, string>) =>
-    t(`Admin.Sida.App.Registration.${key}` as any, opts);
+    TranslateMessage(`Admin.Sida.App.Registration.${key}` as any, opts);
   const tArch = (key: string, opts?: Record<string, string>) =>
-    t(`Admin.Sida.App.PrivateArchReg.${key}` as any, opts);
-  // For fields that exist in both namespaces with the same meaning we prefer
-  // the shared Registration.* key; arch-only fields use PrivateArchReg.*
+    TranslateMessage(`Admin.Sida.App.PrivateArchReg.${key}` as any, opts);
+  // tField resolves using the active mode's namespace
   const tField = isPrivateArch ? tArch : tReg;
 
+  // ── Field setters ─────────────────────────────────────────────────────────
+  const set = (key: keyof IRegistrationForm) => (value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: '' }));
+  };
+
+  // ── Render a row of fields from config ───────────────────────────────────
+  // `resolveLabel` lets callers override the namespace per field if needed
+  const renderRow = (
+    row: IFormField[],
+    resolveLabel: (f: IFormField) => string = (f) => tField(f.labelKey),
+  ) => (
+    <View style={formStyle.formRow}>
+      {row.map((field) => (
+        <Field
+          key={field.key}
+          label={resolveLabel(field)}
+          value={form[field.key] as string}
+          onChange={set(field.key)}
+          required={field.required}
+          keyboardType={field.keyboardType}
+          error={errors[field.key] as string | undefined}
+        />
+      ))}
+    </View>
+  );
+
+  // Render multiple rows at once
+  const renderRows = (
+    rows: IFormField[][],
+    resolveLabel?: (f: IFormField) => string,
+  ) => rows.map((row, i) => (
+    <React.Fragment key={i}>{renderRow(row, resolveLabel)}</React.Fragment>
+  ));
+
+  // ── Validation ────────────────────────────────────────────────────────────
   const validate = (): boolean => {
     const e: Partial<Record<keyof IRegistrationForm, string>> = {};
 
-    const req = (field: keyof IRegistrationForm, label: string) => {
-      const val = form[field];
+    const req = (key: keyof IRegistrationForm, label: string) => {
+      const val = form[key];
       if (!val || (typeof val === 'string' && !val.trim())) {
-        e[field] = tField('Required', { field: label });
+        e[key] = tField('Required', { field: label });
       }
     };
 
-    // Shared required fields
-    req('firstName', tField('FirstName'));
-    req('lastName', tField('LastName'));
-    req('mobileNumber', tField('Mobile'));
-    req('email', tField('Email'));
-    req('regLicenseNo', tField('RegLicenseNo'));
+    // Derive required fields from config arrays — no duplication
+    const requiredFields: Array<[keyof IRegistrationForm, string]> = [
+      ...SHARED_PERSONAL_FIELDS.flat()
+        .filter((f) => f.required)
+        .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+      ...SHARED_CONTACT_FIELDS.flat()
+        .filter((f) => f.required)
+        .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+      ...SHARED_REG_FIELDS
+        .filter((f) => f.required)
+        .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+      ...(isPrivateArch
+        ? PRIVATE_ARCH_ONLY_FIELDS.flat()
+          .filter((f) => f.required)
+          .map((f): [keyof IRegistrationForm, string] => [f.key, tArch(f.labelKey)])
+        : STRUCTURAL_ONLY_FIELDS.flat()
+          .filter((f) => f.required)
+          .map((f): [keyof IRegistrationForm, string] => [f.key, tReg(f.labelKey)])
+      ),
+    ];
 
-    if (isPrivateArch) {
-      // Private Architect specific
-      req('appType', tArch('AppType'));
-      req('instituteName', tArch('InstituteName'));
-      req('yearOfPassing', tArch('YearOfPassing'));
-    } else {
-      // Structural Engineer specific
-      req('qualification', tReg('Qualification'));
-    }
+    requiredFields.forEach(([key, label]) => req(key, label));
 
     if (!form.declared) {
       e.declared = tField('Required', { field: 'Declaration' }) as any;
     }
 
     setErrors(e);
-    return Object.keys(e).length === 0;
+
+    // Attachment validation — uses the active field list
+    const { isValid: attachmentsValid, errors: attachmentValidationErrors } =
+      validateDocumentUploadsForFields(attachmentFiles, attachmentFields);
+    setAttachmentErrors(attachmentValidationErrors);
+
+    return Object.keys(e).length === 0 && attachmentsValid;
   };
 
-  function SectionHeading( title:string) {
-    return (
-      <Text
-        style={[
-          formStyle.labelHeadTitle,
-          { marginTop: 20, marginBottom: 8 },
-        ]}
-      >
-        {title}
-      </Text>
-    );
-  }
-    
   const handleSubmit = () => {
     if (!validate()) return;
     // TODO: dispatch registration action based on mode
   };
 
-  // ── Attachment section title ───────────────────────────────────────────────
-  const attachmentTitle = isPrivateArch
-    ? tArch('Attachments')
-    : tReg('Attachments');
+  // ── City row: Private Arch inserts CityOther between City and Pincode ────
+  const cityRow: IFormField[] = isPrivateArch
+    ? [CITY_ROW_BASE[0], CITY_OTHER_FIELD, CITY_ROW_BASE[1]]
+    : [...CITY_ROW_BASE];
 
-  // ── Declaration / Submit i18n ─────────────────────────────────────────────
-  const declarationText = isPrivateArch
-    ? tArch('Declaration')
-    : tReg('Declaration');
-  const submitText = isPrivateArch ? tArch('Submit') : tReg('Submit');
-  const pageTitle = isPrivateArch
-    ? tArch('Title')
-    : tReg('Title');
+  // Authority field label differs per mode but occupies the same slot
+  const authorityField = isPrivateArch ? PRIVATE_ARCH_AUTHORITY_FIELD : STRUCTURAL_AUTHORITY_FIELD;
+  const resolveAuthorityLabel = (f: IFormField) =>
+    isPrivateArch ? tArch(f.labelKey) : tReg(f.labelKey);
+
+
+  function SelectionHeading(title:string) {
+    return (
+      <Text style={[formStyle.labelHeadTitle, { marginTop: 20, marginBottom: 8 }]}>
+        {title}
+      </Text>
+    )
+  }
+
+
 
   return (
     <ScrollView
@@ -218,133 +250,93 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
             marginBottom: theme.spacing.xl,
           }}
         >
-          {pageTitle}
+          {isPrivateArch ? tArch('Title') : tReg('Title')}
         </Text>
 
         {/* ══ Personal Information (shared) ════════════════════════════════ */}
         {/* <SectionHeading title={tField('PersonalInfo')} /> */}
-        {SectionHeading('PersonalInfo')}
-        <View style={formStyle.formRow}>
-          <Field label={tField('FirstName')} value={form.firstName} onChange={set('firstName')} required error={errors.firstName} />
-          <Field label={tField('MiddleName')} value={form.middleName} onChange={set('middleName')} />
-          <Field label={tField('LastName')} value={form.lastName} onChange={set('lastName')} required error={errors.lastName} />
-        </View>
-        <View style={formStyle.formRow}>
-          {/* Structural uses FatherName/SpouseName keys; Private Arch uses Father/Spouse */}
-          <Field
-            label={isPrivateArch ? tArch('Father') : tReg('FatherName')}
-            value={form.father}
-            onChange={set('father')}
-          />
-          <Field
-            label={isPrivateArch ? tArch('Spouse') : tReg('SpouseName')}
-            value={form.spouse}
-            onChange={set('spouse')}
-          />
-          <Field
-            label={isPrivateArch ? tArch('FatherName') : tReg('FatherName')}
-            value={form.fatherName}
-            onChange={set('fatherName')}
-            required
-          />
-        </View>
+        {SelectionHeading('PersonalInfo')}
+        {renderRows(SHARED_PERSONAL_FIELDS)}
 
         {/* ══ Contact Information (shared) ══════════════════════════════════ */}
-        {/* <SectionHeading title={tField('ContactInfo')} /> */}
-        {SectionHeading('ContactInfo')}
+        {SelectionHeading('ContactInfo')}
+        {/* MailingAddress, State/District/Tehsil */}
+        {renderRows(SHARED_CONTACT_FIELDS.slice(0, 2))}
+        {/* City row — Private Arch inserts CityOther between City and Pincode */}
+        {renderRow(cityRow)}
+        {/* Mobile + Email + Authority — one 3-column row; authority label differs per mode */}
         <View style={formStyle.formRow}>
-          <Field label={tField('MailingAddress')} value={form.mailingAddress} onChange={set('mailingAddress')} />
-        </View>
-        <View style={formStyle.formRow}>
-          <Field label={tField('State')} value={form.state} onChange={set('state')} />
-          <Field label={tField('District')} value={form.district} onChange={set('district')} />
-          <Field label={tField('Tehsil')} value={form.tehsil} onChange={set('tehsil')} />
-        </View>
-        <View style={formStyle.formRow}>
-          <Field label={tField('City')} value={form.cityVillage} onChange={set('cityVillage')} />
-          {/* Private Arch shows an extra "Other City/Village" field */}
-          {isPrivateArch && (
-            <Field label={tArch('CityOther')} value={form.cityVillageOther} onChange={set('cityVillageOther')} />
-          )}
-          <Field label={tField('Pincode')} value={form.pinCode} onChange={set('pinCode')} keyboardType="numeric" />
-          {!isPrivateArch && <View style={formStyle.formCol} />}
-        </View>
-        <View style={formStyle.formRow}>
-          <Field label={tField('Mobile')} value={form.mobileNumber} onChange={set('mobileNumber')} required keyboardType="phone-pad" error={errors.mobileNumber} />
-          <Field label={tField('Email')} value={form.email} onChange={set('email')} required keyboardType="email-address" error={errors.email} />
-          {/* Structural: "Authority" | Private Arch: "Register Authority (Private)" */}
-          {isPrivateArch
-            ? <Field label={tArch('RegAuthority')} value={form.regAuthority} onChange={set('regAuthority')} />
-            : <Field label={tReg('Authority')} value={form.authority} onChange={set('authority')} />
-          }
+          {SHARED_CONTACT_FIELDS[2].map((field) => (
+            <Field
+              key={field.key}
+              label={tField(field.labelKey)}
+              value={form[field.key] as string}
+              onChange={set(field.key)}
+              required={field.required}
+              keyboardType={field.keyboardType}
+              error={errors[field.key] as string | undefined}
+            />
+          ))}
+          <Field
+            label={resolveAuthorityLabel(authorityField)}
+            value={form[authorityField.key] as string}
+            onChange={set(authorityField.key)}
+          />
         </View>
 
-        {/* ══ Organisation Details (Structural only) ════════════════════════ */}
+        {/* ══ Organisation + Professional Details (Structural only) ════════ */}
         {!isPrivateArch && (
           <>
-            {/* <SectionHeading title={tReg('OrgDetails')} /> */}
-            {SectionHeading('OrgDetails')}
+            {SelectionHeading('OrgDetails')}
             <View style={formStyle.formRow}>
-              <Field label={tReg('OrgName')} value={form.organisationName} onChange={set('organisationName')} required />
+              <Field
+                label={tReg(STRUCTURAL_ONLY_FIELDS[0][0].labelKey)}
+                value={form[STRUCTURAL_ONLY_FIELDS[0][0].key] as string}
+                onChange={set(STRUCTURAL_ONLY_FIELDS[0][0].key)}
+                required={STRUCTURAL_ONLY_FIELDS[0][0].required}
+                error={errors[STRUCTURAL_ONLY_FIELDS[0][0].key] as string | undefined}
+              />
               <View style={formStyle.formCol} />
               <View style={formStyle.formCol} />
             </View>
-          </>
-        )}
-
-        {/* ══ Professional Details (Structural only) ════════════════════════ */}
-        {!isPrivateArch && (
-          <>
             {/* <SectionHeading title={tReg('ProfDetails')} /> */}
-            {SectionHeading('ProfDetails')}
+            {SelectionHeading('ProfDetails')}
             <View style={formStyle.formRow}>
-              <Field label={tReg('Qualification')} value={form.qualification} onChange={set('qualification')} required error={errors.qualification} />
+              <Field
+                label={tReg(STRUCTURAL_ONLY_FIELDS[1][0].labelKey)}
+                value={form[STRUCTURAL_ONLY_FIELDS[1][0].key] as string}
+                onChange={set(STRUCTURAL_ONLY_FIELDS[1][0].key)}
+                required={STRUCTURAL_ONLY_FIELDS[1][0].required}
+                error={errors[STRUCTURAL_ONLY_FIELDS[1][0].key] as string | undefined}
+              />
               <View style={formStyle.formCol} />
               <View style={formStyle.formCol} />
             </View>
           </>
         )}
 
-        {/* ══ Registration Details (shared, with mode-specific extra fields) ═ */}
+        {/* ══ Registration Details ══════════════════════════════════════════ */}
         {/* <SectionHeading title={tField('RegDetails')} /> */}
-        {SectionHeading('RegDetails')}
-        {isPrivateArch && (
-          <View style={formStyle.formRow}>
-            <Field label={tArch('AppType')} value={form.appType} onChange={set('appType')} required error={errors.appType} />
-            <Field label={tArch('NoOfYears')} value={form.noOfYears} onChange={set('noOfYears')} keyboardType="numeric" />
-            <View style={formStyle.formCol} />
-          </View>
-        )}
-        <View style={formStyle.formRow}>
-          <Field label={tField('RegLicenseNo')} value={form.regLicenseNo} onChange={set('regLicenseNo')} required error={errors.regLicenseNo} />
-          <Field label={tField('Validity')} value={form.validity} onChange={set('validity')} required />
-          <View style={formStyle.formCol} />
-        </View>
-        {!isPrivateArch && (
-          <View style={formStyle.formRow}>
-            <Field label={tReg('YearsOfExperience')} value={form.yearsOfExperience} onChange={set('yearsOfExperience')} required keyboardType="numeric" />
-            <Field label={tReg('Grade')} value={form.grade} onChange={set('grade')} required />
-            <View style={formStyle.formCol} />
-          </View>
-        )}
+        {SelectionHeading('RegDetails')}
+        {/* Private Arch: AppType + NoOfYears row first */}
+        {isPrivateArch && renderRow(PRIVATE_ARCH_ONLY_FIELDS[0], (f) => tArch(f.labelKey))}
+        {/* Shared: RegLicenseNo + Validity */}
+        {renderRow(SHARED_REG_FIELDS)}
+        {/* Structural: YearsOfExperience + Grade */}
+        {!isPrivateArch && renderRow(STRUCTURAL_ONLY_FIELDS[2], (f) => tReg(f.labelKey))}
 
         {/* ══ Education Information (Private Arch only) ════════════════════ */}
         {isPrivateArch && (
-          <>
-            {/* <SectionHeading title={tArch('EduInfo')} /> */}
-            {SectionHeading('EduInfo')}
-            <View style={formStyle.formRow}>
-              <Field label={tArch('InstituteName')} value={form.instituteName} onChange={set('instituteName')} required error={errors.instituteName} />
-              <Field label={tArch('YearOfPassing')} value={form.yearOfPassing} onChange={set('yearOfPassing')} required keyboardType="numeric" error={errors.yearOfPassing} />
-              <View style={formStyle.formCol} />
-            </View>
+          <>   
+            {SelectionHeading('EduInfo')}
+            {renderRow(PRIVATE_ARCH_ONLY_FIELDS[1], (f) => tArch(f.labelKey))}
           </>
         )}
 
         {/* ══ Attachments ══════════════════════════════════════════════════ */}
         <DocumentUploads
           fields={attachmentFields}
-          sectionTitle={attachmentTitle}
+          sectionTitle={isPrivateArch ? tArch('Attachments') : tReg('Attachments')}
           errors={attachmentErrors}
           setErrors={setAttachmentErrors}
           pickerErrors={attachmentPickerErrors}
@@ -365,7 +357,9 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
               <Icon name="tick" size={14} color={theme.colors.textInverse} />
             )}
           </View>
-          <Text style={formStyle.checkBoxlabel}>{declarationText}</Text>
+          <Text style={formStyle.checkBoxlabel}>
+            {isPrivateArch ? tArch('Declaration') : tReg('Declaration')}
+          </Text>
         </Pressable>
         {errors.declared && (
           <Text style={[formStyle.errorMessage, { marginTop: -theme.spacing.sm, marginBottom: theme.spacing.md }]}>
@@ -377,7 +371,7 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({ mode}) =>
         <View style={{ alignItems: 'flex-end' }}>
           <Pressable onPress={handleSubmit} accessibilityRole="button">
             <Text style={[button.btnBase, button.btnPrimary, { minWidth: 180, textAlign: 'center' }]}>
-              {submitText}
+              {isPrivateArch ? tArch('Submit') : tReg('Submit')}
             </Text>
           </Pressable>
         </View>

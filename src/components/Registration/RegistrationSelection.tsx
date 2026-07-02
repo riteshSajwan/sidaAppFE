@@ -34,20 +34,7 @@ const RegistrationSelection = () => {
                 padding: theme.spacing.xl,
             }}
         >
-            {/* Breadcrumb */}
-            <View
-                style={{
-                    backgroundColor: '#f3f4f6',
-                    padding: theme.spacing.md,
-                    borderRadius: theme.roundness.sm,
-                    marginBottom: theme.spacing.xl,
-                }}
-            >
-                <Text style={{ color: '#EF4444', fontSize: 14 }}>
-                    Dashboard / <Text style={{ color: '#6B7280' }}>Building Permit</Text>
-                </Text>
-            </View>
-
+            
             {/* Page Title */}
             <Text
                 style={{

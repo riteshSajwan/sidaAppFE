@@ -140,7 +140,7 @@ export interface IDocumentUploadsProps {
   files?: IDocumentFilesState;
   onFilesChange?: (files: IDocumentFilesState) => void;
   /** Override the default DOCUMENT_FIELDS with a custom set */
-  fields?: IDocumentField[];
+  fields: IDocumentField[];
   /** Override the section title; defaults to the i18n key */
   sectionTitle?: string;
 }
@@ -174,11 +174,18 @@ export interface IValidationResult {
   errors: IDocumentErrors;
 }
 
-export function validateDocumentUploads(files: IDocumentFilesState): IValidationResult {
-  const errors = generateInitialErrors();
+/**
+ * Generic validation that works against any field list.
+ * Pass the same `fields` array you pass to the DocumentUploads component.
+ */
+export function validateDocumentUploadsForFields(
+  files: IDocumentFilesState,
+  fields: IDocumentField[],
+): IValidationResult {
+  const errors = generateInitialErrorsFromFields(fields);
   let isValid = true;
 
-  for (const field of DOCUMENT_FIELDS) {
+  for (const field of fields) {
     const file = files[field.key];
     const label = translateMessage(field.labelKey);
 
@@ -228,4 +235,12 @@ export function validateDocumentUploads(files: IDocumentFilesState): IValidation
   }
 
   return { isValid, errors };
+}
+
+/**
+ * Convenience wrapper that validates against the default DOCUMENT_FIELDS.
+ * Kept for backward-compatibility with ArchitectDetailsPage.
+ */
+export function validateDocumentUploads(files: IDocumentFilesState): IValidationResult {
+  return validateDocumentUploadsForFields(files, DOCUMENT_FIELDS);
 }

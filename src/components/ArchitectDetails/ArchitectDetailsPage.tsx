@@ -16,6 +16,7 @@ import {
 import { useDocumentUploadStyle } from './DocumentUploads/DocumentUpload';
 import DocumentUploads from './DocumentUploads/DocumentUploads';
 import {
+  DOCUMENT_FIELDS,
   generateInitialErrors,
   generateInitialFilesState,
   IDocumentErrors,
@@ -25,7 +26,7 @@ import {
 import FormInputs from './FormInputs/FormInputs';
 
 const ArchitectDetailsPage = () => {
-  const { t: T } = useTranslation();
+  const { t: TranslateMessage } = useTranslation();
   const layout = useLayoutStyle();
   const button = useButtonStyle();
   const styles = useDocumentUploadStyle();
@@ -56,12 +57,12 @@ const ArchitectDetailsPage = () => {
     } catch {
       setErrors((prev: IDocumentErrors) => ({
         ...prev,
-        apiError: T('Admin.Sida.App.DocumentUpload.ApiError'),
+        apiError: TranslateMessage('Admin.Sida.App.DocumentUpload.ApiError'),
       }));
     } finally {
       setLoading(false);
     }
-  }, [T, validateFormInputs, documentFiles, form]);
+  }, [TranslateMessage, validateFormInputs, documentFiles, form]);
 
 
    const reset = useCallback(() => {
@@ -98,6 +99,7 @@ const ArchitectDetailsPage = () => {
           pickerErrors={pickerErrors}
           setPickerErrors={setPickerErrors}
           files={documentFiles}
+          fields={DOCUMENT_FIELDS}
           onFilesChange={setDocumentFiles}
         />
         <View style={styles.submitWrap}>
@@ -108,8 +110,8 @@ const ArchitectDetailsPage = () => {
           >
             <Text style={[button.btnBase, button.btnPrimary, loading && button.btnDisabled]}>
               {loading
-                ? T('Admin.Sida.App.DocumentUpload.Submitting')
-                : T('Admin.Sida.App.DocumentUpload.Submit')}
+                ? TranslateMessage('Admin.Sida.App.DocumentUpload.Submitting')
+                : TranslateMessage('Admin.Sida.App.DocumentUpload.Submit')}
             </Text>
           </Pressable>
         </View>
