@@ -117,6 +117,7 @@ export default {
     'Admin.Sida.App.DocumentUpload.Error.SizeExceeded': '{{label}} exceeds the maximum size of {{size}}.',
 
     'Admin.Sida.App.NewApplication':'New Application',
+    'Admin.Sida.App.MyApplication':'My Application',
     // To be removed
 
     // 'Admin.Delivery.App.LogIn.Label': 'Log In',

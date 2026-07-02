@@ -1,5 +1,5 @@
 // Light theme
-const primaryLight='#0D1729'
+const primaryLight='#0b59ebff'
 const secondryLight='#E8EDF5'
 const tertiaryLight='#F5F7FB'
 // Dark theme
@@ -12,6 +12,7 @@ export const lightThemeColor = {
 
 	// --Generic--
 	surfaceBase: '#FFFFFF',
+	sideBar:'#0F172A',
 	surfaceLow: tertiaryLight,
 	surfaceMedium: secondryLight,
 	surfaceInverse: primaryLight,

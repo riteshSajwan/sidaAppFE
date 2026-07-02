@@ -18,9 +18,10 @@ const SideMenu = () => {
 
   const screenOptionValues: DrawerNavigationOptions = {
     drawerStyle: {
+      // backgroundColor: theme.colors.sideBar,
       backgroundColor: theme.colors.surfaceBase,
       width: 350,
-      borderLeftColor: theme.colors.borderLow,
+      borderLeftColor: theme.colors.surfaceBase,
       borderRightColor: theme.colors.borderLow,
     },
     drawerType: isDesktop ? 'permanent' : 'front',
