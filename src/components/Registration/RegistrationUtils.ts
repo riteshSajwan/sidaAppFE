@@ -6,12 +6,21 @@ export type RegistrationMode = 'structural' | 'privateArchitect';
 
 // ─── Form field config type ───────────────────────────────────────────────────
 
+export interface IDropdownOption {
+  label: string;
+  value: string;
+}
+
 export interface IFormField {
   key: keyof IRegistrationForm;
   /** Suffix after the i18n namespace prefix, e.g. 'FirstName' */
   labelKey: string;
   required?: boolean;
+  /** Defaults to 'text' when omitted */
+  fieldType?: 'text' | 'dropdown';
   keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
+  /** Required when fieldType === 'dropdown' */
+  options?: IDropdownOption[];
 }
 
 // ─── Combined form interface ──────────────────────────────────────────────────
@@ -58,6 +67,47 @@ export interface IRegistrationForm {
   declared: boolean;
 }
 
+// ─── Shared dropdown option lists ────────────────────────────────────────────
+
+export const STATE_OPTIONS: IDropdownOption[] = [
+  { label: 'Select State', value: '' },
+  { label: 'Madhya Pradesh', value: 'MP' },
+  { label: 'Uttar Pradesh', value: 'UP' },
+  { label: 'Rajasthan', value: 'RJ' },
+];
+
+export const DISTRICT_OPTIONS: IDropdownOption[] = [
+  { label: 'Select District', value: '' },
+  { label: 'District 1', value: 'district1' },
+  { label: 'District 2', value: 'district2' },
+];
+
+export const TEHSIL_OPTIONS: IDropdownOption[] = [
+  { label: 'Select Tehsil', value: '' },
+  { label: 'Tehsil 1', value: 'tehsil1' },
+  { label: 'Tehsil 2', value: 'tehsil2' },
+];
+
+export const CITY_VILLAGE_OPTIONS: IDropdownOption[] = [
+  { label: 'Select City/Village', value: '' },
+  { label: 'City 1', value: 'city1' },
+  { label: 'Other', value: 'other' },
+];
+
+export const GRADE_OPTIONS: IDropdownOption[] = [
+  { label: 'Select Grade', value: '' },
+  { label: 'Grade A', value: 'A' },
+  { label: 'Grade B', value: 'B' },
+  { label: 'Grade C', value: 'C' },
+];
+
+export const APP_TYPE_OPTIONS: IDropdownOption[] = [
+  { label: 'Select Application Type', value: '' },
+  { label: 'New Registration', value: 'new' },
+  { label: 'Renewal', value: 'renewal' },
+  { label: 'Upgrade', value: 'upgrade' },
+];
+
 // ─── Field config arrays (rows of columns) ───────────────────────────────────
 // Each inner array is one <View style={formStyle.formRow}>.
 // The i18n namespace prefix is resolved in the component based on mode.
@@ -82,9 +132,9 @@ export const SHARED_CONTACT_FIELDS: IFormField[][] = [
     { key: 'mailingAddress', labelKey: 'MailingAddress' },
   ],
   [
-    { key: 'state',   labelKey: 'State' },
-    { key: 'district', labelKey: 'District' },
-    { key: 'tehsil',  labelKey: 'Tehsil' },
+    { key: 'state',    labelKey: 'State',    fieldType: 'dropdown', options: STATE_OPTIONS },
+    { key: 'district', labelKey: 'District', fieldType: 'dropdown', options: DISTRICT_OPTIONS },
+    { key: 'tehsil',   labelKey: 'Tehsil',   fieldType: 'dropdown', options: TEHSIL_OPTIONS },
   ],
   [
     { key: 'mobileNumber', labelKey: 'Mobile', required: true, keyboardType: 'phone-pad' },
@@ -97,7 +147,7 @@ export const SHARED_CONTACT_FIELDS: IFormField[][] = [
  * Exported separately so the component can inject the extra field conditionally.
  */
 export const CITY_ROW_BASE: IFormField[] = [
-  { key: 'cityVillage', labelKey: 'City' },
+  { key: 'cityVillage', labelKey: 'City', fieldType: 'dropdown', options: CITY_VILLAGE_OPTIONS },
   { key: 'pinCode',     labelKey: 'Pincode', keyboardType: 'numeric' },
 ];
 export const CITY_OTHER_FIELD: IFormField = {
@@ -121,7 +171,7 @@ export const STRUCTURAL_ONLY_FIELDS: IFormField[][] = [
   // Registration extras
   [
     { key: 'yearsOfExperience', labelKey: 'YearsOfExperience', required: true, keyboardType: 'numeric' },
-    { key: 'grade',             labelKey: 'Grade',             required: true },
+    { key: 'grade',             labelKey: 'Grade',             required: true, fieldType: 'dropdown', options: GRADE_OPTIONS },
   ],
 ];
 
@@ -129,7 +179,7 @@ export const STRUCTURAL_ONLY_FIELDS: IFormField[][] = [
 export const PRIVATE_ARCH_ONLY_FIELDS: IFormField[][] = [
   // Registration extras
   [
-    { key: 'appType',   labelKey: 'AppType',   required: true },
+    { key: 'appType',   labelKey: 'AppType',   required: true, fieldType: 'dropdown', options: APP_TYPE_OPTIONS },
     { key: 'noOfYears', labelKey: 'NoOfYears', keyboardType: 'numeric' },
   ],
   // Education
@@ -147,6 +197,8 @@ export const SHARED_REG_FIELDS: IFormField[] = [
 
 // ─── INITIAL_FORM — derived from all field configs ───────────────────────────
 
+// ─── Initial state ────────────────────────────────────────────────────────────
+
 const ALL_FIELD_KEYS: Array<keyof IRegistrationForm> = [
   ...SHARED_PERSONAL_FIELDS.flat().map((f) => f.key),
   ...SHARED_CONTACT_FIELDS.flat().map((f) => f.key),
@@ -163,6 +215,79 @@ export const INITIAL_FORM: IRegistrationForm = ALL_FIELD_KEYS.reduce(
   (acc, key) => ({ ...acc, [key]: '' }),
   { declared: false } as IRegistrationForm,
 );
+
+// ─── Error state type and factory ─────────────────────────────────────────────
+
+export type IRegistrationFormErrors = Partial<Record<keyof IRegistrationForm, string>> & {
+  apiError: string;
+};
+
+export function generateInitialFormErrors(): IRegistrationFormErrors {
+  return {
+    apiError: '',
+  };
+}
+
+// ─── Validation ───────────────────────────────────────────────────────────────
+
+export interface IRegistrationValidationResult {
+  isValid: boolean;
+  errors: IRegistrationFormErrors;
+}
+
+/**
+ * Validates registration form based on mode and field config.
+ * Returns both isValid flag and populated errors object.
+ */
+export function validateRegistrationForm(
+  form: IRegistrationForm,
+  mode: RegistrationMode,
+  tField: (key: string, opts?: Record<string, string>) => string,
+): IRegistrationValidationResult {
+  const errors = generateInitialFormErrors();
+  let isValid = true;
+
+  const req = (key: keyof IRegistrationForm, label: string) => {
+    const val = form[key];
+    if (!val || (typeof val === 'string' && !val.trim())) {
+      errors[key] = tField('Required', { field: label });
+      isValid = false;
+    }
+  };
+
+  const isPrivateArch = mode === 'privateArchitect';
+
+  // Build required field list from config arrays
+  const requiredFields: Array<[keyof IRegistrationForm, string]> = [
+    ...SHARED_PERSONAL_FIELDS.flat()
+      .filter((f) => f.required)
+      .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+    ...SHARED_CONTACT_FIELDS.flat()
+      .filter((f) => f.required)
+      .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+    ...SHARED_REG_FIELDS
+      .filter((f) => f.required)
+      .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
+    ...(isPrivateArch
+      ? PRIVATE_ARCH_ONLY_FIELDS.flat()
+          .filter((f) => f.required)
+          .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)])
+      : STRUCTURAL_ONLY_FIELDS.flat()
+          .filter((f) => f.required)
+          .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)])
+    ),
+  ];
+
+  requiredFields.forEach(([key, label]) => req(key, label));
+
+  // Declaration checkbox
+  if (!form.declared) {
+    errors.declared = tField('Required', { field: 'Declaration' });
+    isValid = false;
+  }
+
+  return { isValid, errors };
+}
 
 // ─── Attachment fields ────────────────────────────────────────────────────────
 
