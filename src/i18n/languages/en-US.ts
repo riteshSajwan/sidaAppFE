@@ -1180,6 +1180,17 @@ export default {
     'Admin.Sida.App.Registration.Required': '{{field}} is required',
     'Admin.Sida.App.Registration.Email': 'Email id',
 
+    // DocumentUploads table header & status keys
+    'Admin.Sida.App.DocumentUpload.Header.Index':       '#',
+    'Admin.Sida.App.DocumentUpload.Header.DocType':     'Document Type',
+    'Admin.Sida.App.DocumentUpload.Header.Description': 'Description',
+    'Admin.Sida.App.DocumentUpload.Header.Format':      'File Format',
+    'Admin.Sida.App.DocumentUpload.Header.Status':      'Status',
+    'Admin.Sida.App.DocumentUpload.Header.Action':      'Action',
+    'Admin.Sida.App.DocumentUpload.Status.Uploaded':    'Uploaded',
+    'Admin.Sida.App.DocumentUpload.Status.NotUploaded': 'Not Uploaded',
+    'Admin.Sida.App.DocumentUpload.Remove':             'Remove',
+
     // Private Architect Registration — extended fields
     'Admin.Sida.App.PrivateArchReg.Title': 'Private Architect Registration',
     'Admin.Sida.App.PrivateArchReg.PersonalInfo': 'Personal Information',

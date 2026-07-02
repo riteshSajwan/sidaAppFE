@@ -3,119 +3,209 @@ import { useAppTheme } from 'src/common/context/AppTheme';
 
 export const useDocumentUploadStyle = () => {
   const { theme } = useAppTheme();
+
   return StyleSheet.create({
-    /** Outer container wrapping the full list of document rows */
+
+    // ── Outer container ──────────────────────────────────────────────────────
+
     container: {
-      paddingVertical: theme.spacing.md,
+      marginTop: theme.spacing.lg,
+      borderRadius: theme.roundness.md,
+      borderWidth: 1,
+      borderColor: theme.colors.borderLow,
+      overflow: 'hidden',
     },
 
-    /** Section heading above the document list */
     sectionTitle: {
       fontSize: theme.fontSize.S1Subtitle,
       fontFamily: theme.fontFamily.semiBold,
       color: theme.colors.textBody,
-      marginBottom: theme.spacing.md,
-    },
-
-    /** A single row: label on the left, upload button on the right */
-    documentRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.borderDisabled,
+      backgroundColor: theme.colors.surfaceBase,
     },
 
-    /** Row highlighted when there is a validation error */
-    documentRowError: {
-      borderBottomColor: theme.colors.borderErrorInverse,
-    },
+    // ── Table header row ──────────────────────────────────────────────────────
 
-    /** Left side: label block + hints + errors */
-    rowLeft: {
-      flex: 1,
-      flexDirection: 'column',
-      gap: theme.spacing.xs,
-      paddingRight: theme.spacing.md,
-    },
-
-    /** Inline row for label + required star */
-    labelRow: {
+    headerRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: theme.colors.surfaceLow,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.borderLow,
     },
 
-    /** Document label text */
-    documentLabel: {
+    headerText: {
+      fontSize: theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.semiBold,
+      color: theme.colors.textBodyLight,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+
+    // ── Data row ──────────────────────────────────────────────────────────────
+
+    dataRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.borderLow,
+      backgroundColor: theme.colors.surfaceBase,
+    },
+
+    dataRowError: {
+      backgroundColor: theme.colors.surfaceErrorLow ?? '#fff5f5',
+    },
+
+    // ── Column widths (flex) ──────────────────────────────────────────────────
+
+    colIndex: {
+      width: 32,
+    },
+
+    colDocType: {
+      flex: 2,
+      paddingRight: theme.spacing.sm,
+    },
+
+    colDescription: {
+      flex: 2.5,
+      paddingRight: theme.spacing.sm,
+    },
+
+    colFormat: {
+      flex: 1.5,
+      paddingRight: theme.spacing.sm,
+    },
+
+    colStatus: {
+      flex: 1.5,
+      paddingRight: theme.spacing.sm,
+    },
+
+    colAction: {
+      width: 120,
+      alignItems: 'flex-end',
+    },
+
+    // ── Cell content ──────────────────────────────────────────────────────────
+
+    indexText: {
       fontSize: theme.fontSize.textBodyMedium,
-      fontFamily: theme.fontFamily.medium,
+      fontFamily: theme.fontFamily.regular,
+      color: theme.colors.textBodyLight,
+    },
+
+    docTypeLabel: {
+      fontSize: theme.fontSize.textBodyMedium,
+      fontFamily: theme.fontFamily.semiBold,
       color: theme.colors.textBody,
     },
 
-    /** Red asterisk indicating a required field */
-    requiredStar: {
-      fontSize: theme.fontSize.textBodyMedium,
-      fontFamily: theme.fontFamily.medium,
-      color: theme.colors.textErrorDark,
+    docTypeSubtitle: {
+      fontSize: theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.regular,
+      color: theme.colors.textBodyLight,
+      marginTop: 2,
     },
 
-    /** Allowed format + size hint */
-    hintText: {
-      fontSize: theme.fontSize.textCaptionS,
+    descriptionText: {
+      fontSize: theme.fontSize.textBodySmall ?? theme.fontSize.textCaptionS,
       fontFamily: theme.fontFamily.regular,
       color: theme.colors.textBodyLight,
     },
 
-    /** Small file-name text shown after a file is picked */
-    fileNameText: {
-      fontSize: theme.fontSize.textCaptionS,
+    formatText: {
+      fontSize: theme.fontSize.textBodySmall ?? theme.fontSize.textCaptionS,
       fontFamily: theme.fontFamily.regular,
       color: theme.colors.textBodyLight,
     },
 
-    /** Right side: upload button */
-    rowRight: {
-      flexShrink: 0,
+    // ── Status badge ──────────────────────────────────────────────────────────
+
+    statusRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
     },
 
-    /** The upload / re-upload button */
+    statusUploaded: {
+      fontSize: theme.fontSize.textBodySmall ?? theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.semiBold,
+      color: theme.colors.textSuccessDark,
+    },
+
+    statusNotUploaded: {
+      fontSize: theme.fontSize.textBodySmall ?? theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.semiBold,
+      color: theme.colors.textWarningDark ?? theme.colors.textErrorDark,
+    },
+
+    statusFileName: {
+      fontSize: theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.regular,
+      color: theme.colors.textBodyLight,
+      marginTop: 2,
+    },
+
+    // ── Action buttons ────────────────────────────────────────────────────────
+
+    actionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      justifyContent: 'flex-end',
+    },
+
     uploadBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
       borderRadius: theme.roundness.sm,
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.md,
       borderWidth: 1,
       borderColor: theme.colors.borderInverse,
       backgroundColor: theme.colors.surfaceInverse,
-      alignItems: 'center',
+      minWidth: 90,
+      height: 36,
       justifyContent: 'center',
-      minWidth: 110,
-      height: 40,
     },
 
-    /** Label inside the upload button */
     uploadBtnText: {
       fontSize: theme.fontSize.textButtonMedium,
       fontFamily: theme.fontFamily.semiBold,
       color: theme.colors.textInverse,
     },
 
-    /** Uploaded state — green outline button */
-    uploadedBtn: {
-      borderColor: theme.colors.borderSuccessInverse,
+    iconBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: theme.roundness.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.borderLow,
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.colors.surfaceBase,
     },
 
-    uploadedBtnText: {
-      color: theme.colors.textSuccessDark,
+    // ── Error row ─────────────────────────────────────────────────────────────
+
+    errorText: {
+      fontSize: theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.regular,
+      color: theme.colors.textErrorDark,
+      marginTop: 2,
     },
 
-    /** Wrapper for the API-level error shown below the list */
     apiErrorWrap: {
-      marginTop: theme.spacing.md,
+      padding: theme.spacing.md,
     },
 
-    /** Bottom area containing the submit button */
     submitWrap: {
       marginTop: theme.spacing.xl,
       alignItems: 'flex-end',

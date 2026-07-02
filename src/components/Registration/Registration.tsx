@@ -254,12 +254,10 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({
         </Text>
 
         {/* ══ Personal Information (shared) ════════════════════════════════ */}
-        {/* <SectionHeading title={tField('PersonalInfo')} /> */}
         {SectionHeading('PersonalInfo')}
         {renderRows(SHARED_PERSONAL_FIELDS)}
 
         {/* ══ Contact Information (shared) ══════════════════════════════════ */}
-        {/* <SectionHeading title={tField('ContactInfo')} /> */}
         {SectionHeading('ContactInfo')}
         {renderRows(SHARED_CONTACT_FIELDS.slice(0, 2))}
         {/* City row — Private Arch inserts CityOther between City and Pincode */}
@@ -287,7 +285,6 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({
         {/* ══ Organisation + Professional Details (Structural only) ════════ */}
         {!isPrivateArch && (
           <>
-            {/* <SectionHeading title={tReg('OrgDetails')} /> */}
             {SectionHeading('OrgDetails')}
             <View style={formStyle.formRow}>
               <Field
@@ -300,7 +297,6 @@ const RegistrationContainer: React.FC<RegistrationContainerProps> = ({
               <View style={formStyle.formCol} />
               <View style={formStyle.formCol} />
             </View>
-            {/* <SectionHeading title={tReg('ProfDetails')} /> */}
             {SectionHeading('ProfDetails')}
             <View style={formStyle.formRow}>
               <Field

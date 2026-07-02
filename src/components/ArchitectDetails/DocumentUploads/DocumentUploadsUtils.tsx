@@ -30,6 +30,8 @@ export function mimeToExtLabel(mime: string): string {
 export interface IDocumentField {
   key: string;
   labelKey: string;
+  /** Optional subtitle shown below the bold label (i18n key) */
+  descriptionKey?: string;
   required?: boolean;
   allowedTypes?: string[];
   maxSizeBytes?: number;
