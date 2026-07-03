@@ -8,7 +8,7 @@ import {
 } from '@reduxjs/toolkit';
 
 // IMPORT SLICES:--
-import { loginReducer } from 'src/common/service/auth/slice';
+import { authReducer } from 'src/common/service/auth/slice';
 import { BookingReducer } from 'src/common/service/booking/slice';
 import { BusinessReducer } from 'src/common/service/business/slice';
 import { CabReducer } from 'src/common/service/cab/slice';
@@ -29,7 +29,7 @@ import { UserReducer } from 'src/common/service/user/slice';
 import { NewBookingNotificationReducer } from 'src/common/service/websocket/newBookingNotificationSlice';
 
 const combinedReducer = combineReducers({
-  login: loginReducer,
+  auth: authReducer,
   profile: ProfileReducer,
   city: CityReducer,
   ticket: TicketReducer,

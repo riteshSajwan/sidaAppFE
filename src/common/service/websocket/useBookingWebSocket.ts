@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {setConnectionError,setConnectionStatus, WsConnectionStatus,} from 'src/common/service/websocket/newBookingNotificationSlice';
 import { playBookingNotificationSound } from 'src/common/service/websocket/bookingNotificationSound';
 import { bookingWebSocketService } from 'src/common/service/websocket/bookingWebSocketService';
+import { handleNewBookingNotification, INewBookingMessage } from 'src/common/service/websocket/newBookingNotificationActions';
+import { setConnectionError, setConnectionStatus, WsConnectionStatus, } from 'src/common/service/websocket/newBookingNotificationSlice';
 import { getTenantId } from 'src/common/utils/tenantUtils';
 import { WEBSOCKET_BASE_URL } from 'src/constants';
 import { AppDispatch, RootState } from 'src/store';
-import { handleNewBookingNotification, INewBookingMessage } from 'src/common/service/websocket/newBookingNotificationActions';
 
 interface UseOrderWebSocketProps {
   enabled?: boolean;
@@ -18,7 +18,7 @@ export const useOrderWebSocket = ({
   websocketUrl = WEBSOCKET_BASE_URL,
 }: UseOrderWebSocketProps = {}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const isLoggedIn = useSelector((state: RootState) => state.login.isLoggedIn);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.login.isLoggedIn);
   const userId = useSelector((state: RootState) => state.profile.data?.id);
   const connectionStatus = useSelector(
     (state: RootState) => state.newBookingNotification.connectionStatus

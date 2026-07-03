@@ -20,7 +20,7 @@ const withAuth = <P extends AuthenticatedComponentProps>(
 ) => {
   const AuthenticatedComponent = (props: P) => {
     const pathname = usePathname();
-    const isLoggedIn = useSelector((state: RootState) => state.login.isLoggedIn);
+    const isLoggedIn = useSelector((state: RootState) => state.auth.login.isLoggedIn);
     const userDetails = useSelector((state: RootState) => state.profile);
 
     useEffect(() => {

@@ -2,13 +2,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    Dimensions,
-    Pressable,
-    TextInput as RNTextInput,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View
+  Dimensions,
+  Pressable,
+  TextInput as RNTextInput,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -61,7 +61,7 @@ const LoginContainer = () => {
   const formStyle = useFormStyle();
 
   const dispatch: AppDispatch = useDispatch();
-  const loginState = useSelector((state: RootState) => state.login) as ILoginData;
+  const loginState = useSelector((state: RootState) => state.auth.login) as ILoginData;
   const userDetails = useSelector((state: RootState) => state.profile.data);
   const { id } = useLocalSearchParams<{ id?: string | string[] }>();
   const routeBundleId = getSearchParamValue(id);
