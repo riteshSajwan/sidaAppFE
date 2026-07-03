@@ -1,11 +1,11 @@
 export enum Routes {
   DEFAULT = '/home',
   LOGIN = '/login',
-  REGISTRATION = '/registrationSelection',
+  REGISTRATION = '/registration',
   PROFILE = '/profile',
   UPLOAD = '/upload',
   Payment = '/payment',
-  USER = '/user',
+  USER = '/users',
   REPORTS = '/reports',
   DASHBOARD = '/dashboard',
   NEWAPPLICATION = '/newApplication',

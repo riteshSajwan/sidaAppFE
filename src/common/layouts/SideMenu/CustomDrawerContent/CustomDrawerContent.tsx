@@ -32,8 +32,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { theme, mode, toggleTheme } = useAppTheme();
   const dispatch: AppDispatch = useDispatch();
   const { isProductAdmin } = usePermission(MenuType.DASHBOARD);
-    const { isTenantView } = useTenantId();
-  
+  const { isTenantView } = useTenantId();
+
   // const [isDesktop, setIsDesktop] = useState(
   //   Dimensions.get('window').width > 1199,
   // );
@@ -55,20 +55,20 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       )
       .then((payload) => dispatch(logout(payload)))
       .then(() => router.replace(Routes.LOGIN))
-      .catch(() => {});
+      .catch(() => { });
   };
   const pathname = usePathname();
   const { navigation } = props;
   const hiddenForProductAdmin = [
-  Routes.COUNTRIES,
-  Routes.COUPON,
-  Routes.TICKET,
-  Routes.REPORT,
-  Routes.ROLES,
-  Routes.USERS,
-  Routes.BUSINESS,
-  // Routes.CABS,
-];
+    Routes.COUNTRIES,
+    Routes.COUPON,
+    Routes.TICKET,
+    Routes.REPORT,
+    Routes.ROLES,
+    Routes.USERS,
+    Routes.BUSINESS,
+    // Routes.CABS,
+  ];
   const drawerOptions = [
     // {
     //   label: TranslateMessage('Admin.Delivery.App.Restaurants'),
@@ -80,68 +80,49 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: `${Routes.DASHBOARD}`,
       icon: 'dashboard',
     },
-     {
+    {
       label: TranslateMessage('Admin.Sida.App.NewApplication'),
       path: `${Routes.NEWAPPLICATION}`,
       icon: 'application',
     },
-     {
+    {
       label: TranslateMessage('Admin.Sida.App.MyApplication'),
       path: `${Routes.MYAPPLICATION}`,
       icon: 'application',
     },
-     {
+    {
       label: TranslateMessage('Admin.Sida.App.Registration.Label'),
       path: `${Routes.REGISTRATION}`,
       icon: 'registration',
     },
     {
-      label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
-      path: `${Routes.UPLOAD}`,
-      icon: 'upload',
+      label: TranslateMessage('Admin.Sida.App.Users'),
+      path: Routes.USER,
+      icon: 'users',
     },
-    {
-      label: TranslateMessage('Admin.Sida.App.Reports'),
-      path: Routes.SCRUTINYREPORT,
-      icon: 'statsDownSquare',
-    },
-    {
-      label: TranslateMessage('Admin.Sida.APP.ArchitectDetails.Details'),
-      path: Routes.ARCHITECTDETAILS,
-      icon: 'architect',
-    },
-
-    {
-      label: TranslateMessage('Admin.Delivery.App.Ticket'),
-      path: Routes.TICKET,
-      icon: 'ticketLine',
-    },
-
     // {
-    //   label: TranslateMessage('Admin.Delivery.App.Profile.Label'),
-    //   path: Routes.PROFILE,
-    //   icon: 'userCircle',
+    //   label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
+    //   path: `${Routes.UPLOAD}`,
+    //   icon: 'upload',
     // },
     // {
-    //   label: TranslateMessage('Admin.Delivery.App.Roles.Label'),
-    //   path: Routes.ROLES,
-    //   icon: 'communityOutline',
-    // },
-    //  {
-    //   label: TranslateMessage('Admin.Delivery.App.Users.Label'),
-    //   path: Routes.USERS,
-    //   icon: 'userOutlineGroup',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Business'),
-    //   path: Routes.BUSINESS,
+    //   label: TranslateMessage('Admin.Sida.App.Reports'),
+    //   path: Routes.SCRUTINYREPORT,
     //   icon: 'statsDownSquare',
     // },
     // {
-    //   label: TranslateMessage('Admin.Delivery.App.InvoiceManagement'),
-    //   path: Routes.INVOICING,
-    //   icon: 'userCircle',
+    //   label: TranslateMessage('Admin.Sida.APP.ArchitectDetails.Details'),
+    //   path: Routes.ARCHITECTDETAILS,
+    //   icon: 'architect',
     // },
+
+    // {
+    //   label: TranslateMessage('Admin.Delivery.App.Ticket'),
+    //   path: Routes.TICKET,
+    //   icon: 'ticketLine',
+    // },
+
+
     {
       label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
       path: Routes.LOGIN,
@@ -155,31 +136,31 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     Routes.LOGIN,
   ];
 
- const hiddenFromTenant: string[] = [
-  Routes.BUSINESS,
-];
+  const hiddenFromTenant: string[] = [
+    Routes.BUSINESS,
+  ];
 
- const hiddenFromProductAdminAsTenant: string[] = [
-  Routes.BUSINESS,
-  Routes.PROFILE
-];
+  const hiddenFromProductAdminAsTenant: string[] = [
+    Routes.BUSINESS,
+    Routes.PROFILE
+  ];
 
- // Routes hidden in non-SaaS mode
- const hiddenWhenNotSaas: string[] = [
-  Routes.ROLES,
-  Routes.USERS,
-  Routes.INVOICING,
-];
+  // Routes hidden in non-SaaS mode
+  const hiddenWhenNotSaas: string[] = [
+    Routes.ROLES,
+    Routes.USERS,
+    Routes.INVOICING,
+  ];
 
- const filteredDrawerOptions = isProductAdmin && !isTenantView
-  ? drawerOptions.filter((item) => visibleForProductAdmin.includes(item.path))
-  : isProductAdmin && isTenantView
-  ? drawerOptions.filter((item) => !hiddenFromProductAdminAsTenant.includes(item.path))
-  : drawerOptions.filter((item) => {
-      if (!IS_SAAS && hiddenWhenNotSaas.includes(item.path)) return false;
-      return !hiddenFromTenant.includes(item.path);
-    });
-  
+  const filteredDrawerOptions = isProductAdmin && !isTenantView
+    ? drawerOptions.filter((item) => visibleForProductAdmin.includes(item.path))
+    : isProductAdmin && isTenantView
+      ? drawerOptions.filter((item) => !hiddenFromProductAdminAsTenant.includes(item.path))
+      : drawerOptions.filter((item) => {
+        if (!IS_SAAS && hiddenWhenNotSaas.includes(item.path)) return false;
+        return !hiddenFromTenant.includes(item.path);
+      });
+
   const footerItems = [
     {
       key: 'themeToggle',

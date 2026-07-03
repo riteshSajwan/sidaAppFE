@@ -31,14 +31,17 @@ import { NewBookingNotificationReducer } from 'src/common/service/websocket/newB
 const combinedReducer = combineReducers({
   login: loginReducer,
   profile: ProfileReducer,
+  city: CityReducer,
+  ticket: TicketReducer,
+
+
+  // to be removed
   rateTier: rateTierListReducer,
   driver: DriverReducer,
   invoicing: InvoicingReducer,
   country: CountryReducer,
-  city: CityReducer,
   customer: CustomerReducer,
   coupon: CouponReducer,
-  ticket: TicketReducer,
   report: ReportReducer,
   booking: BookingReducer,
   notification: NotificationReducer,

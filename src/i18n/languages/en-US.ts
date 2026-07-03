@@ -23,7 +23,6 @@ export default {
     'Admin.Sida.App.Registration.MiddleName': 'Middle Name',
     'Admin.Sida.App.Registration.LastName': 'Last Name',
     'Admin.Sida.App.Registration.FatherName': 'Father',
-    'Admin.Sida.App.Registration.SpouseName': 'Spouse',
     'Admin.Sida.App.Registration.State': 'State',
     'Admin.Sida.App.Registration.District': 'District',
     'Admin.Sida.App.Registration.Thesil': 'Thesil',
@@ -118,6 +117,12 @@ export default {
 
     'Admin.Sida.App.NewApplication':'New Application',
     'Admin.Sida.App.MyApplication':'My Application',
+
+
+   
+
+
+
     // To be removed
 
     // 'Admin.Delivery.App.LogIn.Label': 'Log In',
@@ -1198,8 +1203,7 @@ export default {
     'Admin.Sida.App.PrivateArchReg.FirstName': 'First Name',
     'Admin.Sida.App.PrivateArchReg.MiddleName': 'Middle Name',
     'Admin.Sida.App.PrivateArchReg.LastName': 'Last Name',
-    'Admin.Sida.App.PrivateArchReg.Father': 'Father',
-    'Admin.Sida.App.PrivateArchReg.Spouse': 'Spouse',
+    'Admin.Sida.App.PrivateArchReg.SpouseName': 'Spouse Name',
     'Admin.Sida.App.PrivateArchReg.FatherName': 'Father Name',
     'Admin.Sida.App.PrivateArchReg.ContactInfo': 'Contact Information',
     'Admin.Sida.App.PrivateArchReg.MailingAddress': 'Mailing Address',

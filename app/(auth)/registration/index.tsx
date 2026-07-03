@@ -1,9 +1,5 @@
-import Registration from 'src/components/Auth/Registration/Registration';
+import Registration from 'src/components/Auth/Registration/RegistrationMultiStep';
 
-export default function RegistrationPage (){
-  return (
-   
-      <Registration />
-   
-  );
+export default function RegistrationPage() {
+  return <Registration />;
 }

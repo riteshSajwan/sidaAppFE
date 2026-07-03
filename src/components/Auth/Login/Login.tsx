@@ -2,13 +2,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Dimensions,
-  Pressable,
-  TextInput as RNTextInput,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
+    Dimensions,
+    Pressable,
+    TextInput as RNTextInput,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -525,7 +525,13 @@ const LoginContainer = () => {
             <View style={styles.registerRow}>
               <Text style={styles.registerText}>
                 New citizen?{' '}
-                <Text style={styles.registerLink}>Register here</Text>
+                <Text
+                  style={styles.registerLink}
+                  onPress={() => router.push(Routes.REGISTRATION as any)}
+                  accessibilityRole="link"
+                >
+                  Register here
+                </Text>
               </Text>
             </View>
 

@@ -1,10 +1,6 @@
-import { FORMAT, IDocumentField } from '../ArchitectDetails/DocumentUploads/DocumentUploadsUtils';
+import { FORMAT, IDocumentField } from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploadsUtils';
 
-// ─── Mode ─────────────────────────────────────────────────────────────────────
-
-export type RegistrationMode = 'structural' | 'privateArchitect';
-
-// ─── Form field config type ───────────────────────────────────────────────────
+// ─── Form field config types ──────────────────────────────────────────────────
 
 export interface IDropdownOption {
   label: string;
@@ -13,61 +9,47 @@ export interface IDropdownOption {
 
 export interface IFormField {
   key: keyof IRegistrationForm;
-  /** Suffix after the i18n namespace prefix, e.g. 'FirstName' */
   labelKey: string;
   required?: boolean;
-  /** Defaults to 'text' when omitted */
   fieldType?: 'text' | 'dropdown';
   keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
-  /** Required when fieldType === 'dropdown' */
   options?: IDropdownOption[];
 }
 
-// ─── Combined form interface ──────────────────────────────────────────────────
+// ─── Form interface ───────────────────────────────────────────────────────────
 
 export interface IRegistrationForm {
-  // Personal (shared)
+  // Personal
   firstName: string;
   middleName: string;
   lastName: string;
   father: string;
   spouse: string;
   fatherName: string;
-  // Contact (shared)
+  // Contact
   mailingAddress: string;
   state: string;
   district: string;
   tehsil: string;
   cityVillage: string;
+  cityVillageOther: string;
   pinCode: string;
   mobileNumber: string;
   email: string;
-  // Contact: Structural-only
-  authority: string;
-  // Contact: Private Architect-only
-  cityVillageOther: string;
   regAuthority: string;
-  // Organisation (Structural-only)
-  organisationName: string;
-  // Professional (Structural-only)
-  qualification: string;
-  // Registration (shared)
-  regLicenseNo: string;
-  validity: string;
-  // Registration: Structural-only
-  yearsOfExperience: string;
-  grade: string;
-  // Registration: Private Architect-only
+  // Registration
   appType: string;
   noOfYears: string;
-  // Education (Private Architect-only)
+  regLicenseNo: string;
+  validity: string;
+  // Education
   instituteName: string;
   yearOfPassing: string;
-  // Declaration (shared)
+  // Declaration
   declared: boolean;
 }
 
-// ─── Shared dropdown option lists ────────────────────────────────────────────
+// ─── Dropdown options ─────────────────────────────────────────────────────────
 
 export const STATE_OPTIONS: IDropdownOption[] = [
   { label: 'Select State', value: '' },
@@ -94,13 +76,6 @@ export const CITY_VILLAGE_OPTIONS: IDropdownOption[] = [
   { label: 'Other', value: 'other' },
 ];
 
-export const GRADE_OPTIONS: IDropdownOption[] = [
-  { label: 'Select Grade', value: '' },
-  { label: 'Grade A', value: 'A' },
-  { label: 'Grade B', value: 'B' },
-  { label: 'Grade C', value: 'C' },
-];
-
 export const APP_TYPE_OPTIONS: IDropdownOption[] = [
   { label: 'Select Application Type', value: '' },
   { label: 'New Registration', value: 'new' },
@@ -108,12 +83,9 @@ export const APP_TYPE_OPTIONS: IDropdownOption[] = [
   { label: 'Upgrade', value: 'upgrade' },
 ];
 
-// ─── Field config arrays (rows of columns) ───────────────────────────────────
-// Each inner array is one <View style={formStyle.formRow}>.
-// The i18n namespace prefix is resolved in the component based on mode.
+// ─── Field configs ────────────────────────────────────────────────────────────
 
-/** Personal section — identical for both modes */
-export const SHARED_PERSONAL_FIELDS: IFormField[][] = [
+export const PERSONAL_FIELDS: IFormField[][] = [
   [
     { key: 'firstName',  labelKey: 'FirstName',  required: true },
     { key: 'middleName', labelKey: 'MiddleName' },
@@ -126,8 +98,7 @@ export const SHARED_PERSONAL_FIELDS: IFormField[][] = [
   ],
 ];
 
-/** Contact rows shared by both modes (no authority field yet) */
-export const SHARED_CONTACT_FIELDS: IFormField[][] = [
+export const CONTACT_FIELDS: IFormField[][] = [
   [
     { key: 'mailingAddress', labelKey: 'MailingAddress' },
   ],
@@ -142,71 +113,45 @@ export const SHARED_CONTACT_FIELDS: IFormField[][] = [
   ],
 ];
 
-/**
- * City/pin row differs: Private Arch adds a "Other City/Village" column.
- * Exported separately so the component can inject the extra field conditionally.
- */
 export const CITY_ROW_BASE: IFormField[] = [
   { key: 'cityVillage', labelKey: 'City', fieldType: 'dropdown', options: CITY_VILLAGE_OPTIONS },
   { key: 'pinCode',     labelKey: 'Pincode', keyboardType: 'numeric' },
 ];
+
 export const CITY_OTHER_FIELD: IFormField = {
   key: 'cityVillageOther', labelKey: 'CityOther',
 };
 
-/** Authority field — different key/label per mode, but same position */
-export const STRUCTURAL_AUTHORITY_FIELD: IFormField = {
-  key: 'authority', labelKey: 'Authority',
-};
 export const PRIVATE_ARCH_AUTHORITY_FIELD: IFormField = {
   key: 'regAuthority', labelKey: 'RegAuthority',
 };
 
-/** Structural-only: org + professional + reg extras */
-export const STRUCTURAL_ONLY_FIELDS: IFormField[][] = [
-  // Organisation
-  [{ key: 'organisationName', labelKey: 'OrgName', required: true }],
-  // Professional
-  [{ key: 'qualification', labelKey: 'Qualification', required: true }],
-  // Registration extras
-  [
-    { key: 'yearsOfExperience', labelKey: 'YearsOfExperience', required: true, keyboardType: 'numeric' },
-    { key: 'grade',             labelKey: 'Grade',             required: true, fieldType: 'dropdown', options: GRADE_OPTIONS },
-  ],
-];
-
-/** Private Architect-only: reg extras + education */
+/** Registration extras (AppType + NoOfYears) and Education (InstituteName + YearOfPassing) */
 export const PRIVATE_ARCH_ONLY_FIELDS: IFormField[][] = [
-  // Registration extras
   [
     { key: 'appType',   labelKey: 'AppType',   required: true, fieldType: 'dropdown', options: APP_TYPE_OPTIONS },
     { key: 'noOfYears', labelKey: 'NoOfYears', keyboardType: 'numeric' },
   ],
-  // Education
   [
     { key: 'instituteName', labelKey: 'InstituteName', required: true },
     { key: 'yearOfPassing', labelKey: 'YearOfPassing', required: true, keyboardType: 'numeric' },
   ],
 ];
 
-/** Shared registration row (RegLicenseNo + Validity) */
 export const SHARED_REG_FIELDS: IFormField[] = [
   { key: 'regLicenseNo', labelKey: 'RegLicenseNo', required: true },
   { key: 'validity',     labelKey: 'Validity',     required: true },
 ];
 
-// ─── INITIAL_FORM — derived from all field configs ───────────────────────────
-
-// ─── Initial state ────────────────────────────────────────────────────────────
+// ─── Initial form state ───────────────────────────────────────────────────────
 
 const ALL_FIELD_KEYS: Array<keyof IRegistrationForm> = [
-  ...SHARED_PERSONAL_FIELDS.flat().map((f) => f.key),
-  ...SHARED_CONTACT_FIELDS.flat().map((f) => f.key),
-  CITY_ROW_BASE[0].key, CITY_ROW_BASE[1].key,
+  ...PERSONAL_FIELDS.flat().map((f) => f.key),
+  ...CONTACT_FIELDS.flat().map((f) => f.key),
+  CITY_ROW_BASE[0].key,
+  CITY_ROW_BASE[1].key,
   CITY_OTHER_FIELD.key,
-  STRUCTURAL_AUTHORITY_FIELD.key,
   PRIVATE_ARCH_AUTHORITY_FIELD.key,
-  ...STRUCTURAL_ONLY_FIELDS.flat().map((f) => f.key),
   ...PRIVATE_ARCH_ONLY_FIELDS.flat().map((f) => f.key),
   ...SHARED_REG_FIELDS.map((f) => f.key),
 ];
@@ -216,16 +161,14 @@ export const INITIAL_FORM: IRegistrationForm = ALL_FIELD_KEYS.reduce(
   { declared: false } as IRegistrationForm,
 );
 
-// ─── Error state type and factory ─────────────────────────────────────────────
+// ─── Error state ──────────────────────────────────────────────────────────────
 
 export type IRegistrationFormErrors = Partial<Record<keyof IRegistrationForm, string>> & {
   apiError: string;
 };
 
 export function generateInitialFormErrors(): IRegistrationFormErrors {
-  return {
-    apiError: '',
-  };
+  return { apiError: '' };
 }
 
 // ─── Validation ───────────────────────────────────────────────────────────────
@@ -236,12 +179,11 @@ export interface IRegistrationValidationResult {
 }
 
 /**
- * Validates registration form based on mode and field config.
- * Returns both isValid flag and populated errors object.
+ * Validate Step 1 only (personal/contact/registration/education fields).
+ * Does NOT check the declaration checkbox (that's on Step 2).
  */
 export function validateRegistrationForm(
   form: IRegistrationForm,
-  mode: RegistrationMode,
   tField: (key: string, opts?: Record<string, string>) => string,
 ): IRegistrationValidationResult {
   const errors = generateInitialFormErrors();
@@ -255,79 +197,28 @@ export function validateRegistrationForm(
     }
   };
 
-  const isPrivateArch = mode === 'privateArchitect';
-
-  // Build required field list from config arrays
   const requiredFields: Array<[keyof IRegistrationForm, string]> = [
-    ...SHARED_PERSONAL_FIELDS.flat()
+    ...PERSONAL_FIELDS.flat()
       .filter((f) => f.required)
       .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
-    ...SHARED_CONTACT_FIELDS.flat()
+    ...CONTACT_FIELDS.flat()
       .filter((f) => f.required)
       .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
     ...SHARED_REG_FIELDS
       .filter((f) => f.required)
       .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
-    ...(isPrivateArch
-      ? PRIVATE_ARCH_ONLY_FIELDS.flat()
-          .filter((f) => f.required)
-          .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)])
-      : STRUCTURAL_ONLY_FIELDS.flat()
-          .filter((f) => f.required)
-          .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)])
-    ),
+    ...PRIVATE_ARCH_ONLY_FIELDS.flat()
+      .filter((f) => f.required)
+      .map((f): [keyof IRegistrationForm, string] => [f.key, tField(f.labelKey)]),
   ];
 
   requiredFields.forEach(([key, label]) => req(key, label));
 
-  // Declaration checkbox
-  if (!form.declared) {
-    errors.declared = tField('Required', { field: 'Declaration' });
-    isValid = false;
-  }
-
+  // NOTE: Declaration is NOT validated here — it's on Step 2
   return { isValid, errors };
 }
 
 // ─── Attachment fields ────────────────────────────────────────────────────────
-
-export const STRUCTURAL_REGISTRATION_ATTACHMENT_FIELDS: IDocumentField[] = [
-  {
-    key: 'identity',
-    labelKey: 'Admin.Sida.App.Registration.Attach1',
-    required: true,
-    allowedTypes: [...FORMAT.IMAGE, ...FORMAT.PDF],
-    maxSizeBytes: 5 * 1024 * 1024,
-  },
-  {
-    key: 'photo',
-    labelKey: 'Admin.Sida.App.Registration.Attach2',
-    required: true,
-    allowedTypes: [...FORMAT.IMAGE],
-    maxSizeBytes: 5 * 1024 * 1024,
-  },
-  {
-    key: 'photoId',
-    labelKey: 'Admin.Sida.App.Registration.Attach3',
-    required: true,
-    allowedTypes: [...FORMAT.IMAGE, ...FORMAT.PDF],
-    maxSizeBytes: 5 * 1024 * 1024,
-  },
-  {
-    key: 'experienceCert',
-    labelKey: 'Admin.Sida.App.Registration.Attach4',
-    required: false,
-    allowedTypes: [...FORMAT.PDF],
-    maxSizeBytes: 10 * 1024 * 1024,
-  },
-  {
-    key: 'workAssignment',
-    labelKey: 'Admin.Sida.App.Registration.Attach5',
-    required: false,
-    allowedTypes: [...FORMAT.PDF],
-    maxSizeBytes: 10 * 1024 * 1024,
-  },
-];
 
 export const PRIVATE_ARCH_ATTACHMENT_FIELDS: IDocumentField[] = [
   {
@@ -401,3 +292,18 @@ export const PRIVATE_ARCH_ATTACHMENT_FIELDS: IDocumentField[] = [
     maxSizeBytes: 5 * 1024 * 1024,
   },
 ];
+
+// ─── UI constants ─────────────────────────────────────────────────────────────
+
+import { Dimensions } from 'react-native';
+
+export const ACCENT = '#1a3fbd';
+export const DARK_PANEL = '#0D2580';
+export const IS_WIDE = Dimensions.get('window').width >= 900;
+
+export const STEPS = [
+  { key: 'details',   label: 'Personal Details' },
+  { key: 'documents', label: 'Documents' },
+] as const;
+
+export type StepKey = (typeof STEPS)[number]['key'];
