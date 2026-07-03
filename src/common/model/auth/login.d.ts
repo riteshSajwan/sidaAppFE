@@ -51,3 +51,16 @@ export type UserProfilesDetailsDto = {
   superAdmin: boolean;
   isProductAdmin: boolean;
 };
+
+
+
+export type RegisterArchitectRequestDto = {
+  username: string;
+  password: string;
+  deviceToken: string;
+  admin: boolean;
+};
+
+export type RegisterArchitectResponseDto = {
+ 
+};

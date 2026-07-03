@@ -50,4 +50,8 @@ const SUPPORT_CHAT_COMMON_CONFIG = {
   websocket: `wss://${SUPPORT_CHAT_DOMAIN}/xmpp-websocket`,
 };
 
+
+
+export const REGISTER_URL = AUTH_BASE_URL + `/api/auth/register`;
+
 export const SUPPORT_CHAT_CONFIG = SUPPORT_CHAT_COMMON_CONFIG;

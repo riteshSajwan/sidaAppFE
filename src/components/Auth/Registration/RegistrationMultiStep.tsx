@@ -19,9 +19,8 @@ import { Routes } from 'src/routing/paths';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { sectionStyles, stepStyles, styles } from './Registration';
 import {
-  CITY_OTHER_FIELD,
-  CITY_ROW_BASE,
   CONTACT_FIELDS,
+  EDUCATION_FIELDS,
   generateInitialFormErrors,
   IDropdownOption,
   IFormField,
@@ -30,9 +29,7 @@ import {
   IRegistrationFormErrors,
   PERSONAL_FIELDS,
   PRIVATE_ARCH_ATTACHMENT_FIELDS,
-  PRIVATE_ARCH_AUTHORITY_FIELD,
-  PRIVATE_ARCH_ONLY_FIELDS,
-  SHARED_REG_FIELDS,
+  REGISTRATION_FIELDS,
   STEPS,
   validateRegistrationForm,
 } from './RegistrationUtils';
@@ -94,9 +91,11 @@ const Registration: React.FC = () => {
     [TranslateMessage],
   );
 
-  const [currentStep, setCurrentStep] = useState(0);
-  const [form, setForm]               = useState<IRegistrationForm>(INITIAL_FORM);
-  const [formErrors, setFormErrors]   = useState<IRegistrationFormErrors>(generateInitialFormErrors);
+  // ── State ─────────────────────────────────────────────────────────────────
+
+  const [currentStep,  setCurrentStep]  = useState(0);
+  const [form,         setForm]         = useState<IRegistrationForm>(INITIAL_FORM);
+  const [formErrors,   setFormErrors]   = useState<IRegistrationFormErrors>(generateInitialFormErrors);
   const [attachmentFiles, setAttachmentFiles] = useState<IDocumentFilesState>(
     () => generateInitialFilesStateFromFields(PRIVATE_ARCH_ATTACHMENT_FIELDS),
   );
@@ -124,12 +123,13 @@ const Registration: React.FC = () => {
     [],
   );
 
-  // ── Render helpers ────────────────────────────────────────────────────────
+  // ── Field renderers ───────────────────────────────────────────────────────
 
-  const renderField = useCallback((field: IFormField, label: string) => {
+  const renderField = useCallback((field: IFormField) => {
+    const label = tArch(field.labelKey);
     const error = formErrors[field.key] as string | undefined;
     return (
-      <View key={field.key} style={formStyle.formCol}>
+      <View key={field.key} style={[formStyle.formCol, field.span === 3 && { flex: 3 }]}>
         <Text style={formStyle.labelTitle}>
           {label}
           {field.required && <Text style={formStyle.asteriskTxt}> *</Text>}
@@ -153,9 +153,10 @@ const Registration: React.FC = () => {
         {!!error && <ErrorMessageContainer message={error} />}
       </View>
     );
-  }, [form, formErrors, formStyle, setField, theme]);
+  }, [form, formErrors, formStyle, setField, tArch, theme]);
 
-  const renderDropdown = useCallback((field: IFormField, label: string) => {
+  const renderDropdown = useCallback((field: IFormField) => {
+    const label    = tArch(field.labelKey);
     const error    = formErrors[field.key] as string | undefined;
     const strValue = form[field.key] as string;
     const selected = (field.options ?? []).find((o) => o.value === strValue)
@@ -175,30 +176,37 @@ const Registration: React.FC = () => {
         {!!error && <ErrorMessageContainer message={error} />}
       </View>
     );
-  }, [form, formErrors, formStyle, setDropdown]);
+  }, [form, formErrors, formStyle, setDropdown, tArch]);
 
-  const renderFormField = useCallback((field: IFormField, label: string) => {
-    if (field.fieldType === 'dropdown' && field.options) return renderDropdown(field, label);
-    return renderField(field, label);
-  }, [renderDropdown, renderField]);
+  /**
+   * Renders a flat array of fields chunked into rows of 3 columns.
+   * A field with span=3 gets its own full-width row.
+   */
+  const renderSection = useCallback((fields: IFormField[]) => {
+    const rows: IFormField[][] = [];
+    let current: IFormField[]  = [];
 
-  const renderRow = useCallback((
-    row: IFormField[],
-    resolveLabel: (f: IFormField) => string = (f) => tArch(f.labelKey),
-  ) => (
-    <View style={formStyle.formRow}>
-      {row.map((field) => renderFormField(field, resolveLabel(field)))}
-    </View>
-  ), [formStyle, renderFormField, tArch]);
+    fields.forEach((field) => {
+      if (field.span === 3) {
+        if (current.length) { rows.push(current); current = []; }
+        rows.push([field]);
+      } else {
+        current.push(field);
+        if (current.length === 3) { rows.push(current); current = []; }
+      }
+    });
+    if (current.length) rows.push(current);
 
-  const renderRows = useCallback((
-    rows: IFormField[][],
-    resolveLabel?: (f: IFormField) => string,
-  ) =>
-    rows.map((row, i) => (
-      <React.Fragment key={i}>{renderRow(row, resolveLabel)}</React.Fragment>
-    )),
-  [renderRow]);
+    return rows.map((row, i) => (
+      <View key={i} style={formStyle.formRow}>
+        {row.map((field) =>
+          field.fieldType === 'dropdown' && field.options
+            ? renderDropdown(field)
+            : renderField(field),
+        )}
+      </View>
+    ));
+  }, [formStyle, renderDropdown, renderField]);
 
   // ── Validation ────────────────────────────────────────────────────────────
 
@@ -219,10 +227,14 @@ const Registration: React.FC = () => {
 
   // ── Navigation ────────────────────────────────────────────────────────────
 
-  const handleNext   = () => { if (validateStep1()) setCurrentStep(1); };
-  const handleBack   = () => setCurrentStep(0);
+  const handleNext = () => { if (validateStep1()) setCurrentStep(1); };
+  const handleBack = () => setCurrentStep(0);
 
+  console.log("form",form)
+  console.log("attachmentFiles",attachmentFiles)
   const handleSubmit = useCallback(async () => {
+    
+    if (!validateStep2()) return;
     if (!form.declared) {
       setFormErrors((prev) => ({
         ...prev,
@@ -230,7 +242,6 @@ const Registration: React.FC = () => {
       }));
       return;
     }
-    if (!validateStep2()) return;
     setLoading(true);
     try {
       console.log('Submit registration', { form, attachmentFiles });
@@ -244,21 +255,6 @@ const Registration: React.FC = () => {
     }
   }, [validateStep2, attachmentFiles, form, TranslateMessage, tArch]);
 
-  const cityRow: IFormField[] = [CITY_ROW_BASE[0], CITY_OTHER_FIELD, CITY_ROW_BASE[1]];
-
-  function renderFooter() {
-    return (
-      <View style={styles.footerRow}>
-        <Text style={styles.footerText}>Already registered? </Text>
-        <Pressable
-          onPress={() => router.replace(Routes.LOGIN as any)}
-          accessibilityRole="link"
-        >
-          <Text style={styles.footerLink}>Sign in</Text>
-        </Pressable>
-      </View>
-    );
-  }
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -289,7 +285,7 @@ const Registration: React.FC = () => {
         <View style={styles.rightPanel}>
           <Text style={styles.brandName}>SIDA</Text>
           <Text style={styles.pageHeading}>
-            {currentStep === 0 ? 'Architect Registration' : 'Upload Documents'}
+            {currentStep === 0 ? tArch('Title') : tArch('Attachments')}
           </Text>
           <Text style={styles.pageSubtitle}>
             {currentStep === 0
@@ -297,31 +293,24 @@ const Registration: React.FC = () => {
               : 'Step 2 of 2 — Upload the required supporting documents'}
           </Text>
 
-          {/* ══ STEP 1 ══ */}
+          {/* ══ STEP 1: Details ══════════════════════════════ */}
           {currentStep === 0 && (
             <>
+              {/* Personal Information */}
               <SectionHeading title={tArch('PersonalInfo')} />
-              {renderRows(PERSONAL_FIELDS)}
+              {renderSection(PERSONAL_FIELDS)}
 
+              {/* Contact Information */}
               <SectionHeading title={tArch('ContactInfo')} />
-              {renderRows(CONTACT_FIELDS.slice(0, 1))}
-              {renderRows(CONTACT_FIELDS.slice(1, 2))}
-              {renderRow(cityRow)}
+              {renderSection(CONTACT_FIELDS)}
 
-              {/* Mobile / Email / RegAuthority */}
-              <View style={formStyle.formRow}>
-                {CONTACT_FIELDS[2].map((field) =>
-                  renderFormField(field, tArch(field.labelKey)),
-                )}
-                {renderField(PRIVATE_ARCH_AUTHORITY_FIELD, tArch(PRIVATE_ARCH_AUTHORITY_FIELD.labelKey))}
-              </View>
-
+              {/* Registration Details */}
               <SectionHeading title={tArch('RegDetails')} />
-              {renderRow(PRIVATE_ARCH_ONLY_FIELDS[0])}
-              {renderRow(SHARED_REG_FIELDS)}
+              {renderSection(REGISTRATION_FIELDS)}
 
+              {/* Education Information */}
               <SectionHeading title={tArch('EduInfo')} />
-              {renderRow(PRIVATE_ARCH_ONLY_FIELDS[1])}
+              {renderSection(EDUCATION_FIELDS)}
 
               <View style={styles.btnRowEnd}>
                 <Pressable
@@ -335,7 +324,7 @@ const Registration: React.FC = () => {
             </>
           )}
 
-          {/* ══ STEP 2 ══ */}
+          {/* ══ STEP 2: Documents ════════════════════════════ */}
           {currentStep === 1 && (
             <>
               <DocumentUploads
@@ -393,7 +382,16 @@ const Registration: React.FC = () => {
             </>
           )}
 
-          {renderFooter()}
+          {/* Footer */}
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>Already registered? </Text>
+            <Pressable
+              onPress={() => router.replace(Routes.LOGIN as any)}
+              accessibilityRole="link"
+            >
+              <Text style={styles.footerLink}>Sign in</Text>
+            </Pressable>
+          </View>
         </View>
 
       </View>

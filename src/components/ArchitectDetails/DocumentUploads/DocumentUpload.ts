@@ -183,14 +183,19 @@ export const useDocumentUploadStyle = () => {
     },
 
     iconBtn: {
-      width: 32,
-      height: 32,
+      width: 36,
+      height: 36,
       borderRadius: theme.roundness.sm,
       borderWidth: 1,
       borderColor: theme.colors.borderLow,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.surfaceBase,
+    },
+
+    iconBtnDanger: {
+      borderColor: theme.colors.borderErrorInverse,
+      backgroundColor: theme.colors.surfaceErrorLow ?? '#fff5f5',
     },
 
     // ── Error row ─────────────────────────────────────────────────────────────

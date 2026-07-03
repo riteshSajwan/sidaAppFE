@@ -1,9 +1,9 @@
-import { SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
+import { RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
 import { ILogoutRequest } from 'src/common/service/auth/slice';
 import restService from 'src/common/service/restService/restService';
 import { ROLES } from 'src/common/utils/permissionUtils';
 import { getTenantId } from 'src/common/utils/tenantUtils';
-import { API_AUTH_BUSINESS_ADMIN_URL, API_AUTH_CUSTOMER_URL, AUTH_BASE_URL, BUSINESS_ADMIN_LOGIN_URL, IS_SAAS, LOGIN_URL } from 'src/constants/index';
+import { API_AUTH_BUSINESS_ADMIN_URL, API_AUTH_CUSTOMER_URL, AUTH_BASE_URL, BUSINESS_ADMIN_LOGIN_URL, IS_SAAS, LOGIN_URL, REGISTER_URL } from 'src/constants/index';
 import { getCurrentLang } from 'src/i18n/i18nUtils';
 
 export interface UserDetails {
@@ -154,4 +154,49 @@ export const handleUserLogout = (data: ILogoutData): Promise<string> => {
         });
       });
     });
+};
+
+
+
+export const assignArchitect = (data: RegisterArchitectRequestDto, tenantId?: string | null, retries = 3) => {
+  const attemptFetch = (attempt: number): Promise<RegisterArchitectResponseDto> => {
+    const headers: Record<string, string> = {
+      Accept: '*/*',
+      'Content-Type': 'application/json',
+      'Accept-Language': getCurrentLang(),
+    };
+
+    // Add X-Tenant-Id header if tenantId is provided
+    if (tenantId) {
+      headers['X-Tenant-Id'] = tenantId;
+    }
+
+    // Non-SaaS: always use the normal login endpoint regardless of tenantId
+    const registerUrl = !IS_SAAS ? REGISTER_URL : tenantId ? REGISTER_URL : BUSINESS_ADMIN_LOGIN_URL;
+    const registerBody = !IS_SAAS ? data : tenantId ? data : { ...data, role: ROLES.PRIVATE_ARCHITECT };
+
+    return fetch(registerUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(registerBody),
+    })      .then((res) => {
+        if (!res.ok) {
+          return res
+            .json()
+            .catch(() => res.status)
+            .then((error) => {
+              return Promise.reject(error);
+            });
+        }
+        return res.json();
+      })
+      .catch((e) => {
+        // if (attempt < retries) {
+        //   return attemptFetch(attempt + 1);
+        // }
+        return Promise.reject(e);
+      });
+  };
+
+  return attemptFetch(0);
 };

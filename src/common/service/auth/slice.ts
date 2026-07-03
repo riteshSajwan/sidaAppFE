@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { ERRORS } from 'src/constants/index';
 
 export interface ILoginData {
   success: boolean;
@@ -31,6 +30,12 @@ const loginSlice = createSlice({
   loginFailed(state, action: PayloadAction<any>) {
       state.error = action.payload;
     },
+     registerSuccess(state, action: PayloadAction<any>) {
+      state.success = action.payload;
+    },
+    registerFailed(state, action: PayloadAction<any>) {
+        state.error = action.payload;
+      },
     clearErrors(state) {
       state.error = null;
     },
@@ -41,4 +46,4 @@ const loginSlice = createSlice({
 });
 
 export const loginReducer = loginSlice.reducer;
-export const { loginSuccess, loginFailed, clearErrors, setLoginStatus } = loginSlice.actions;
+export const { loginSuccess, loginFailed, registerFailed , registerSuccess , clearErrors, setLoginStatus } = loginSlice.actions;

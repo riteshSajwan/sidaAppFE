@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
-import { fetchLogin, handleUserLogout, ISilentResponse, silentSignIn } from 'src/common/service/auth/apiCall';
-import { clearErrors, ILogoutRequest, loginFailed, loginSuccess, setLoginStatus } from 'src/common/service/auth/slice';
+import { RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
+import { assignArchitect, fetchLogin, handleUserLogout, ISilentResponse, silentSignIn } from 'src/common/service/auth/apiCall';
+import { clearErrors, ILogoutRequest, loginFailed, loginSuccess, registerFailed, setLoginStatus } from 'src/common/service/auth/slice';
 import { profileData } from 'src/common/service/profile/slice';
 import { setUserCredentials } from 'src/common/utils/credentialsUtil';
 import { setUserRole } from 'src/common/utils/roleStorageUtils';
@@ -112,4 +112,31 @@ export const logout =
       .then((tenantId) => handleUserLogout({ ...data, tenantId }))
       .catch(() => {})
       .then(() => doReset());
+  };
+
+
+   export const signUpRequest =
+  (data: RegisterArchitectRequestDto, tenantId?: string | null): AppThunk =>
+  async (dispatch) => {
+    try {
+      const apiResponse = assignArchitect(data, tenantId);
+
+      apiResponse
+        .then((res: RegisterArchitectResponseDto) => {
+          
+          
+          // setUserCredentials(JSON.stringify(res.supperAdminProperties));
+
+          
+
+          
+        })
+        .catch((error) => {
+          const typedError = error as IApiErrorResponse;
+          dispatch(registerFailed(typedError));
+        });
+    } catch (error) {
+      const typedError = error as IApiErrorResponse;
+      dispatch(registerFailed(typedError));
+    }
   };
