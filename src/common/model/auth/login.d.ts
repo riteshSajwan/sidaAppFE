@@ -55,10 +55,23 @@ export type UserProfilesDetailsDto = {
 
 
 export type RegisterArchitectRequestDto = {
-  username: string;
-  password: string;
-  deviceToken: string;
-  admin: boolean;
+  firstName:    string;
+  middleName:   string;
+  lastName:     string;
+  fatherName:   string;
+  mailingAddress: string;
+  state:          string;
+  district:       string;
+  tehsil:         string;
+  cityVillage:    string;
+  pinCode:        string;
+  mobileNumber:   string;
+  email:          string;
+  regLicenseNo: string;
+  instituteName: string;
+  yearOfPassing: string;
+  declared: boolean;
+  attachments:any 
 };
 
 export type RegisterArchitectResponseDto = {

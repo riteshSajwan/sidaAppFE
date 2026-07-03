@@ -13,130 +13,130 @@ import { AppThunk } from 'src/store/index';
 
 export const loginRequest =
   (data: SignInRequestDto, tenantId?: string | null): AppThunk =>
-  async (dispatch) => {
-    try {
-      const apiResponse = fetchLogin(data, tenantId);
+    async (dispatch) => {
+      try {
+        const apiResponse = fetchLogin(data, tenantId);
 
-      apiResponse
-        .then((res: SignInResponseDto) => {
-          dispatch(profileData(res.userDetails));
-          dispatch(
-            saveToken({
-              token: res.token,
-              refreshToken: res.refreshToken,
-            } as ISilentResponse),
-          );
-          setUserCredentials(JSON.stringify(res.supperAdminProperties));
+        apiResponse
+          .then((res: SignInResponseDto) => {
+            dispatch(profileData(res.userDetails));
+            dispatch(
+              saveToken({
+                token: res.token,
+                refreshToken: res.refreshToken,
+              } as ISilentResponse),
+            );
+            setUserCredentials(JSON.stringify(res.supperAdminProperties));
 
-          // Store role from response
-          if (res.userDetails?.role?.name) {
-            setUserRole(res.userDetails.role.name).catch(() => {
-              console.error('Failed to store user role');
-            });
-          }
+            // Store role from response
+            if (res.userDetails?.role?.name) {
+              setUserRole(res.userDetails.role.name).catch(() => {
+                console.error('Failed to store user role');
+              });
+            }
 
-          dispatch(setLoginStatus(true));
-        })
-        .catch((error) => {
-          const typedError = error as IApiErrorResponse;
-          dispatch(loginFailed(typedError));
-        });
-    } catch (error) {
-      const typedError = error as IApiErrorResponse;
-      dispatch(loginFailed(typedError));
-    }
-  };
+            dispatch(setLoginStatus(true));
+          })
+          .catch((error) => {
+            const typedError = error as IApiErrorResponse;
+            dispatch(loginFailed(typedError));
+          });
+      } catch (error) {
+        const typedError = error as IApiErrorResponse;
+        dispatch(loginFailed(typedError));
+      }
+    };
 
 const saveToken =
   ({ token, refreshToken }: ISilentResponse): AppThunk =>
-  async (dispatch) => {
-    setUserToken(token);
-    setUserRefreshToken(refreshToken);
-    dispatch(loginSuccess(true));
-  };
+    async (dispatch) => {
+      setUserToken(token);
+      setUserRefreshToken(refreshToken);
+      dispatch(loginSuccess(true));
+    };
 
 export const clearLoginErrors = (): AppThunk => async (dispatch) => {
   try {
     dispatch(clearErrors());
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const refreshUserToken =
   (data: ILogoutRequest): AppThunk<Promise<ISilentResponse>> =>
-  (dispatch) => {
-    return silentSignIn(data)
-      .then((response: ISilentResponse) => {
-        if (response.token && response.userDetails) {
-          dispatch(profileData(response.userDetails));
-          dispatch(saveData(response));
+    (dispatch) => {
+      return silentSignIn(data)
+        .then((response: ISilentResponse) => {
+          if (response.token && response.userDetails) {
+            dispatch(profileData(response.userDetails));
+            dispatch(saveData(response));
 
-          // Store role from response
-          if (response.userDetails?.role?.name) {
-            setUserRole(response.userDetails.role.name).catch(() => {});
+            // Store role from response
+            if (response.userDetails?.role?.name) {
+              setUserRole(response.userDetails.role.name).catch(() => { });
+            }
           }
-        }
-        return response;
-      })
-      .catch((error) => {
-        if (typeof error === 'object' && error !== null && 'status' in error && error.status === 400) {
-          dispatch(logout());
-        }
-        throw error;
-      });
-  };
+          return response;
+        })
+        .catch((error) => {
+          if (typeof error === 'object' && error !== null && 'status' in error && error.status === 400) {
+            dispatch(logout());
+          }
+          throw error;
+        });
+    };
 
 const saveData =
   ({ token, refreshToken }: ISilentResponse): AppThunk =>
-  async () => {
-    setUserToken(token);
-    setUserRefreshToken(refreshToken);
-  };
+    async () => {
+      setUserToken(token);
+      setUserRefreshToken(refreshToken);
+    };
 
 export const logout =
   (data?: ILogoutRequest): AppThunk =>
-  (dispatch) => {
-    const doReset = () => {
-      dispatch(setLoginStatus(false));
-      dispatch({ type: 'RESET' });
-      AsyncStorage.clear();
+    (dispatch) => {
+      const doReset = () => {
+        dispatch(setLoginStatus(false));
+        dispatch({ type: 'RESET' });
+        AsyncStorage.clear();
+      };
+
+      if (!data) {
+        doReset();
+        return;
+      }
+
+      // Read tenantId BEFORE clearing AsyncStorage, pass it to handleUserLogout
+      // Wait for logout API to finish before clearing storage
+      getTenantId()
+        .then((tenantId) => handleUserLogout({ ...data, tenantId }))
+        .catch(() => { })
+        .then(() => doReset());
     };
 
-    if (!data) {
-      doReset();
-      return;
-    }
 
-    // Read tenantId BEFORE clearing AsyncStorage, pass it to handleUserLogout
-    // Wait for logout API to finish before clearing storage
-    getTenantId()
-      .then((tenantId) => handleUserLogout({ ...data, tenantId }))
-      .catch(() => {})
-      .then(() => doReset());
-  };
+export const signUpRequest =
+  (data: RegisterArchitectRequestDto): AppThunk =>
+    async (dispatch) => {
+      try {
+        const apiResponse = assignArchitect(data);
+
+        apiResponse
+          .then((res: RegisterArchitectResponseDto) => {
 
 
-   export const signUpRequest =
-  (data: RegisterArchitectRequestDto, tenantId?: string | null): AppThunk =>
-  async (dispatch) => {
-    try {
-      const apiResponse = assignArchitect(data, tenantId);
+            // setUserCredentials(JSON.stringify(res.supperAdminProperties));
 
-      apiResponse
-        .then((res: RegisterArchitectResponseDto) => {
-          
-          
-          // setUserCredentials(JSON.stringify(res.supperAdminProperties));
 
-          
 
-          
-        })
-        .catch((error) => {
-          const typedError = error as IApiErrorResponse;
-          dispatch(registerFailed(typedError));
-        });
-    } catch (error) {
-      const typedError = error as IApiErrorResponse;
-      dispatch(registerFailed(typedError));
-    }
-  };
+
+          })
+          .catch((error) => {
+            const typedError = error as IApiErrorResponse;
+            dispatch(registerFailed(typedError));
+          });
+      } catch (error) {
+        const typedError = error as IApiErrorResponse;
+        dispatch(registerFailed(typedError));
+      }
+    };

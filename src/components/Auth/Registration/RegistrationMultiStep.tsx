@@ -1,12 +1,15 @@
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
+import CustomSnackbar, { SnackbarType } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { signUpRequest } from 'src/common/service/auth/action';
 import DocumentUploads from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploads';
 import {
   generateInitialErrorsFromFields,
@@ -16,6 +19,7 @@ import {
   validateDocumentUploadsForFields,
 } from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploadsUtils';
 import { Routes } from 'src/routing/paths';
+import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { sectionStyles, stepStyles, styles } from './Registration';
 import {
@@ -40,7 +44,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
     <View style={stepStyles.row}>
       {STEPS.map((step, index) => {
-        const isDone   = index < currentStep;
+        const isDone = index < currentStep;
         const isActive = index === currentStep;
         return (
           <React.Fragment key={step.key}>
@@ -82,9 +86,9 @@ function SectionHeading({ title }: { title: string }) {
 
 const Registration: React.FC = () => {
   const { t: TranslateMessage } = useTranslation();
-  const { theme }  = useAppTheme();
-  const formStyle  = useFormStyle();
-
+  const { theme } = useAppTheme();
+  const formStyle = useFormStyle();
+  const dispatch: AppDispatch = useDispatch();
   const tArch = useCallback(
     (key: string, opts?: Record<string, string>) =>
       TranslateMessage(`Admin.Sida.App.PrivateArchReg.${key}` as any, opts),
@@ -93,9 +97,9 @@ const Registration: React.FC = () => {
 
   // ── State ─────────────────────────────────────────────────────────────────
 
-  const [currentStep,  setCurrentStep]  = useState(0);
-  const [form,         setForm]         = useState<IRegistrationForm>(INITIAL_FORM);
-  const [formErrors,   setFormErrors]   = useState<IRegistrationFormErrors>(generateInitialFormErrors);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [form, setForm] = useState<IRegistrationForm>(INITIAL_FORM);
+  const [formErrors, setFormErrors] = useState<IRegistrationFormErrors>(generateInitialFormErrors);
   const [attachmentFiles, setAttachmentFiles] = useState<IDocumentFilesState>(
     () => generateInitialFilesStateFromFields(PRIVATE_ARCH_ATTACHMENT_FIELDS),
   );
@@ -104,7 +108,8 @@ const Registration: React.FC = () => {
   );
   const [attachmentPickerErrors, setAttachmentPickerErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-
+  const [snackbarVisible,setSnackbarVisible] = useState<{msg:string,state:boolean}>({msg:'',state:false});
+  const registerState = useSelector((state: RootState) => state.auth.register);
   // ── Field setters ─────────────────────────────────────────────────────────
 
   const setField = useCallback(
@@ -156,8 +161,8 @@ const Registration: React.FC = () => {
   }, [form, formErrors, formStyle, setField, tArch, theme]);
 
   const renderDropdown = useCallback((field: IFormField) => {
-    const label    = tArch(field.labelKey);
-    const error    = formErrors[field.key] as string | undefined;
+    const label = tArch(field.labelKey);
+    const error = formErrors[field.key] as string | undefined;
     const strValue = form[field.key] as string;
     const selected = (field.options ?? []).find((o) => o.value === strValue)
       ?? { label: '', value: '' };
@@ -184,7 +189,7 @@ const Registration: React.FC = () => {
    */
   const renderSection = useCallback((fields: IFormField[]) => {
     const rows: IFormField[][] = [];
-    let current: IFormField[]  = [];
+    let current: IFormField[] = [];
 
     fields.forEach((field) => {
       if (field.span === 3) {
@@ -230,22 +235,29 @@ const Registration: React.FC = () => {
   const handleNext = () => { if (validateStep1()) setCurrentStep(1); };
   const handleBack = () => setCurrentStep(0);
 
-  console.log("form",form)
-  console.log("attachmentFiles",attachmentFiles)
+  console.log("form", form)
+  console.log("attachmentFiles", attachmentFiles)
   const handleSubmit = useCallback(async () => {
-    
-    if (!validateStep2()) return;
-    if (!form.declared) {
-      setFormErrors((prev) => ({
-        ...prev,
-        declared: tArch('Required', { field: 'Declaration' }),
-      }));
-      return;
-    }
-    setLoading(true);
+
+    // if (!validateStep2()) return;
+    // if (!form.declared) {
+    //   setFormErrors((prev) => ({
+    //     ...prev,
+    //     declared: tArch('Required', { field: 'Declaration' }),
+    //   }));
+    //   return;
+    // }
     try {
-      console.log('Submit registration', { form, attachmentFiles });
+      setLoading(true);
+      const payload = {
+        ...form,
+        attachments: []
+      };
+
+      dispatch(signUpRequest(payload));
+
     } catch {
+      alert('test')
       setAttachmentErrors((prev: IDocumentErrors) => ({
         ...prev,
         apiError: TranslateMessage('Admin.Sida.App.DocumentUpload.ApiError' as any),
@@ -255,147 +267,168 @@ const Registration: React.FC = () => {
     }
   }, [validateStep2, attachmentFiles, form, TranslateMessage, tArch]);
 
+
+
+  useEffect(() => {
+    if (registerState.success) {
+      setLoading(false);
+      try { router.replace(Routes.LOGIN); } catch { }
+    }
+    else if (registerState.error) {
+      setSnackbarVisible({msg:registerState.error.error,state:true})
+    }
+  }, [registerState]);
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.scroll}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.card}>
+    <>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.card}>
 
-        {/* ── Left panel ── */}
-        <View style={styles.leftPanel}>
-          <View>
-            <Text style={styles.leftTitle}>Smart City{'\n'}Building Services</Text>
-            <Text style={styles.leftSubtitle}>
-              Register as a Private Architect to submit building permit
-              applications on behalf of citizens.
+          {/* ── Left panel ── */}
+          <View style={styles.leftPanel}>
+            <View>
+              <Text style={styles.leftTitle}>Smart City{'\n'}Building Services</Text>
+              <Text style={styles.leftSubtitle}>
+                Register as a Private Architect to submit building permit
+                applications on behalf of citizens.
+              </Text>
+            </View>
+            <View style={styles.stepSection}>
+              <Text style={styles.stepLabel}>Progress</Text>
+              <StepIndicator currentStep={currentStep} />
+            </View>
+          </View>
+
+          {/* ── Right panel ── */}
+          <View style={styles.rightPanel}>
+            <Text style={styles.brandName}>SIDA</Text>
+            <Text style={styles.pageHeading}>
+              {currentStep === 0 ? tArch('Title') : tArch('Attachments')}
             </Text>
-          </View>
-          <View style={styles.stepSection}>
-            <Text style={styles.stepLabel}>Progress</Text>
-            <StepIndicator currentStep={currentStep} />
-          </View>
-        </View>
+            <Text style={styles.pageSubtitle}>
+              {currentStep === 0
+                ? 'Step 1 of 2 — Fill in your personal and professional details'
+                : 'Step 2 of 2 — Upload the required supporting documents'}
+            </Text>
 
-        {/* ── Right panel ── */}
-        <View style={styles.rightPanel}>
-          <Text style={styles.brandName}>SIDA</Text>
-          <Text style={styles.pageHeading}>
-            {currentStep === 0 ? tArch('Title') : tArch('Attachments')}
-          </Text>
-          <Text style={styles.pageSubtitle}>
-            {currentStep === 0
-              ? 'Step 1 of 2 — Fill in your personal and professional details'
-              : 'Step 2 of 2 — Upload the required supporting documents'}
-          </Text>
+            {/* ══ STEP 1: Details ══════════════════════════════ */}
+            {currentStep === 0 && (
+              <>
+                {/* Personal Information */}
+                <SectionHeading title={tArch('PersonalInfo')} />
+                {renderSection(PERSONAL_FIELDS)}
 
-          {/* ══ STEP 1: Details ══════════════════════════════ */}
-          {currentStep === 0 && (
-            <>
-              {/* Personal Information */}
-              <SectionHeading title={tArch('PersonalInfo')} />
-              {renderSection(PERSONAL_FIELDS)}
+                {/* Contact Information */}
+                <SectionHeading title={tArch('ContactInfo')} />
+                {renderSection(CONTACT_FIELDS)}
 
-              {/* Contact Information */}
-              <SectionHeading title={tArch('ContactInfo')} />
-              {renderSection(CONTACT_FIELDS)}
+                {/* Registration Details */}
+                <SectionHeading title={tArch('RegDetails')} />
+                {renderSection(REGISTRATION_FIELDS)}
 
-              {/* Registration Details */}
-              <SectionHeading title={tArch('RegDetails')} />
-              {renderSection(REGISTRATION_FIELDS)}
+                {/* Education Information */}
+                <SectionHeading title={tArch('EduInfo')} />
+                {renderSection(EDUCATION_FIELDS)}
 
-              {/* Education Information */}
-              <SectionHeading title={tArch('EduInfo')} />
-              {renderSection(EDUCATION_FIELDS)}
-
-              <View style={styles.btnRowEnd}>
-                <Pressable
-                  onPress={handleNext}
-                  style={styles.primaryBtn}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.primaryBtnText}>Save &amp; Continue →</Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-
-          {/* ══ STEP 2: Documents ════════════════════════════ */}
-          {currentStep === 1 && (
-            <>
-              <DocumentUploads
-                fields={PRIVATE_ARCH_ATTACHMENT_FIELDS}
-                sectionTitle={tArch('Attachments')}
-                errors={attachmentErrors}
-                setErrors={setAttachmentErrors}
-                pickerErrors={attachmentPickerErrors}
-                setPickerErrors={setAttachmentPickerErrors}
-                files={attachmentFiles}
-                onFilesChange={setAttachmentFiles}
-              />
-
-              {/* Declaration */}
-              <Pressable
-                style={styles.checkRow}
-                onPress={() => {
-                  setForm((prev) => ({ ...prev, declared: !prev.declared }));
-                  setFormErrors((prev) => ({ ...prev, declared: '' }));
-                }}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: form.declared }}
-              >
-                <View style={[styles.checkbox, form.declared && styles.checkboxChecked]}>
-                  {form.declared && <Icon name="tick" size={13} color="#fff" />}
+                <View style={styles.btnRowEnd}>
+                  <Pressable
+                    onPress={handleNext}
+                    style={styles.primaryBtn}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.primaryBtnText}>Save &amp; Continue →</Text>
+                  </Pressable>
                 </View>
-                <Text style={styles.checkLabel}>{tArch('Declaration')}</Text>
+              </>
+            )}
+
+            {/* ══ STEP 2: Documents ════════════════════════════ */}
+            {currentStep === 1 && (
+              <>
+                <DocumentUploads
+                  fields={PRIVATE_ARCH_ATTACHMENT_FIELDS}
+                  sectionTitle={tArch('Attachments')}
+                  errors={attachmentErrors}
+                  setErrors={setAttachmentErrors}
+                  pickerErrors={attachmentPickerErrors}
+                  setPickerErrors={setAttachmentPickerErrors}
+                  files={attachmentFiles}
+                  onFilesChange={setAttachmentFiles}
+                />
+
+                {/* Declaration */}
+                <Pressable
+                  style={styles.checkRow}
+                  onPress={() => {
+                    setForm((prev) => ({ ...prev, declared: !prev.declared }));
+                    setFormErrors((prev) => ({ ...prev, declared: '' }));
+                  }}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: form.declared }}
+                >
+                  <View style={[styles.checkbox, form.declared && styles.checkboxChecked]}>
+                    {form.declared && <Icon name="tick" size={13} color="#fff" />}
+                  </View>
+                  <Text style={styles.checkLabel}>{tArch('Declaration')}</Text>
+                </Pressable>
+                {!!formErrors.declared && (
+                  <ErrorMessageContainer message={formErrors.declared} />
+                )}
+                {!!attachmentErrors.apiError && (
+                  <ErrorMessageContainer message={attachmentErrors.apiError} />
+                )}
+
+                <View style={styles.btnRow}>
+                  <Pressable
+                    onPress={handleBack}
+                    style={styles.outlineBtn}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.outlineBtnText}>← Back</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleSubmit}
+                    disabled={loading}
+                    style={[styles.primaryBtn, loading && styles.disabledBtn]}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.primaryBtnText}>
+                      {loading ? 'Submitting…' : tArch('Submit')}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+
+            {/* Footer */}
+            <View style={styles.footerRow}>
+              <Text style={styles.footerText}>Already registered? </Text>
+              <Pressable
+                onPress={() => router.replace(Routes.LOGIN as any)}
+                accessibilityRole="link"
+              >
+                <Text style={styles.footerLink}>Sign in</Text>
               </Pressable>
-              {!!formErrors.declared && (
-                <ErrorMessageContainer message={formErrors.declared} />
-              )}
-              {!!attachmentErrors.apiError && (
-                <ErrorMessageContainer message={attachmentErrors.apiError} />
-              )}
-
-              <View style={styles.btnRow}>
-                <Pressable
-                  onPress={handleBack}
-                  style={styles.outlineBtn}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.outlineBtnText}>← Back</Text>
-                </Pressable>
-                <Pressable
-                  onPress={handleSubmit}
-                  disabled={loading}
-                  style={[styles.primaryBtn, loading && styles.disabledBtn]}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.primaryBtnText}>
-                    {loading ? 'Submitting…' : tArch('Submit')}
-                  </Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-
-          {/* Footer */}
-          <View style={styles.footerRow}>
-            <Text style={styles.footerText}>Already registered? </Text>
-            <Pressable
-              onPress={() => router.replace(Routes.LOGIN as any)}
-              accessibilityRole="link"
-            >
-              <Text style={styles.footerLink}>Sign in</Text>
-            </Pressable>
+            </View>
           </View>
-        </View>
 
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+      <CustomSnackbar
+        visible={snackbarVisible.state}
+        message={snackbarVisible.msg}
+        duration={2}
+        onDismiss={() => setSnackbarVisible({msg:'',state:true})}
+        type={SnackbarType.WARNING}
+      />
+    </>
   );
 };
 
