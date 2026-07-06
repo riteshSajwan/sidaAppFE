@@ -52,6 +52,6 @@ const SUPPORT_CHAT_COMMON_CONFIG = {
 
 
 
-export const REGISTER_URL = AUTH_BASE_URL + `/api/auth/register`;
+export const REGISTER_URL = AUTH_BASE_URL + `/api/auth/registration/private-architect`;
 
 export const SUPPORT_CHAT_CONFIG = SUPPORT_CHAT_COMMON_CONFIG;

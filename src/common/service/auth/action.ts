@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
+import { RegisterArchitectFilesDto, RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
 import { assignArchitect, fetchLogin, handleUserLogout, ISilentResponse, silentSignIn } from 'src/common/service/auth/apiCall';
-import { clearErrors, ILogoutRequest, loginFailed, loginSuccess, registerFailed, setLoginStatus } from 'src/common/service/auth/slice';
+import { clearErrors, ILogoutRequest, loginFailed, loginSuccess, registerFailed, registerSuccess, setLoginStatus } from 'src/common/service/auth/slice';
 import { profileData } from 'src/common/service/profile/slice';
 import { setUserCredentials } from 'src/common/utils/credentialsUtil';
 import { setUserRole } from 'src/common/utils/roleStorageUtils';
@@ -116,25 +116,11 @@ export const logout =
 
 
 export const signUpRequest =
-  (data: RegisterArchitectRequestDto): AppThunk =>
+  (data: RegisterArchitectRequestDto, files: RegisterArchitectFilesDto): AppThunk =>
     async (dispatch) => {
       try {
-        const apiResponse = assignArchitect(data);
-
-        apiResponse
-          .then((res: RegisterArchitectResponseDto) => {
-
-
-            // setUserCredentials(JSON.stringify(res.supperAdminProperties));
-
-
-
-
-          })
-          .catch((error) => {
-            const typedError = error as IApiErrorResponse;
-            dispatch(registerFailed(typedError));
-          });
+        const res: RegisterArchitectResponseDto = await assignArchitect(data, files);
+        dispatch(registerSuccess(res));
       } catch (error) {
         const typedError = error as IApiErrorResponse;
         dispatch(registerFailed(typedError));

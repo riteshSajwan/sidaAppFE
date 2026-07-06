@@ -1,4 +1,4 @@
-import { RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
+import { RegisterArchitectFilesDto, RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
 import { ILogoutRequest } from 'src/common/service/auth/slice';
 import restService from 'src/common/service/restService/restService';
 import { ROLES } from 'src/common/utils/permissionUtils';
@@ -158,45 +158,60 @@ export const handleUserLogout = (data: ILogoutData): Promise<string> => {
 
 
 
-export const assignArchitect = (data: RegisterArchitectRequestDto, tenantId?: string | null, retries = 3) => {
-  const attemptFetch = (attempt: number): Promise<RegisterArchitectResponseDto> => {
-    const headers: Record<string, string> = {
-      Accept: '*/*',
-      'Content-Type': 'application/json',
-      'Accept-Language': getCurrentLang(),
-    };
-
-    // Add X-Tenant-Id header if tenantId is provided
-    if (tenantId) {
-      headers['X-Tenant-Id'] = tenantId;
-    }
-
-    // Non-SaaS: always use the normal login endpoint regardless of tenantId
-    const registerUrl = !IS_SAAS ? REGISTER_URL : tenantId ? REGISTER_URL : BUSINESS_ADMIN_LOGIN_URL;
-    const registerBody = !IS_SAAS ? data : tenantId ? data : { ...data, role: ROLES.PRIVATE_ARCHITECT };
-
-    return fetch(registerUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(registerBody),
-    })      .then((res) => {
-        if (!res.ok) {
-          return res
-            .json()
-            .catch(() => res.status)
-            .then((error) => {
-              return Promise.reject(error);
-            });
-        }
-        return res.json();
-      })
-      .catch((e) => {
-        // if (attempt < retries) {
-        //   return attemptFetch(attempt + 1);
-        // }
-        return Promise.reject(e);
-      });
+export const assignArchitect = (
+  data: RegisterArchitectRequestDto,
+  files: RegisterArchitectFilesDto,
+  tenantId?: string | null,
+): Promise<RegisterArchitectResponseDto> => {
+  const headers: Record<string, string> = {
+    Accept: '*/*',
+    'Accept-Language': getCurrentLang(),
+    // Do NOT set Content-Type — browser/fetch sets it with the correct boundary for multipart
   };
 
-  return attemptFetch(0);
+  if (tenantId) {
+    headers['X-Tenant-Id'] = tenantId;
+  }
+
+  const registerUrl = REGISTER_URL;
+
+  // ── Build multipart form ──────────────────────────────────────────────────
+  const formData = new FormData();
+
+  // Part 1: JSON registration blob
+  const registrationBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  formData.append('registration', registrationBlob);
+
+  // Part 2-6: file attachments (append only when present)
+  const fileMap: Array<{ field: string; file: RegisterArchitectFilesDto[keyof RegisterArchitectFilesDto] }> = [
+    { field: 'twelfthCertificate', file: files.twelfthCertificate },
+    { field: 'identityProof',      file: files.identityProof },
+    { field: 'coaCertificate',     file: files.coaCertificate },
+    { field: 'degreeMarksheet',    file: files.degreeMarksheet },
+    { field: 'profileImage',       file: files.profileImage },
+  ];
+
+  fileMap.forEach(({ field, file }) => {
+    if (!file) return;
+    if (file.blob) {
+      formData.append(field, file.blob, file.fileName);
+    } else if (file.uri) {
+      // React Native: append as { uri, name, type } object
+      formData.append(field, { uri: file.uri, name: file.fileName, type: file.fileType ?? 'application/octet-stream' } as any);
+    }
+  });
+
+  return fetch(registerUrl, {
+    method: 'POST',
+    headers,
+    body: formData,
+  }).then((res) => {
+    if (!res.ok) {
+      return res
+        .json()
+        .catch(() => ({ error: `Server error: ${res.status}` }))
+        .then((error) => Promise.reject(error));
+    }
+    return res.json();
+  });
 };

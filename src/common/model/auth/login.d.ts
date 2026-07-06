@@ -1,3 +1,4 @@
+import { IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import { PermissionType } from 'src/common/utils/permissionUtils';
 
 export type SignInRequestDto = {
@@ -55,25 +56,44 @@ export type UserProfilesDetailsDto = {
 
 
 export type RegisterArchitectRequestDto = {
-  firstName:    string;
-  middleName:   string;
-  lastName:     string;
-  fatherName:   string;
-  mailingAddress: string;
-  state:          string;
-  district:       string;
-  tehsil:         string;
-  cityVillage:    string;
-  pinCode:        string;
-  mobileNumber:   string;
-  email:          string;
-  regLicenseNo: string;
-  instituteName: string;
-  yearOfPassing: string;
-  declared: boolean;
-  attachments:any 
+  // Personal
+  firstName:      string;
+  middleName:     string;
+  lastName:       string;
+  fatherName:     string;
+  spouseName?:    string;
+  // Contact
+  mailingAddress:   string;
+  state:            string;
+  district:         string;
+  tehsil:           string;
+  cityVillage:      string;
+  otherCityVillage?: string;
+  pinCode:          string;
+  mobileNumber:     string;
+  email:            string;
+  password:         string;
+  // Registration
+  role:                   string;
+  registeringAuthority?:  string;
+  applicationType?:       string;
+  experience?:            string;
+  registrationCoaNumber:  string;   // maps from regLicenseNo
+  validityDate?:          string;
+  // Education
+  instituteName:  string;
+  yearOfPassing:  number;
+};
+
+export type RegisterArchitectFilesDto = {
+  twelfthCertificate: IFilesData | null;
+  identityProof:      IFilesData | null;
+  coaCertificate:     IFilesData | null;
+  degreeMarksheet:    IFilesData | null;
+  profileImage:       IFilesData | null;
 };
 
 export type RegisterArchitectResponseDto = {
- 
+  message?: string;
+  success?: boolean;
 };

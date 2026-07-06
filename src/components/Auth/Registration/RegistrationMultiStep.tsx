@@ -8,6 +8,7 @@ import { useFormStyle } from 'src/common/assets/styles/form';
 import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { RegisterArchitectFilesDto } from 'src/common/model/auth/login';
 import { signUpRequest } from 'src/common/service/auth/action';
 import DocumentUploads from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploads';
 import {
@@ -304,30 +305,58 @@ const Registration: React.FC = () => {
 
   const handleNext = () => { if (validateStep1()) setCurrentStep(1); };
   const handleBack = () => setCurrentStep(0);
-
-  console.log("form", form)
-  console.log("attachmentFiles", attachmentFiles)
   const handleSubmit = useCallback(async () => {
+    if (!validateStep2()) return;
+    if (!form.declared) {
+      setFormErrors((prev) => ({
+        ...prev,
+        declared: tArch('Required', { field: 'Declaration' }),
+      }));
+      return;
+    }
 
-    // if (!validateStep2()) return;
-    // if (!form.declared) {
-    //   setFormErrors((prev) => ({
-    //     ...prev,
-    //     declared: tArch('Required', { field: 'Declaration' }),
-    //   }));
-    //   return;
-    // }
     try {
       setLoading(true);
-      const payload = {
-        ...form,
-        attachments: []
+
+      // ── Map form fields → API DTO ────────────────────────────────────────
+      const dto = {
+        firstName:             form.firstName.trim(),
+        middleName:            form.middleName.trim(),
+        lastName:              form.lastName.trim(),
+        fatherName:            form.fatherName.trim(),
+        spouseName:            '',
+        mailingAddress:        form.mailingAddress.trim(),
+        state:                 form.state,
+        district:              form.district,
+        tehsil:                form.tehsil,
+        cityVillage:           form.cityVillage,
+        otherCityVillage:      '',
+        pinCode:               form.pinCode.trim(),
+        mobileNumber:          `+91${form.mobileNumber.trim()}`,
+        email:                 form.email.trim(),
+        password:              '',           // collected elsewhere or left blank for now
+        role:                  'PRIVATE_ARCHITECT',
+        registeringAuthority:  '',
+        applicationType:       'NEW_REGISTRATION',
+        experience:            '',
+        registrationCoaNumber: form.regLicenseNo.trim(),
+        validityDate:          '',
+        instituteName:         form.instituteName.trim(),
+        yearOfPassing:         Number(form.yearOfPassing),
       };
 
-      dispatch(signUpRequest(payload));
+      // ── Map attachment files → API file parts ────────────────────────────
+      const files: RegisterArchitectFilesDto = {
+        twelfthCertificate: attachmentFiles['twelfthPassCert'] ?? null,
+        identityProof:      attachmentFiles['aadharPassport']  ?? null,
+        coaCertificate:     attachmentFiles['coaCertScanCopy'] ?? null,
+        degreeMarksheet:    attachmentFiles['markSheetDegree'] ?? null,
+        profileImage:       attachmentFiles['latestPhoto']     ?? null,
+      };
+
+      dispatch(signUpRequest(dto, files));
 
     } catch {
-      alert('test')
       setAttachmentErrors((prev: IDocumentErrors) => ({
         ...prev,
         apiError: TranslateMessage('Admin.Sida.App.DocumentUpload.ApiError' as any),
@@ -335,7 +364,7 @@ const Registration: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [validateStep2, attachmentFiles, form, TranslateMessage, tArch]);
+  }, [validateStep2, attachmentFiles, form, dispatch, TranslateMessage, tArch]);
 
 
 
