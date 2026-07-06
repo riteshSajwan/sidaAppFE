@@ -213,5 +213,20 @@ export const useNewApplicationStyle = () => {
     disabledPrev: {
       opacity: 0.35,
     },
+    // ── Info note box ─────────────────────────────────────────────────
+    noteBox: {
+      backgroundColor: theme.colors.surfaceWarningBase,
+      borderRadius: theme.roundness.xs,
+      padding: theme.spacing.sm,
+    },
+    noteText: {
+      fontSize: theme.fontSize.textCaptionS,
+      fontFamily: theme.fontFamily.regular,
+      color: theme.colors.textWarningDark,
+      lineHeight: theme.fontSize.textCaptionS * 1.4,
+    },
+    noteTitle: {
+      fontFamily: theme.fontFamily.semiBold,
+    },
   });
 };

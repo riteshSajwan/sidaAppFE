@@ -1,83 +1,200 @@
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
+import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
+import { useAppTheme } from 'src/common/context/AppTheme';
+import DocumentUploads from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploads';
 import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplication';
-import { IBuildingDetails, IFormData, IOwnerDetails, IPropertyDetails, MultistepFormProps, STEP_TITLES } from '../NewApplicationUtils';
+import { Icon } from 'src/submodules/iconlibrary/src';
+import {
+  ARCHITECT_FIELDS,
+  GIS_FIELDS,
+  IArchitect,
+  IArchitectErrors,
+  IFormField,
+  IGisCoordinates,
+  IGisCoordinatesErrors,
+  IOwner,
+  IOwnerErrors,
+  IPropertyDetails,
+  IPropertyDetailsErrors,
+  MultistepFormProps,
+  NEW_APPLICATION_DOCUMENT_FIELDS,
+  OWNER_FIELDS,
+  PROPERTY_FIELDS,
+  STEP_TITLES,
+} from '../NewApplicationUtils';
 
+// ─── Reusable field renderer (text input or dropdown) ─────────────────────────
 
-// ─── Reusable field ────────────────────────────────────────────────────────────
-
-const Field: React.FC<{
-  label: string;
+function FormField<T extends Record<string, any>>({
+  field,
+  value,
+  error,
+  onChange,
+}: {
+  field: IFormField<T>;
   value: string;
-  placeholder?: string;
-  required?: boolean;
+  error?: string;
   onChange: (v: string) => void;
-  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
-  fullWidth?: boolean;
-}> = ({ label, value, placeholder, required, onChange, keyboardType = 'default' }) => {
+}) {
   const styles = useNewApplicationStyle();
-  return (
-    <View style={styles.formCol}>
-      <Text style={styles.fieldLabel}>
+  const { theme } = useAppTheme();
+
+  const label = (
+    <Text style={styles.fieldLabel}>
+      {field.label}
+      {field.required && <Text style={styles.required}> *</Text>}
+    </Text>
+  );
+
+  if (field.fieldType === 'dropdown' && field.options) {
+    const selected = field.options.find((o) => o.value === value) ?? { label: '', value: '' };
+    return (
+      <View style={[styles.formCol, field.span === 2 && { flexBasis: '100%' }]}>
         {label}
-        {required && <Text style={styles.required}> *</Text>}
-      </Text>
+        <Customdropdown
+          data={field.options}
+          selectedValue={selected}
+          onChange={(item) => onChange(item.value)}
+          error={error}
+        />
+        {!!error && <ErrorMessageContainer message={error} />}
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.formCol, field.span === 2 && { flexBasis: '100%' }]}>
+      {label}
       <TextInput
-        style={styles.textInput}
+        style={[styles.textInput, !!error && { borderColor: theme.colors.borderErrorInverse }]}
         value={value}
         onChangeText={onChange}
-        placeholder={placeholder ?? label}
-        keyboardType={keyboardType}
+        placeholder={field.placeholder ?? field.label}
+        keyboardType={field.keyboardType ?? 'default'}
+        maxLength={field.maxLength}
         placeholderTextColor="#A7A7A7"
       />
+      {!!error && <ErrorMessageContainer message={error} />}
     </View>
   );
-};
+}
+
+/** Chunks a flat field list into rows of 2 columns, honoring span=2 as a full-width row. */
+function renderFieldRows<T extends Record<string, any>>(
+  fields: IFormField<T>[],
+  values: T,
+  errors: Partial<Record<keyof T, string>>,
+  onChange: (key: keyof T, value: string) => void,
+  styles: ReturnType<typeof useNewApplicationStyle>,
+) {
+  const rows: IFormField<T>[][] = [];
+  let current: IFormField<T>[] = [];
+
+  fields.forEach((field) => {
+    if (field.span === 2) {
+      if (current.length) { rows.push(current); current = []; }
+      rows.push([field]);
+    } else {
+      current.push(field);
+      if (current.length === 2) { rows.push(current); current = []; }
+    }
+  });
+  if (current.length) rows.push(current);
+
+  return rows.map((row, i) => (
+    <View key={i} style={styles.formRow}>
+      {row.map((field) => (
+        <FormField
+          key={String(field.key)}
+          field={field}
+          value={String(values[field.key] ?? '')}
+          error={errors[field.key]}
+          onChange={(v) => onChange(field.key, v)}
+        />
+      ))}
+    </View>
+  ));
+}
 
 // ─── Step 0: Property Details ──────────────────────────────────────────────────
 
 const PropertyDetailsForm: React.FC<{
   data: IPropertyDetails;
+  errors: IPropertyDetailsErrors;
   onChange: (f: string, v: string) => void;
-}> = ({ data, onChange }) => {
+}> = ({ data, errors, onChange }) => {
   const styles = useNewApplicationStyle();
+  const addressField = PROPERTY_FIELDS[PROPERTY_FIELDS.length - 1];
+  const otherFields = PROPERTY_FIELDS.slice(0, -1);
   return (
     <View>
+      {renderFieldRows(otherFields, data, errors, (key, v) => onChange(String(key), v), styles)}
       <View style={styles.formRow}>
-        <Field label="Property Address" value={data.propertyAddress} required onChange={(v) => onChange('propertyAddress', v)} />
-        <Field label="Plot Number" value={data.plotNumber} required onChange={(v) => onChange('plotNumber', v)} />
-      </View>
-      <View style={styles.formRow}>
-        <Field label="Area (sq ft)" value={data.area} required keyboardType="numeric" onChange={(v) => onChange('area', v)} />
-        <Field label="Usage Type" value={data.usage} required onChange={(v) => onChange('usage', v)} />
+        <FormField
+          field={addressField}
+          value={data[addressField.key]}
+          error={errors[addressField.key]}
+          onChange={(v) => onChange(String(addressField.key), v)}
+        />
+        <View style={styles.formCol}>
+          <View style={styles.noteBox}>
+            <Text style={styles.noteText}>
+              <Text style={styles.noteTitle}>Note: </Text>
+              The applicant will fill the application no. of the fresh application for which addition/alteration is being applied, in case of addition and alteration (CTE and CTO).
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );
 };
 
-// ─── Step 1: Owner Details ─────────────────────────────────────────────────────
+// ─── Step 1: Applicant Details (Owners) ────────────────────────────────────────
 
-const OwnerDetailsForm: React.FC<{
-  data: IOwnerDetails;
-  onChange: (f: string, v: string) => void;
-}> = ({ data, onChange }) => {
+const OwnerBlock: React.FC<{
+  owner: IOwner;
+  index: number;
+  errors: IOwnerErrors;
+  onChange: (field: keyof IOwner, value: string) => void;
+  onRemove?: () => void;
+}> = ({ owner, index, errors, onChange, onRemove }) => {
   const styles = useNewApplicationStyle();
+  const { theme } = useAppTheme();
+  return (
+    <View style={styles.sectionBox}>
+      <View style={styles.formCardHeader}>
+        <Text style={styles.sectionLabel}>{index === 0 ? 'Primary Owner' : `Owner ${index + 1}`}</Text>
+        {!!onRemove && (
+          <Pressable onPress={onRemove} accessibilityRole="button" accessibilityLabel="Remove owner">
+            <Icon name="closeAlt" size={16} color={theme.colors.textErrorDark} />
+          </Pressable>
+        )}
+      </View>
+      {renderFieldRows(OWNER_FIELDS, owner, errors, onChange, styles)}
+    </View>
+  );
+};
+
+const ApplicantDetailsForm: React.FC<{
+  owners: IOwner[];
+  errors: Record<string, IOwnerErrors>;
+  onOwnerChange: (ownerId: string, field: keyof IOwner, value: string) => void;
+  onRemoveOwner: (ownerId: string) => void;
+}> = ({ owners, errors, onOwnerChange, onRemoveOwner }) => {
   return (
     <View>
-      <View style={styles.sectionBox}>
-        <Text style={styles.sectionLabel}>Primary Owner</Text>
-        <View style={styles.formRow}>
-          <Field label="Full Name" value={data.fullName} required onChange={(v) => onChange('fullName', v)} />
-          <Field label="Mobile Number" value={data.mobileNumber} required keyboardType="phone-pad" onChange={(v) => onChange('mobileNumber', v)} />
-        </View>
-        <View style={styles.formRow}>
-          <Field label="Email Address" value={data.emailAddress} keyboardType="email-address" onChange={(v) => onChange('emailAddress', v)} />
-          <Field label="Aadhaar Number" value={data.aadhaarNumber} required keyboardType="numeric" onChange={(v) => onChange('aadhaarNumber', v)} />
-        </View>
-        <View style={styles.formRow}>
-          <Field label="Residential Address" value={data.residentialAddress} required onChange={(v) => onChange('residentialAddress', v)} />
-        </View>
-      </View>
+      {owners.map((owner, index) => (
+        <OwnerBlock
+          key={owner.id}
+          owner={owner}
+          index={index}
+          errors={errors[owner.id] ?? {}}
+          onChange={(field, value) => onOwnerChange(owner.id, field, value)}
+          onRemove={owners.length > 1 ? () => onRemoveOwner(owner.id) : undefined}
+        />
+      ))}
     </View>
   );
 };
@@ -85,59 +202,55 @@ const OwnerDetailsForm: React.FC<{
 // ─── Step 2: Architect / Engineer ─────────────────────────────────────────────
 
 const ArchitectForm: React.FC<{
-  data: IFormData['architect'];
+  data: IArchitect;
+  errors: IArchitectErrors;
   onChange: (f: string, v: string) => void;
-}> = ({ data, onChange }) => {
+}> = ({ data, errors, onChange }) => {
   const styles = useNewApplicationStyle();
   return (
     <View>
       <View style={styles.sectionBox}>
-        <View style={styles.formRow}>
-          <Field label="Architect / Engineer Name" value={data.name} required onChange={(v) => onChange('name', v)} />
-          <Field label="License Number" value={data.licenseNumber} required onChange={(v) => onChange('licenseNumber', v)} />
-        </View>
-        <View style={styles.formRow}>
-          <Field label="Email Address" value={data.email} keyboardType="email-address" onChange={(v) => onChange('email', v)} />
-          <View style={{ flex: 1 }} />
-        </View>
+        {renderFieldRows(ARCHITECT_FIELDS, data, errors, (key, v) => onChange(String(key), v), styles)}
       </View>
     </View>
   );
 };
 
-// ─── Step 3: Building Details ──────────────────────────────────────────────────
+// ─── Step 3: GIS Coordinates ───────────────────────────────────────────────────
 
-const BuildingDetailsForm: React.FC<{
-  data: IBuildingDetails;
+const GisCoordinatesForm: React.FC<{
+  data: IGisCoordinates;
+  errors: IGisCoordinatesErrors;
   onChange: (f: string, v: string) => void;
-}> = ({ data, onChange }) => {
+}> = ({ data, errors, onChange }) => {
   const styles = useNewApplicationStyle();
   return (
     <View>
       <View style={styles.sectionBox}>
-        <View style={styles.formRow}>
-          <Field label="Number of Floors" value={data.floors} required keyboardType="numeric" onChange={(v) => onChange('floors', v)} />
-          <Field label="Building Type" value={data.buildingType} required onChange={(v) => onChange('buildingType', v)} />
-        </View>
-        <View style={styles.formRow}>
-          <Field label="Construction Area (sq ft)" value={data.constructionArea} required keyboardType="numeric" onChange={(v) => onChange('constructionArea', v)} />
-          <View style={{ flex: 1 }} />
-        </View>
+        {renderFieldRows(GIS_FIELDS, data, errors, (key, v) => onChange(String(key), v), styles)}
       </View>
     </View>
   );
 };
 
-// ─── Step 4: Documents placeholder ────────────────────────────────────────────
+// ─── Step 4: Documents ──────────────────────────────────────────────────────────
 
-const DocumentsForm: React.FC = () => {
-  const styles = useNewApplicationStyle();
+const DocumentsForm: React.FC<
+  Pick<
+    MultistepFormProps,
+    'documentFiles' | 'documentErrors' | 'documentPickerErrors' | 'setDocumentFiles' | 'setDocumentErrors' | 'setDocumentPickerErrors'
+  >
+> = ({ documentFiles, documentErrors, documentPickerErrors, setDocumentFiles, setDocumentErrors, setDocumentPickerErrors }) => {
   return (
-    <View style={styles.sectionBox}>
-      <Text style={[styles.fieldLabel, { textAlign: 'center', paddingVertical: 40 }]}>
-        Document upload will be available here.
-      </Text>
-    </View>
+    <DocumentUploads
+      fields={NEW_APPLICATION_DOCUMENT_FIELDS}
+      errors={documentErrors}
+      setErrors={setDocumentErrors}
+      pickerErrors={documentPickerErrors}
+      setPickerErrors={setDocumentPickerErrors}
+      files={documentFiles}
+      onFilesChange={setDocumentFiles}
+    />
   );
 };
 
@@ -154,9 +267,22 @@ const FeePaymentForm: React.FC = () => {
   );
 };
 
-// ─── Step 6: Review & Submit placeholder ──────────────────────────────────────
+// ─── Step 6: Upload Map placeholder ───────────────────────────────────────────
 
-const ReviewForm: React.FC<{ formData: IFormData }> = ({ formData }) => {
+const UploadMapForm: React.FC = () => {
+  const styles = useNewApplicationStyle();
+  return (
+    <View style={styles.sectionBox}>
+      <Text style={[styles.fieldLabel, { textAlign: 'center', paddingVertical: 40 }]}>
+        Map upload will be available here.
+      </Text>
+    </View>
+  );
+};
+
+// ─── Step 7: Review & Submit placeholder ──────────────────────────────────────
+
+const ReviewForm: React.FC = () => {
   const styles = useNewApplicationStyle();
   return (
     <View style={styles.sectionBox}>
@@ -167,14 +293,22 @@ const ReviewForm: React.FC<{ formData: IFormData }> = ({ formData }) => {
   );
 };
 
-
-
 // ─── Main MultistepForm ────────────────────────────────────────────────────────
 
 const MultistepForm: React.FC<MultistepFormProps> = ({
   currentStep,
   formData,
-  onChange,
+  formErrors,
+  onFieldChange,
+  onOwnerChange,
+  onAddOwner,
+  onRemoveOwner,
+  documentFiles,
+  documentErrors,
+  documentPickerErrors,
+  setDocumentFiles,
+  setDocumentErrors,
+  setDocumentPickerErrors,
 }) => {
   const styles = useNewApplicationStyle();
 
@@ -184,36 +318,52 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
         return (
           <PropertyDetailsForm
             data={formData.property}
-            onChange={(f, v) => onChange('property', f, v)}
+            errors={formErrors.property}
+            onChange={(f, v) => onFieldChange('property', f, v)}
           />
         );
       case 1:
         return (
-          <OwnerDetailsForm
-            data={formData.owner}
-            onChange={(f, v) => onChange('owner', f, v)}
+          <ApplicantDetailsForm
+            owners={formData.applicant.owners}
+            errors={formErrors.applicant}
+            onOwnerChange={onOwnerChange}
+            onRemoveOwner={onRemoveOwner}
           />
         );
       case 2:
         return (
           <ArchitectForm
             data={formData.architect}
-            onChange={(f, v) => onChange('architect', f, v)}
+            errors={formErrors.architect}
+            onChange={(f, v) => onFieldChange('architect', f, v)}
           />
         );
       case 3:
         return (
-          <BuildingDetailsForm
-            data={formData.building}
-            onChange={(f, v) => onChange('building', f, v)}
+          <GisCoordinatesForm
+            data={formData.gis}
+            errors={formErrors.gis}
+            onChange={(f, v) => onFieldChange('gis', f, v)}
           />
         );
       case 4:
-        return <DocumentsForm />;
+        return (
+          <DocumentsForm
+            documentFiles={documentFiles}
+            documentErrors={documentErrors}
+            documentPickerErrors={documentPickerErrors}
+            setDocumentFiles={setDocumentFiles}
+            setDocumentErrors={setDocumentErrors}
+            setDocumentPickerErrors={setDocumentPickerErrors}
+          />
+        );
       case 5:
         return <FeePaymentForm />;
       case 6:
-        return <ReviewForm formData={formData} />;
+        return <UploadMapForm />;
+      case 7:
+        return <ReviewForm />;
       default:
         return null;
     }
@@ -227,9 +377,9 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
           {STEP_TITLES[currentStep]}
         </Text>
         {currentStep === 1 && (
-          <View style={styles.addBtn}>
+          <Pressable style={styles.addBtn} onPress={onAddOwner} accessibilityRole="button" accessibilityLabel="Add owner">
             <Text style={styles.addBtnText}>+ Add Owner</Text>
-          </View>
+          </Pressable>
         )}
       </View>
 

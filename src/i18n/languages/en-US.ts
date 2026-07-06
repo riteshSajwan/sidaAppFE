@@ -110,6 +110,21 @@ export default {
     'Admin.Sida.App.DocumentUpload.Field.Experience': 'Experience Certificate',
     'Admin.Sida.App.DocumentUpload.Field.Portfolio': 'Portfolio / Work Samples',
 
+    // Document Uploads — New Application field labels
+    'Admin.Sida.App.NewApplication.Document.SaleDeed': 'Sale Deed',
+    'Admin.Sida.App.NewApplication.Document.PossessionCertificate': 'Possession Certificate',
+    'Admin.Sida.App.NewApplication.Document.FireNoc': 'Uttarakhand Fire & Emergency Service',
+    'Admin.Sida.App.NewApplication.Document.FireNoc.Desc': 'Application for pre-establishment fire NOC',
+    'Admin.Sida.App.NewApplication.Document.JalSansthan': 'Uttarakhand Jal Sansthan',
+    'Admin.Sida.App.NewApplication.Document.JalSansthan.Desc': 'Application for Water Connection',
+    'Admin.Sida.App.NewApplication.Document.PowerCorporation': 'Uttarakhand Power Corporation Limited',
+    'Admin.Sida.App.NewApplication.Document.PowerCorporation.Desc': 'Application for new connection LT line - non domestic / industrial',
+    'Admin.Sida.App.NewApplication.Document.ForestDepartment': 'Uttarakhand Forest Department',
+    'Admin.Sida.App.NewApplication.Document.ForestDepartment.Desc': 'Letter of Distance from Forest',
+    'Admin.Sida.App.NewApplication.Document.PollutionControlBoard': 'Uttarakhand Pollution Control Board',
+    'Admin.Sida.App.NewApplication.Document.PollutionControlBoard.Desc': 'Consent to Establish (CTE)',
+    'Admin.Sida.App.NewApplication.Document.LabourDepartment': 'Department of Labour',
+
     // Document Uploads — validation errors
     'Admin.Sida.App.DocumentUpload.Error.Required': '{{label}} is required.',
     'Admin.Sida.App.DocumentUpload.Error.InvalidType': '{{label}} must be one of: {{formats}}.',

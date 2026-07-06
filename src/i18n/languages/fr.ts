@@ -996,6 +996,21 @@ const frenchLangTranslations: {
     'Admin.Sida.App.DocumentUpload.Field.Experience': "Certificat d'expérience", //TODO translation
     'Admin.Sida.App.DocumentUpload.Field.Portfolio': 'Portfolio / Exemples de travaux', //TODO translation
 
+    // Document Uploads — New Application field labels
+    'Admin.Sida.App.NewApplication.Document.SaleDeed': 'Sale Deed', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.PossessionCertificate': 'Possession Certificate', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.FireNoc': 'Uttarakhand Fire & Emergency Service', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.FireNoc.Desc': 'Application for pre-establishment fire NOC', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.JalSansthan': 'Uttarakhand Jal Sansthan', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.JalSansthan.Desc': 'Application for Water Connection', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.PowerCorporation': 'Uttarakhand Power Corporation Limited', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.PowerCorporation.Desc': 'Application for new connection LT line - non domestic / industrial', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.ForestDepartment': 'Uttarakhand Forest Department', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.ForestDepartment.Desc': 'Letter of Distance from Forest', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.PollutionControlBoard': 'Uttarakhand Pollution Control Board', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.PollutionControlBoard.Desc': 'Consent to Establish (CTE)', //TODO translation
+    'Admin.Sida.App.NewApplication.Document.LabourDepartment': 'Department of Labour', //TODO translation
+
     // Document Uploads — validation errors
     'Admin.Sida.App.DocumentUpload.Error.Required': '{{label}} est requis.', //TODO translation
     'Admin.Sida.App.DocumentUpload.Error.InvalidType': '{{label}} doit être l\'un des formats suivants : {{formats}}.', //TODO translation
