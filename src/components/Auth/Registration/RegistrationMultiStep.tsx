@@ -6,7 +6,6 @@ import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormStyle } from 'src/common/assets/styles/form';
 import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
-import CustomSnackbar, { SnackbarType } from 'src/common/components/CustomSnackbar/CustomSnackbar';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { signUpRequest } from 'src/common/service/auth/action';
@@ -23,6 +22,7 @@ import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { sectionStyles, stepStyles, styles } from './Registration';
 import {
+  CO_NUMBER_REGEX,
   CONTACT_FIELDS,
   EDUCATION_FIELDS,
   generateInitialFormErrors,
@@ -108,7 +108,7 @@ const Registration: React.FC = () => {
   );
   const [attachmentPickerErrors, setAttachmentPickerErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [snackbarVisible,setSnackbarVisible] = useState<{msg:string,state:boolean}>({msg:'',state:false});
+  const [snackbarVisible, setSnackbarVisible] = useState<{ msg: string; state: boolean }>({ msg: '', state: false });
   const registerState = useSelector((state: RootState) => state.auth.register);
   // ── Field setters ─────────────────────────────────────────────────────────
 
@@ -128,11 +128,80 @@ const Registration: React.FC = () => {
     [],
   );
 
+  // ── CO number handler ─────────────────────────────────────────────────────
+
+  const handleCoNumberChange = useCallback((raw: string) => {
+    // Always enforce "CA/" prefix — extract only the part after it
+    const afterPrefix = raw.startsWith('CA/') ? raw.slice(3) : raw;
+
+    // Keep only digits; cap total to 4 (year) + 10 (id) = 14 digits
+    const digits = afterPrefix.replace(/[^\d]/g, '').slice(0, 14);
+
+    let formatted: string;
+    if (digits.length <= 4) {
+      // Still typing the year
+      formatted = `CA/${digits}`;
+    } else {
+      // Year complete — auto-insert slash between year and id (id max 10 digits)
+      const year = digits.slice(0, 4);
+      const id   = digits.slice(4, 14);
+      formatted = `CA/${year}/${id}`;
+    }
+
+    // Update form and run inline validation immediately
+    setForm((prev) => ({ ...prev, regLicenseNo: formatted }));
+    const errorMsg = CO_NUMBER_REGEX.test(formatted)
+      ? ''
+      : 'Registration number must follow format CA/YYYY/ID (e.g. CA/2025/337337)';
+    setFormErrors((prev) => ({ ...prev, regLicenseNo: errorMsg }));
+  }, []);
+
   // ── Field renderers ───────────────────────────────────────────────────────
 
   const renderField = useCallback((field: IFormField) => {
     const label = tArch(field.labelKey);
     const error = formErrors[field.key] as string | undefined;
+
+    // ── CO number: "CA/" is baked into the input value, protected from deletion ──
+    if (field.key === 'regLicenseNo') {
+      const stored = (form.regLicenseNo as string) || 'CA/';
+      // Ensure value always starts with "CA/"
+      const displayValue = stored.startsWith('CA/') ? stored : `CA/${stored}`;
+      return (
+        <View key={field.key} style={[formStyle.formCol, field.span === 3 && { flex: 3 }]}>
+          <Text style={formStyle.labelTitle}>
+            {label}
+            {field.required && <Text style={formStyle.asteriskTxt}> *</Text>}
+          </Text>
+          <TextInput
+            mode="outlined"
+            value={displayValue}
+            onChangeText={(text) => {
+              // Prevent backspace from eating "CA/" prefix
+              if (!text.startsWith('CA/')) {
+                // User deleted into the prefix — restore it and keep whatever came after
+                handleCoNumberChange(`CA/${text.replace(/^C?A?\/?/i, '')}`);
+                return;
+              }
+              handleCoNumberChange(text);
+            }}
+            placeholder="CA/YYYY/ID (e.g. CA/2025/337337)"
+            placeholderTextColor={theme.colors.textNeutral}
+            keyboardType="default"
+            autoCapitalize="none"
+            autoComplete="off"
+            activeOutlineColor={theme.colors.borderInverse}
+            outlineColor={error ? theme.colors.borderErrorInverse : theme.colors.borderMedium}
+            style={[formStyle.inputField, !!error && formStyle.errorBorderColor]}
+            contentStyle={formStyle.textInputLabel}
+            outlineStyle={formStyle.inputFieldOuline}
+            error={!!error}
+          />
+          {!!error && <ErrorMessageContainer message={error} />}
+        </View>
+      );
+    }
+
     return (
       <View key={field.key} style={[formStyle.formCol, field.span === 3 && { flex: 3 }]}>
         <Text style={formStyle.labelTitle}>
@@ -146,6 +215,7 @@ const Registration: React.FC = () => {
           placeholder={label}
           placeholderTextColor={theme.colors.textNeutral}
           keyboardType={field.keyboardType ?? 'default'}
+          maxLength={field.maxLength ?? 100}
           autoCapitalize="none"
           autoComplete="off"
           activeOutlineColor={theme.colors.borderInverse}
@@ -275,7 +345,7 @@ const Registration: React.FC = () => {
       try { router.replace(Routes.LOGIN); } catch { }
     }
     else if (registerState.error) {
-      setSnackbarVisible({msg:registerState.error.error,state:true})
+      setSnackbarVisible({ msg: registerState.error.error, state: true });
     }
   }, [registerState]);
 
@@ -421,13 +491,14 @@ const Registration: React.FC = () => {
 
         </View>
       </ScrollView>
-      <CustomSnackbar
+      {/* <CustomSnackbar
         visible={snackbarVisible.state}
         message={snackbarVisible.msg}
-        duration={2}
-        onDismiss={() => setSnackbarVisible({msg:'',state:true})}
+        duration={3000}
+        onDismiss={() => setSnackbarVisible({ msg: '', state: false })}
         type={SnackbarType.WARNING}
-      />
+      /> */}
+      {/* {!!loginError && <ErrorMessageContainer message={loginError} />} */}
     </>
   );
 };
