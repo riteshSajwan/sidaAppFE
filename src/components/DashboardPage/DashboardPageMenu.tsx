@@ -2,12 +2,12 @@ import { router } from 'expo-router';
 import { useTranslation } from 'node_modules/react-i18next';
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import CustomLineChart from 'src/common/components/CustomChart/Web/LineGraph';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { useDashboardStyle } from 'src/components/DashboardPage/DashboardStyle';
 import { Routes } from 'src/routing/paths';
 import { Icon } from 'src/submodules/iconlibrary/src';
+import ApplicationTable from '../Application/Listing/Table/ApplicationTable';
 import DashboardCards from './DashboardCards';
 import NotificationCard from './NotificationCard';
 
@@ -35,12 +35,12 @@ interface NotifItem {
 // ─── Static data (replace with Redux selectors as needed) ─────────────────────
 
 const STAT_CARDS: StatCard[] = [
-  { label: 'Total Applications', value: 48, trend: '+12% this month', trendPositive: true,  iconName: 'page',            iconBg: '#EEF2FF' },
-  { label: 'Draft Applications', value: 7,  trend: '+2 this month',   trendPositive: true,  iconName: 'edit',            iconBg: '#FFF8E6' },
-  { label: 'Submitted',          value: 23, trend: '+5 this month',   trendPositive: true,  iconName: 'statsDownSquare', iconBg: '#E8F4FD' },
-  { label: 'Approved',           value: 14, trend: '+8% this month',  trendPositive: true,  iconName: 'tick',            iconBg: '#E8F8EE' },
-  { label: 'Objections Raised',  value: 3,  trend: '-1 this month',   trendPositive: false, iconName: 'legal',           iconBg: '#FFF3E0' },
-  { label: 'Rejected',           value: 1,  trend: '0 this month',    trendPositive: true,  iconName: 'closeAlt',        iconBg: '#FEEDED' },
+  { label: 'Total Applications', value: 48, trend: '+12% this month', trendPositive: true, iconName: 'page', iconBg: '#EEF2FF' },
+  { label: 'Draft Applications', value: 7, trend: '+2 this month', trendPositive: true, iconName: 'edit', iconBg: '#FFF8E6' },
+  { label: 'Submitted', value: 23, trend: '+5 this month', trendPositive: true, iconName: 'statsDownSquare', iconBg: '#E8F4FD' },
+  { label: 'Approved', value: 14, trend: '+8% this month', trendPositive: true, iconName: 'tick', iconBg: '#E8F8EE' },
+  { label: 'Objections Raised', value: 3, trend: '-1 this month', trendPositive: false, iconName: 'legal', iconBg: '#FFF3E0' },
+  { label: 'Rejected', value: 1, trend: '0 this month', trendPositive: true, iconName: 'closeAlt', iconBg: '#FEEDED' },
 ];
 
 // Simulated monthly bar heights (0–1 scale) for Submitted vs Approved
@@ -97,7 +97,7 @@ const NOTIFICATIONS: NotifItem[] = [
 const DashboardPageMenu = () => {
   const styles = useDashboardStyle();
   const { theme } = useAppTheme();
-   const { t: TranslateMessage } = useTranslation();
+  const { t: TranslateMessage } = useTranslation();
 
   // ── Welcome Banner ────────────────────────────────────────────────
   function renderBanner() {
@@ -123,7 +123,7 @@ const DashboardPageMenu = () => {
           variant="subHeading"
           style={{ color: theme.colors.textInverse, fontSize: 22 }}
         >
-         {TranslateMessage('Admin.Sida.App.Dasboard.Greeting')}
+          {TranslateMessage('Admin.Sida.App.Dasboard.Greeting')}
         </Typography>
         <Text style={styles.bannerSubText}>
           You have 3 pending actions and 1 fee payment due today.
@@ -295,20 +295,22 @@ const DashboardPageMenu = () => {
     >
       {renderBanner()}
       {/* {renderStatCards()} */}
-      <DashboardCards/>
-      <View style={styles.bottomRow}>
-        {/* {renderChart()} */}
-        <CustomLineChart
-         data={[]}
-          data2={[]}
-          frontColor={'red'}
-          secondaryColor={'blue'}
-          firstLabel={'Test1'}
-          secondLabel={'Test2'}
-          height={400}
+      <DashboardCards />
+      <View style={styles.bottomRow}>       
+        <ApplicationTable
+          data={[{
+            id: 'APP-2024-0042',
+            applicantName: 'John Doe',
+            buildingNo: 'B-12',
+            submittedOn: '2024-06-10',
+            buildingType: 'Residential',
+            status: 'Approved',
+          }]}
+          isDashboard={true}
+          onViewAllPress={() => router.push(Routes.APPLICATIONS as any)}
         />
-        {/* {renderNotifications()} */}
-        <NotificationCard/>
+          {/* {renderNotifications()} */}
+          <NotificationCard />
       </View>
     </ScrollView>
   );

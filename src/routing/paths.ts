@@ -67,4 +67,16 @@ export enum Routes {
   NEWBOOKING = '/newBooking',
   DRIVER_UPLOAD_PREVIEW = '/driverUploadPreview',
   TRIP_CHAT = '/tripChat',
+
+  // Private architect
+  DOCUMENT_VAULT = '/documentVault',
+
+  // Super admin
+  APPLICATIONS = '/applications',
+  SCHEDULE_AWARDS = '/scheduleAwards',
+  CERTIFICATES = '/certificates',
+  DOCUMENT_STORE = '/documentStore',
+  PERFORMANCE = '/performance',
+  AUDIT_LOGS = '/auditLogs',
+  SETTINGS = '/settings',
 }

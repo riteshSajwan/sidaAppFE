@@ -1,5 +1,5 @@
 import React from 'react';
-import NewApplicationContainer from 'src/components/NewApplication/NewApplicationContainer';
+import NewApplicationContainer from 'src/components/Application/NewApplication/NewApplicationContainer';
 
 const InvoicingListPage = () => {
   return (

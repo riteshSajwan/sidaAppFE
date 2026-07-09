@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { useAppTheme } from 'src/common/context/AppTheme';
-import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplication';
+import { useNewApplicationStyle } from 'src/components/Application/NewApplication/NewApplication';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { MultistepTimelineProps } from '../NewApplicationUtils';
 

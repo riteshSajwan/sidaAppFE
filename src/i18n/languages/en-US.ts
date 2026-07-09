@@ -132,6 +132,16 @@ export default {
 
     'Admin.Sida.App.NewApplication':'New Application',
     'Admin.Sida.App.MyApplication':'My Application',
+    'Admin.Sida.App.DocumentVault': 'Document Vault',
+    'Admin.Sida.App.Applications': 'Applications',
+    'Admin.Sida.App.ScheduleAwards': 'Schedule Awards',
+    'Admin.Sida.App.Certificates': 'Certificates',
+    'Admin.Sida.App.Payments': 'Payments',
+    'Admin.Sida.App.DocumentStore': 'Document Store',
+    'Admin.Sida.App.Performance': 'Performance',
+    'Admin.Sida.App.Roles': 'Roles',
+    'Admin.Sida.App.AuditLogs': 'Audit Logs',
+    'Admin.Sida.App.Settings': 'Settings',
 
 
    

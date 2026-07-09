@@ -38,6 +38,10 @@ interface CustomDataTableProps<T extends TableRowBase> {
   renderRowDetails?: (id?: string | number, title?: string,textsDisabled ?:boolean,emailsDisabled?:boolean) => () => void;
   cellContentAlign?: 'left' | 'center';
   headerContentAlign?: 'left' | 'center';
+  // Bounds the row list to a fixed height so it scrolls internally instead of
+  // growing the page — avoids the horizontal ScrollView (below) swallowing
+  // vertical wheel scroll on web when nested inside a page-level ScrollView.
+  bodyMaxHeight?: number;
 }
 
 const CustomDataTable = <T extends TableRowBase>({
@@ -60,6 +64,7 @@ const CustomDataTable = <T extends TableRowBase>({
   renderRowDetails,
   cellContentAlign = 'left',
   headerContentAlign = 'left',
+  bodyMaxHeight,
 }: CustomDataTableProps<T>) => {
   const [hoveredItems, setHoveredItems] = useState<boolean[]>([]);
 
@@ -142,7 +147,10 @@ const CustomDataTable = <T extends TableRowBase>({
         </DataTable.Header>
 
         {/* Table Rows */}
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={bodyMaxHeight !== undefined ? { maxHeight: bodyMaxHeight } : undefined}
+        >
           {data.map((item, index) => (
             <Pressable
               key={index}

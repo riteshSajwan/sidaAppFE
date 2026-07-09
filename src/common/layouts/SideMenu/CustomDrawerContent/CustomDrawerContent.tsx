@@ -19,11 +19,17 @@ import { logout } from 'src/common/service/auth/action';
 import { getDeviceToken } from 'src/common/utils/getDeviceToken';
 import { MenuType } from 'src/common/utils/permissionUtils';
 import { getRefreshToken } from 'src/common/utils/refreshTokenUtils';
-import { IS_SAAS } from 'src/constants';
 import { Routes } from 'src/routing/paths';
 import { AppDispatch, RootState } from 'src/store';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import { IconName } from 'src/submodules/iconlibrary/src/assets/icons';
+
+type DrawerOption = {
+  label: string;
+  path: string;
+  icon: IconName;
+  onPress?: () => void;
+};
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { t: TranslateMessage } = useTranslation();
@@ -31,7 +37,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const styles = useDrawerStyle();
   const { theme, mode, toggleTheme } = useAppTheme();
   const dispatch: AppDispatch = useDispatch();
-  const { isProductAdmin } = usePermission(MenuType.DASHBOARD);
+  const { isProductAdmin, isSuperAdmin } = usePermission(MenuType.DASHBOARD);
   const { isTenantView } = useTenantId();
 
   // const [isDesktop, setIsDesktop] = useState(
@@ -59,22 +65,76 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   };
   const pathname = usePathname();
   const { navigation } = props;
-  const hiddenForProductAdmin = [
-    Routes.COUNTRIES,
-    Routes.COUPON,
-    Routes.TICKET,
-    Routes.REPORT,
-    Routes.ROLES,
-    Routes.USERS,
-    Routes.BUSINESS,
-    // Routes.CABS,
+
+  const logoutOption: DrawerOption = {
+    label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
+    path: Routes.LOGIN,
+    icon: 'logout',
+    onPress: handleLogOut,
+  };
+
+  // Super admin: full platform oversight menu
+  const superAdminDrawerOptions: DrawerOption[] = [
+    {
+      label: TranslateMessage('Admin.Sida.App.Dasboard'),
+      path: `${Routes.DASHBOARD}`,
+      icon: 'dashboard',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Applications'),
+      path: Routes.APPLICATIONS,
+      icon: 'page',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.ScheduleAwards'),
+      path: Routes.SCHEDULE_AWARDS,
+      icon: 'trophy',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Certificates'),
+      path: Routes.CERTIFICATES,
+      icon: 'pdf',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Payments'),
+      path: Routes.Payment,
+      icon: 'wallet',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.DocumentStore'),
+      path: Routes.DOCUMENT_STORE,
+      icon: 'multiplePagesAdd',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Performance'),
+      path: Routes.PERFORMANCE,
+      icon: 'graphdown',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Roles'),
+      path: Routes.ROLES,
+      icon: 'userOutlineGroup',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Reports'),
+      path: Routes.REPORTS,
+      icon: 'statsDownSquare',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.AuditLogs'),
+      path: Routes.AUDIT_LOGS,
+      icon: 'legal',
+    },
+    {
+      label: TranslateMessage('Admin.Sida.App.Settings'),
+      path: Routes.SETTINGS,
+      icon: 'setting',
+    },
+    logoutOption,
   ];
-  const drawerOptions = [
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Restaurants'),
-    //   path: Routes.RESTAURANTS,
-    //   icon: 'silverware-fork-knife',
-    // },
+
+  // Private architect: personal application workspace
+  const privateArchitectDrawerOptions: DrawerOption[] = [
     {
       label: TranslateMessage('Admin.Sida.App.Dasboard'),
       path: `${Routes.DASHBOARD}`,
@@ -83,53 +143,22 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     {
       label: TranslateMessage('Admin.Sida.App.NewApplication'),
       path: `${Routes.NEWAPPLICATION}`,
-      icon: 'application',
+      icon: 'multiplePagesAdd',
     },
     {
       label: TranslateMessage('Admin.Sida.App.MyApplication'),
       path: `${Routes.MYAPPLICATION}`,
-      icon: 'application',
+      icon: 'page',
     },
     {
-      label: TranslateMessage('Admin.Sida.App.Registration.Label'),
-      path: `${Routes.REGISTRATION}`,
-      icon: 'registration',
+      label: TranslateMessage('Admin.Sida.App.DocumentVault'),
+      path: Routes.DOCUMENT_VAULT,
+      icon: 'pdf',
     },
-    {
-      label: TranslateMessage('Admin.Sida.App.Users'),
-      path: Routes.USER,
-      icon: 'users',
-    },
-    // {
-    //   label: TranslateMessage('Admin.Sida.App.Layout.Upload'),
-    //   path: `${Routes.UPLOAD}`,
-    //   icon: 'upload',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Sida.App.Reports'),
-    //   path: Routes.SCRUTINYREPORT,
-    //   icon: 'statsDownSquare',
-    // },
-    // {
-    //   label: TranslateMessage('Admin.Sida.APP.ArchitectDetails.Details'),
-    //   path: Routes.ARCHITECTDETAILS,
-    //   icon: 'architect',
-    // },
-
-    // {
-    //   label: TranslateMessage('Admin.Delivery.App.Ticket'),
-    //   path: Routes.TICKET,
-    //   icon: 'ticketLine',
-    // },
-
-
-    {
-      label: TranslateMessage('Admin.Delivery.App.LogOut.Label'),
-      path: Routes.LOGIN,
-      icon: 'logout',
-      onPress: handleLogOut,
-    },
+    logoutOption,
   ];
+
+
   const visibleForProductAdmin: string[] = [
     Routes.PROFILE,
     Routes.BUSINESS,
@@ -152,14 +181,20 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     Routes.INVOICING,
   ];
 
-  const filteredDrawerOptions = isProductAdmin && !isTenantView
-    ? drawerOptions.filter((item) => visibleForProductAdmin.includes(item.path))
-    : isProductAdmin && isTenantView
-      ? drawerOptions.filter((item) => !hiddenFromProductAdminAsTenant.includes(item.path))
-      : drawerOptions.filter((item) => {
-        if (!IS_SAAS && hiddenWhenNotSaas.includes(item.path)) return false;
-        return !hiddenFromTenant.includes(item.path);
-      });
+  // const filteredDrawerOptions = isSuperAdmin
+  //   ? superAdminDrawerOptions
+  //   : isProductAdmin && !isTenantView
+  //     ? businessAdminDrawerOptions.filter((item) => visibleForProductAdmin.includes(item.path))
+  //     : isProductAdmin && isTenantView
+  //       ? businessAdminDrawerOptions.filter((item) => !hiddenFromProductAdminAsTenant.includes(item.path))
+  //       : isProductAdmin
+  //         ? businessAdminDrawerOptions.filter((item) => {
+  //           if (!IS_SAAS && hiddenWhenNotSaas.includes(item.path)) return false;
+  //           return !hiddenFromTenant.includes(item.path);
+  //         })
+  //         : privateArchitectDrawerOptions;
+
+  const filteredDrawerOptions = superAdminDrawerOptions
 
   const footerItems = [
     {

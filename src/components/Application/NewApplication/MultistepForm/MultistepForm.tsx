@@ -3,26 +3,26 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { useNewApplicationStyle } from 'src/components/Application/NewApplication/NewApplication';
 import DocumentUploads from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploads';
-import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplication';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import {
-  ARCHITECT_FIELDS,
-  GIS_FIELDS,
-  IArchitect,
-  IArchitectErrors,
-  IFormField,
-  IGisCoordinates,
-  IGisCoordinatesErrors,
-  IOwner,
-  IOwnerErrors,
-  IPropertyDetails,
-  IPropertyDetailsErrors,
-  MultistepFormProps,
-  NEW_APPLICATION_DOCUMENT_FIELDS,
-  OWNER_FIELDS,
-  PROPERTY_FIELDS,
-  STEP_TITLES,
+    ARCHITECT_FIELDS,
+    GIS_FIELDS,
+    IArchitect,
+    IArchitectErrors,
+    IFormField,
+    IGisCoordinates,
+    IGisCoordinatesErrors,
+    IOwner,
+    IOwnerErrors,
+    IPropertyDetails,
+    IPropertyDetailsErrors,
+    MultistepFormProps,
+    NEW_APPLICATION_DOCUMENT_FIELDS,
+    OWNER_FIELDS,
+    PROPERTY_FIELDS,
+    STEP_TITLES,
 } from '../NewApplicationUtils';
 
 // ─── Reusable field renderer (text input or dropdown) ─────────────────────────

@@ -2,27 +2,27 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import MultistepForm from 'src/components/Application/NewApplication/MultistepForm/MultistepForm';
+import MultistepTimeline from 'src/components/Application/NewApplication/MultistepForm/MultistepTimeline';
+import { useNewApplicationStyle } from 'src/components/Application/NewApplication/NewApplication';
 import {
-  generateInitialErrorsFromFields,
-  generateInitialFilesStateFromFields,
-  validateDocumentUploadsForFields,
+    generateInitialErrorsFromFields,
+    generateInitialFilesStateFromFields,
+    validateDocumentUploadsForFields,
 } from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploadsUtils';
-import MultistepForm from 'src/components/NewApplication/MultistepForm/MultistepForm';
-import MultistepTimeline from 'src/components/NewApplication/MultistepForm/MultistepTimeline';
-import { useNewApplicationStyle } from 'src/components/NewApplication/NewApplication';
 import { Icon } from 'src/submodules/iconlibrary/src';
 import {
-  createEmptyOwner,
-  generateInitialFormErrors,
-  IFormData,
-  IOwner,
-  INITIAL_FORM,
-  NEW_APPLICATION_DOCUMENT_FIELDS,
-  STEPS,
-  validateApplicantDetails,
-  validateArchitectDetails,
-  validateGisCoordinates,
-  validatePropertyDetails,
+    createEmptyOwner,
+    generateInitialFormErrors,
+    IFormData,
+    INITIAL_FORM,
+    IOwner,
+    NEW_APPLICATION_DOCUMENT_FIELDS,
+    STEPS,
+    validateApplicantDetails,
+    validateArchitectDetails,
+    validateGisCoordinates,
+    validatePropertyDetails,
 } from './NewApplicationUtils';
 
 
