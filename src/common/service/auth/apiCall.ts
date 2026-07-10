@@ -183,11 +183,11 @@ export const assignArchitect = (
 
   // Part 2-6: file attachments (append only when present)
   const fileMap: Array<{ field: string; file: RegisterArchitectFilesDto[keyof RegisterArchitectFilesDto] }> = [
-    { field: 'twelfthCertificate', file: files.twelfthCertificate },
-    { field: 'identityProof',      file: files.identityProof },
-    { field: 'coaCertificate',     file: files.coaCertificate },
-    { field: 'degreeMarksheet',    file: files.degreeMarksheet },
-    { field: 'profileImage',       file: files.profileImage },
+    { field: 'twelfthPassCertificate', file: files.twelfthPassCertificate },
+    { field: 'identityProof',          file: files.identityProof },
+    { field: 'coaCertificate',         file: files.coaCertificate },
+    { field: 'degreeMarksheet',        file: files.degreeMarksheet },
+    { field: 'latestPhoto',            file: files.latestPhoto },
   ];
 
   fileMap.forEach(({ field, file }) => {

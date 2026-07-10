@@ -10,6 +10,7 @@ import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessa
 import { useAppTheme } from 'src/common/context/AppTheme';
 import { RegisterArchitectFilesDto } from 'src/common/model/auth/login';
 import { signUpRequest } from 'src/common/service/auth/action';
+import { resetAuthDetails } from 'src/common/service/auth/slice';
 import DocumentUploads from 'src/components/ArchitectDetails/DocumentUploads/DocumentUploads';
 import {
   generateInitialErrorsFromFields,
@@ -95,6 +96,8 @@ const Registration: React.FC = () => {
       TranslateMessage(`Admin.Sida.App.PrivateArchReg.${key}` as any, opts),
     [TranslateMessage],
   );
+  const registrationState = useSelector((state: RootState) => state.auth.register);
+    
 
   // ── State ─────────────────────────────────────────────────────────────────
 
@@ -107,6 +110,7 @@ const Registration: React.FC = () => {
   const [attachmentErrors, setAttachmentErrors] = useState<IDocumentErrors>(
     () => generateInitialErrorsFromFields(PRIVATE_ARCH_ATTACHMENT_FIELDS),
   );
+  const [registrationError, setRegistrationError] = useState<string>('');
   const [attachmentPickerErrors, setAttachmentPickerErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState<{ msg: string; state: boolean }>({ msg: '', state: false });
@@ -128,7 +132,7 @@ const Registration: React.FC = () => {
     },
     [],
   );
-
+console.log("registrationError",registrationError)
   // ── CO number handler ─────────────────────────────────────────────────────
 
   const handleCoNumberChange = useCallback((raw: string) => {
@@ -306,6 +310,7 @@ const Registration: React.FC = () => {
   const handleNext = () => { if (validateStep1()) setCurrentStep(1); };
   const handleBack = () => setCurrentStep(0);
   const handleSubmit = useCallback(async () => {
+    setRegistrationError('');
     if (!validateStep2()) return;
     if (!form.declared) {
       setFormErrors((prev) => ({
@@ -333,7 +338,7 @@ const Registration: React.FC = () => {
         otherCityVillage:      '',
         pinCode:               form.pinCode.trim(),
         mobileNumber:          `+91${form.mobileNumber.trim()}`,
-        email:                 form.email.trim(),
+        emailId:               form.email.trim(),
         password:              '',           // collected elsewhere or left blank for now
         role:                  'PRIVATE_ARCHITECT',
         registeringAuthority:  '',
@@ -341,17 +346,17 @@ const Registration: React.FC = () => {
         experience:            '',
         registrationCoaNumber: form.regLicenseNo.trim(),
         validityDate:          '',
-        instituteName:         form.instituteName.trim(),
+        nameOfInstitute:       form.instituteName.trim(),
         yearOfPassing:         Number(form.yearOfPassing),
       };
 
       // ── Map attachment files → API file parts ────────────────────────────
       const files: RegisterArchitectFilesDto = {
-        twelfthCertificate: attachmentFiles['twelfthPassCert'] ?? null,
-        identityProof:      attachmentFiles['aadharPassport']  ?? null,
-        coaCertificate:     attachmentFiles['coaCertScanCopy'] ?? null,
-        degreeMarksheet:    attachmentFiles['markSheetDegree'] ?? null,
-        profileImage:       attachmentFiles['latestPhoto']     ?? null,
+        twelfthPassCertificate: attachmentFiles['twelfthPassCert'] ?? null,
+        identityProof:          attachmentFiles['aadharPassport']  ?? null,
+        coaCertificate:         attachmentFiles['coaCertScanCopy'] ?? null,
+        degreeMarksheet:        attachmentFiles['markSheetDegree'] ?? null,
+        latestPhoto:            attachmentFiles['latestPhoto']     ?? null,
       };
 
       dispatch(signUpRequest(dto, files));
@@ -367,14 +372,16 @@ const Registration: React.FC = () => {
   }, [validateStep2, attachmentFiles, form, dispatch, TranslateMessage, tArch]);
 
 
-
+console.log("registerState",registerState)
   useEffect(() => {
     if (registerState.success) {
       setLoading(false);
+      dispatch(resetAuthDetails({ type: 'register' }));
       try { router.replace(Routes.LOGIN); } catch { }
     }
     else if (registerState.error) {
-      setSnackbarVisible({ msg: registerState.error.error, state: true });
+      setRegistrationError('Something went wrong. Please try again later.');
+      // setSnackbarVisible({ msg: registerState.error.error, state: true });
     }
   }, [registerState]);
 
@@ -483,7 +490,7 @@ const Registration: React.FC = () => {
                 {!!attachmentErrors.apiError && (
                   <ErrorMessageContainer message={attachmentErrors.apiError} />
                 )}
-
+                {!!registrationError && <ErrorMessageContainer message={registrationError} />}
                 <View style={styles.btnRow}>
                   <Pressable
                     onPress={handleBack}
@@ -527,7 +534,7 @@ const Registration: React.FC = () => {
         onDismiss={() => setSnackbarVisible({ msg: '', state: false })}
         type={SnackbarType.WARNING}
       /> */}
-      {/* {!!loginError && <ErrorMessageContainer message={loginError} />} */}
+      
     </>
   );
 };

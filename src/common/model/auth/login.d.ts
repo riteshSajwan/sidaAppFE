@@ -72,7 +72,7 @@ export type RegisterArchitectRequestDto = {
   otherCityVillage?: string;
   pinCode:          string;
   mobileNumber:     string;
-  email:            string;
+  emailId:          string;
   password:         string;
   // Registration
   role:                   string;
@@ -82,16 +82,16 @@ export type RegisterArchitectRequestDto = {
   registrationCoaNumber:  string;   // maps from regLicenseNo
   validityDate?:          string;
   // Education
-  instituteName:  string;
-  yearOfPassing:  number;
+  nameOfInstitute:  string;
+  yearOfPassing:    number;
 };
 
 export type RegisterArchitectFilesDto = {
-  twelfthCertificate: IFilesData | null;
-  identityProof:      IFilesData | null;
-  coaCertificate:     IFilesData | null;
-  degreeMarksheet:    IFilesData | null;
-  profileImage:       IFilesData | null;
+  twelfthPassCertificate: IFilesData | null;
+  identityProof:          IFilesData | null;
+  coaCertificate:         IFilesData | null;
+  degreeMarksheet:        IFilesData | null;
+  latestPhoto:             IFilesData | null;
 };
 
 export type RegisterArchitectResponseDto = {

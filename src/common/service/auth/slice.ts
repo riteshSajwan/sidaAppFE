@@ -47,6 +47,11 @@ const authSlice = createSlice({
     registerFailed(state, action: PayloadAction<any>) {
       state.register.error = action.payload;
     },
+    resetAuthDetails(state,action: PayloadAction<{type: string}>) {
+      if (action.payload.type === 'register') {
+        state.register = { loading: false, error: null, data: {} };
+      }
+    },
     clearErrors(state) {
       state.login.error = null;
     },
@@ -57,4 +62,4 @@ const authSlice = createSlice({
 });
 
 export const authReducer = authSlice.reducer;
-export const { loginSuccess, loginFailed, registerFailed, registerSuccess, clearErrors, setLoginStatus } = authSlice.actions;
+export const { loginSuccess, loginFailed, resetAuthDetails , registerFailed, registerSuccess, clearErrors, setLoginStatus } = authSlice.actions;
