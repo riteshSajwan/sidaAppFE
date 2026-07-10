@@ -71,7 +71,8 @@ const LoginContainer = () => {
     username: '',
     password: '',
     deviceToken: '',
-    admin: true,
+    fcmToken: '',
+    role: 'SUPERADMIN',
   });
   const [validationErrors, setValidationErrors] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState<string>('');
@@ -138,7 +139,7 @@ const LoginContainer = () => {
           'Something went wrong. Try Again';
       }
       setLoginError(customMessage);
-      setLoginForm({ username: '', password: '', deviceToken: '', admin: true });
+      setLoginForm({ username: '', password: '', deviceToken: '', fcmToken: '', role: 'ARCHITECT' });
     } else {
       setLoginError('');
     }
@@ -168,7 +169,8 @@ const LoginContainer = () => {
         username: loginForm.username.trim(),
         password: loginForm.password.trim(),
         deviceToken: getDeviceToken() ?? '',
-        admin: true,
+        fcmToken:  '', //getFcmToken() ??
+        role: loginForm.role,
       };
       const loginWithTenant = (tenantId: string | null | undefined) => {
         dispatch(loginRequest(payload, tenantId));

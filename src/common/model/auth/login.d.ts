@@ -5,7 +5,8 @@ export type SignInRequestDto = {
   username: string;
   password: string;
   deviceToken: string;
-  admin: boolean;
+  fcmToken : string;
+  role: string;
 };
 
 export type SuperAdminProperties = {

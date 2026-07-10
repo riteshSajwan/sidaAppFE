@@ -143,7 +143,7 @@ export default {
     'Admin.Sida.App.AuditLogs': 'Audit Logs',
     'Admin.Sida.App.Settings': 'Settings',
 
-
+    'Admin.Sida.App.SomethingWentWrong': 'Something went wrong! Please try again.',
    
 
 

@@ -194,15 +194,15 @@ const getRiderMonthlySchedule = (
 };
 
 export {
-    assignRiderToBooking,
-    cancelBookingByAdmin,
-    completeRideByAdmin,
-    getBookingList,
-    getNewBookingList,
-    getRideDetails, getRiderMonthlySchedule, getRoundTripDetails, getUserBookingList,
-    ICancelBookingByAdminRequest,
-    IRiderMonthlyScheduleRequest,
-    IRiderMonthlyScheduleResponse,
-    unassignRiderFromBooking
+  assignRiderToBooking,
+  cancelBookingByAdmin,
+  completeRideByAdmin,
+  getBookingList,
+  getNewBookingList,
+  getRideDetails, getRiderMonthlySchedule, getRoundTripDetails, getUserBookingList,
+  ICancelBookingByAdminRequest,
+  IRiderMonthlyScheduleRequest,
+  IRiderMonthlyScheduleResponse,
+  unassignRiderFromBooking
 };
 

@@ -1,7 +1,7 @@
-import { AUTH_BASE_URL } from 'src/constants';
-import RestService from 'src/common/service/restService/restService';
-import { ICouponListResponse, ICouponListFilter } from 'src/components/CouponPage/CouponListUtil';
 import { buildQueryParam } from 'src/common/service/ApiUtil';
+import RestService from 'src/common/service/restService/restService';
+import { ICouponListFilter, ICouponListResponse } from 'src/components/CouponPage/CouponListUtil';
+import { AUTH_BASE_URL } from 'src/constants';
 
 const getAllCouponList = (filter: ICouponListFilter, page?: number, size?: number): Promise<ICouponListResponse> => {
   return RestService.generateHeaders().then((headers) => {
@@ -60,4 +60,5 @@ const getCouponUpdateStatus = (id: number, isActive: boolean) => {
   );
 };
 
-export { getAllCouponList, getCouponById, SaveCoupon, getCouponUpdateStatus }
+export { getAllCouponList, getCouponById, getCouponUpdateStatus, SaveCoupon };
+

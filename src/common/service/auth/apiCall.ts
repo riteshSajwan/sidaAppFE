@@ -1,7 +1,6 @@
 import { RegisterArchitectFilesDto, RegisterArchitectRequestDto, RegisterArchitectResponseDto, SignInRequestDto, SignInResponseDto } from 'src/common/model/auth/login';
 import { ILogoutRequest } from 'src/common/service/auth/slice';
 import restService from 'src/common/service/restService/restService';
-import { ROLES } from 'src/common/utils/permissionUtils';
 import { getTenantId } from 'src/common/utils/tenantUtils';
 import { API_AUTH_BUSINESS_ADMIN_URL, API_AUTH_CUSTOMER_URL, AUTH_BASE_URL, BUSINESS_ADMIN_LOGIN_URL, IS_SAAS, LOGIN_URL, REGISTER_URL } from 'src/constants/index';
 import { getCurrentLang } from 'src/i18n/i18nUtils';
@@ -67,7 +66,7 @@ export const fetchLogin = (data: SignInRequestDto, tenantId?: string | null, ret
 
     // Non-SaaS: always use the normal login endpoint regardless of tenantId
     const loginUrl = !IS_SAAS ? LOGIN_URL : tenantId ? LOGIN_URL : BUSINESS_ADMIN_LOGIN_URL;
-    const loginBody = !IS_SAAS ? data : tenantId ? data : { ...data, role: ROLES.BUSINESS_ADMIN };
+    const loginBody = !IS_SAAS ? data : tenantId ? data : { ...data }; //, role: ROLES.BUSINESS_ADMIN
 
     return fetch(loginUrl, {
       method: 'POST',

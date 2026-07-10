@@ -10,7 +10,7 @@ export const WEBSOCKET_BASE_URL =
   sanitizeEnvValue(process.env.EXPO_PUBLIC_WEBSOCKETCONNECTION_BASE_URL) ||
   'wss://taxiappsaas.findnerd.com/ws/order/admin';
 export const API_AUTH_CUSTOMER_URL = AUTH_BASE_URL + '/api/auth/customer';
-export const API_AUTH_BUSINESS_ADMIN_URL = AUTH_BASE_URL + '/api/auth/admin';
+export const API_AUTH_BUSINESS_ADMIN_URL = AUTH_BASE_URL + '/api/auth';
 export const LOGIN_URL = AUTH_BASE_URL + `/api/auth/signin`;
 export const BUSINESS_ADMIN_LOGIN_URL = API_AUTH_BUSINESS_ADMIN_URL + `/signin`;
 export const FORGOT_PASSWORD_URL = AUTH_BASE_URL + `/api/auth/forget-password`;
@@ -52,6 +52,6 @@ const SUPPORT_CHAT_COMMON_CONFIG = {
 
 
 
-export const REGISTER_URL = AUTH_BASE_URL + `/api/auth/registration/private-architect`;
+export const REGISTER_URL = AUTH_BASE_URL + `/api/auth/registration/architecture`;
 
 export const SUPPORT_CHAT_CONFIG = SUPPORT_CHAT_COMMON_CONFIG;
