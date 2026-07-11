@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
@@ -11,7 +11,18 @@ import { useAppTheme } from "src/common/context/AppTheme";
 import { RegisterArchitectFilesDto } from "src/common/model/auth/login";
 import { signUpRequest } from "src/common/service/auth/action";
 import { resetAuthDetails } from "src/common/service/auth/slice";
-import { fetchStateListingAction } from "src/common/service/masterlocation/action";
+import {
+  fetchCityListingAction,
+  fetchDistrictListingAction,
+  fetchStateListingAction,
+  fetchTehsilListingAction,
+} from "src/common/service/masterlocation/action";
+import {
+  resetCityListing,
+  resetDistrictListing,
+  resetStateListing,
+  resetTehsilListing,
+} from "src/common/service/masterlocation/slice";
 import DocumentUploads from "src/components/ArchitectDetails/DocumentUploads/DocumentUploads";
 import {
   generateInitialErrorsFromFields,
@@ -131,6 +142,66 @@ const Registration: React.FC = () => {
   >({});
   const [loading, setLoading] = useState(false);
   const registerState = useSelector((state: RootState) => state.auth.register);
+
+  // ── Location cascade (State → District/City, District → Tehsil) ────────────
+
+  const stateListing = useSelector(
+    (state: RootState) => state.masterlocation.stateListing,
+  );
+  const districtListing = useSelector(
+    (state: RootState) => state.masterlocation.districtListing,
+  );
+  const tehsilListing = useSelector(
+    (state: RootState) => state.masterlocation.tehsilListing,
+  );
+  const cityListing = useSelector(
+    (state: RootState) => state.masterlocation.cityListing,
+  );
+
+  const toDropdownOptions = (
+    items: { id: number; name: string }[],
+    placeholder: string,
+  ): IDropdownOption[] => [
+    { label: placeholder, value: "" },
+    ...items.map((item) => ({ label: item.name, value: String(item.id) })),
+  ];
+
+  const stateOptions = useMemo(
+    () => toDropdownOptions(stateListing.data.data, "Select State"),
+    [stateListing.data.data],
+  );
+  const districtOptions = useMemo(
+    () => toDropdownOptions(districtListing.data.data, "Select District"),
+    [districtListing.data.data],
+  );
+  const tehsilOptions = useMemo(
+    () => toDropdownOptions(tehsilListing.data.data, "Select Tehsil"),
+    [tehsilListing.data.data],
+  );
+  const cityOptions = useMemo(
+    () => toDropdownOptions(cityListing.data.data, "Select City/Village"),
+    [cityListing.data.data],
+  );
+
+  const contactFields = useMemo(
+    () =>
+      CONTACT_FIELDS.map((field) => {
+        switch (field.key) {
+          case "state":
+            return { ...field, options: stateOptions };
+          case "district":
+            return { ...field, options: districtOptions };
+          case "tehsil":
+            return { ...field, options: tehsilOptions };
+          case "cityVillage":
+            return { ...field, options: cityOptions };
+          default:
+            return field;
+        }
+      }),
+    [stateOptions, districtOptions, tehsilOptions, cityOptions],
+  );
+
   // ── Field setters ─────────────────────────────────────────────────────────
 
   const setField = useCallback(
@@ -147,6 +218,47 @@ const Registration: React.FC = () => {
       setFormErrors((prev) => ({ ...prev, [key]: "" }));
     },
     [],
+  );
+
+  // State changed → clear district/tehsil/city, refetch districts + cities for the new state
+  const handleStateChange = useCallback(
+    (item: IDropdownOption) => {
+      setForm((prev) => ({
+        ...prev,
+        state: item.value,
+        district: "",
+        tehsil: "",
+        cityVillage: "",
+      }));
+      setFormErrors((prev) => ({
+        ...prev,
+        state: "",
+        district: "",
+        tehsil: "",
+        cityVillage: "",
+      }));
+      dispatch(resetDistrictListing());
+      dispatch(resetTehsilListing());
+      dispatch(resetCityListing());
+      if (item.value) {
+        dispatch(fetchDistrictListingAction(Number(item.value)));
+        dispatch(fetchCityListingAction(Number(item.value)));
+      }
+    },
+    [dispatch],
+  );
+
+  // District changed → clear tehsil, refetch tehsils for the new district
+  const handleDistrictChange = useCallback(
+    (item: IDropdownOption) => {
+      setForm((prev) => ({ ...prev, district: item.value, tehsil: "" }));
+      setFormErrors((prev) => ({ ...prev, district: "", tehsil: "" }));
+      dispatch(resetTehsilListing());
+      if (item.value) {
+        dispatch(fetchTehsilListingAction(Number(item.value)));
+      }
+    },
+    [dispatch],
   );
   // ── CO number handler ─────────────────────────────────────────────────────
 
@@ -281,6 +393,20 @@ const Registration: React.FC = () => {
       const selected = (field.options ?? []).find(
         (o) => o.value === strValue,
       ) ?? { label: "", value: "" };
+
+      // Dependent location fields: locked until their parent selection is made
+      const disabled =
+        (field.key === "district" && !form.state) ||
+        (field.key === "tehsil" && !form.district) ||
+        (field.key === "cityVillage" && !form.state);
+
+      const onChange =
+        field.key === "state"
+          ? handleStateChange
+          : field.key === "district"
+            ? handleDistrictChange
+            : setDropdown(field.key);
+
       return (
         <View key={field.key} style={formStyle.formCol}>
           <Text style={formStyle.labelTitle}>
@@ -290,14 +416,23 @@ const Registration: React.FC = () => {
           <Customdropdown
             data={field.options ?? []}
             selectedValue={selected}
-            onChange={setDropdown(field.key)}
+            onChange={onChange}
+            disabled={disabled}
             error={error}
           />
           {!!error && <ErrorMessageContainer message={error} />}
         </View>
       );
     },
-    [form, formErrors, formStyle, setDropdown, tArch],
+    [
+      form,
+      formErrors,
+      formStyle,
+      setDropdown,
+      handleStateChange,
+      handleDistrictChange,
+      tArch,
+    ],
   );
 
   /**
@@ -427,6 +562,14 @@ const Registration: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchStateListingAction());
+
+    // Clear stale location listings on unmount so a later visit starts fresh
+    return () => {
+      dispatch(resetStateListing());
+      dispatch(resetDistrictListing());
+      dispatch(resetTehsilListing());
+      dispatch(resetCityListing());
+    };
   }, []);
 
   useEffect(() => {
@@ -491,7 +634,7 @@ const Registration: React.FC = () => {
 
                 {/* Contact Information */}
                 <SectionHeading title={tArch("ContactInfo")} />
-                {renderSection(CONTACT_FIELDS)}
+                {renderSection(contactFields)}
 
                 {/* Registration Details */}
                 <SectionHeading title={tArch("RegDetails")} />

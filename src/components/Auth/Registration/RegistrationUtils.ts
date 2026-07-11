@@ -60,34 +60,10 @@ export interface IRegistrationForm {
   declared: boolean;
 }
 
-// ─── Dropdown options ─────────────────────────────────────────────────────────
-
-export const STATE_OPTIONS: IDropdownOption[] = [
-  { label: 'Select State', value: '' },
-  { label: 'Madhya Pradesh', value: 'MP' },
-  { label: 'Uttar Pradesh', value: 'UP' },
-  { label: 'Rajasthan',     value: 'RJ' },
-];
-
-export const DISTRICT_OPTIONS: IDropdownOption[] = [
-  { label: 'Select District', value: '' },
-  { label: 'District 1',      value: 'district1' },
-  { label: 'District 2',      value: 'district2' },
-];
-
-export const TEHSIL_OPTIONS: IDropdownOption[] = [
-  { label: 'Select Tehsil', value: '' },
-  { label: 'Tehsil 1',      value: 'tehsil1' },
-  { label: 'Tehsil 2',      value: 'tehsil2' },
-];
-
-export const CITY_VILLAGE_OPTIONS: IDropdownOption[] = [
-  { label: 'Select City/Village', value: '' },
-  { label: 'City 1',              value: 'city1' },
-  { label: 'Other',               value: 'other' },
-];
-
 // ─── Section field configs (flat arrays) ─────────────────────────────────────
+// NOTE: state/district/tehsil/cityVillage `options` are placeholders here —
+// they're overridden at render time in RegistrationMultiStep with live data
+// from the masterlocation slice (state → district/city → tehsil cascade).
 
 /** Personal Information — 3 name fields + Father's Name */
 export const PERSONAL_FIELDS: IFormField[] = [
@@ -100,10 +76,10 @@ export const PERSONAL_FIELDS: IFormField[] = [
 /** Contact Information */
 export const CONTACT_FIELDS: IFormField[] = [
   { key: 'mailingAddress', labelKey: 'MailingAddress', span: 3 ,required: true },
-  { key: 'state',    labelKey: 'State',    fieldType: 'dropdown', options: STATE_OPTIONS ,required: true },
-  { key: 'district', labelKey: 'District', fieldType: 'dropdown', options: DISTRICT_OPTIONS ,required: true },
-  { key: 'tehsil',   labelKey: 'Tehsil',   fieldType: 'dropdown', options: TEHSIL_OPTIONS ,required: true},
-  { key: 'cityVillage', labelKey: 'City',    fieldType: 'dropdown', options: CITY_VILLAGE_OPTIONS,required: true },
+  { key: 'state',    labelKey: 'State',    fieldType: 'dropdown', options: [] ,required: true },
+  { key: 'district', labelKey: 'District', fieldType: 'dropdown', options: [] ,required: true },
+  { key: 'tehsil',   labelKey: 'Tehsil',   fieldType: 'dropdown', options: [] ,required: true},
+  { key: 'cityVillage', labelKey: 'City',    fieldType: 'dropdown', options: [],required: true },
   { key: 'pinCode',      labelKey: 'Pincode', keyboardType: 'numeric',    required: true, maxLength: 6  },
   { key: 'mobileNumber', labelKey: 'Mobile',  required: true, keyboardType: 'phone-pad', maxLength: 10 },
   { key: 'email',        labelKey: 'Email',   required: true, keyboardType: 'email-address' },

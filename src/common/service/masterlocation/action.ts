@@ -52,9 +52,9 @@ export const fetchTehsilListingAction = (districtId: number): AppThunk => (dispa
     });
 };
 
-export const fetchCityListingAction = (tehsilId: number): AppThunk => (dispatch) => {
+export const fetchCityListingAction = (stateId: number): AppThunk => (dispatch) => {
   dispatch(fetchCityListing());
-  return getCityListing(tehsilId)
+  return getCityListing(stateId)
     .then((result) => {
       dispatch(fetchCityListingSuccess(result));
       return result;
