@@ -1,22 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface IState {
+export interface IDropdownOption {
   id: number;
   name: string;
-  stateCode: string;
 }
 
-export interface IDistrict {
-  id: number;
-  name: string;
-  districtCode: string;
-}
 
-export interface ITehsil {
-  id: number;
-  name: string;
-  tehsilCode: string;
-}
 
 export interface ICity {
   id: number;
@@ -24,33 +13,13 @@ export interface ICity {
   cityCode: string;
 }
 
-export interface IStateListResponse {
-  data: IState[];
-  total: number;
-  page: number;
-  size: number;
-}
+export type IStateListResponse = IDropdownOption[];
 
-export interface IDistrictListResponse {
-  data: IDistrict[];
-  total: number;
-  page: number;
-  size: number;
-}
+export type IDistrictListResponse = IDropdownOption[];
 
-export interface ITehsilListResponse {
-  data: ITehsil[];
-  total: number;
-  page: number;
-  size: number;
-}
+export type ITehsilListResponse = IDropdownOption[];
 
-export interface ICityListResponse {
-  data: ICity[];
-  total: number;
-  page: number;
-  size: number;
-}
+export type ICityListResponse = ICity[];
 
 export interface IStateListingState {
   loading: boolean;
@@ -83,7 +52,7 @@ export interface IMasterLocationState {
   cityListing: ICityListingState;
 }
 
-const emptyListResponse = { data: [], total: 0, page: 0, size: 0 };
+const emptyListResponse: never[] = [];
 
 export const masterLocationInitialState: IMasterLocationState = {
   stateListing: { loading: false, error: null, data: emptyListResponse },

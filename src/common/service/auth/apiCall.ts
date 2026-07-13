@@ -2,7 +2,7 @@ import { RegisterArchitectFilesDto, RegisterArchitectRequestDto, RegisterArchite
 import { ILogoutRequest } from 'src/common/service/auth/slice';
 import restService from 'src/common/service/restService/restService';
 import { getTenantId } from 'src/common/utils/tenantUtils';
-import { API_AUTH_BUSINESS_ADMIN_URL, API_AUTH_CUSTOMER_URL, AUTH_BASE_URL, BUSINESS_ADMIN_LOGIN_URL, IS_SAAS, LOGIN_URL, REGISTER_URL } from 'src/constants/index';
+import { API_AUTH_CUSTOMER_URL, AUTH_BASE_URL, BUSINESS_ADMIN_LOGIN_URL, IS_SAAS, LOGIN_URL, REGISTER_URL } from 'src/constants/index';
 import { getCurrentLang } from 'src/i18n/i18nUtils';
 
 export interface UserDetails {
@@ -98,12 +98,12 @@ export const silentSignIn = (data: ILogoutRequest): Promise<ISilentResponse> => 
   return getTenantId().then((tenantId) => {
     return restService.generateUserRole().then((roleData) => {
       // Non-SaaS: always use the customer (normal) silent sign-in endpoint
-      const baseUrl = !IS_SAAS
-        ? API_AUTH_CUSTOMER_URL
-        : tenantId
-        ? API_AUTH_CUSTOMER_URL
-        : API_AUTH_BUSINESS_ADMIN_URL;
-      return fetch(`${baseUrl}/silent-sign-in`, {
+      // const baseUrl = !IS_SAAS
+      //   ? API_AUTH_CUSTOMER_URL
+      //   : tenantId
+      //   ? API_AUTH_CUSTOMER_URL
+      //   : API_AUTH_BUSINESS_ADMIN_URL;
+      return fetch(`${API_AUTH_CUSTOMER_URL}/silent-sign-in`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -135,7 +135,7 @@ export const silentSignIn = (data: ILogoutRequest): Promise<ISilentResponse> => 
 
 export const handleUserLogout = (data: ILogoutData): Promise<string> => {
   const { tenantId, ...logoutData } = data;
-  const logoutUrl = tenantId ? `${AUTH_BASE_URL}/api/auth/logout` : `${AUTH_BASE_URL}/api/auth/admin/signout`;
+  const logoutUrl = tenantId ? `${AUTH_BASE_URL}/api/auth/logout` : `${AUTH_BASE_URL}/api/auth/logout`;
 
   return restService
     .generateHeaders({

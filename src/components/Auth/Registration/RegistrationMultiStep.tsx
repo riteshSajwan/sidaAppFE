@@ -159,29 +159,33 @@ const Registration: React.FC = () => {
   );
 
   const toDropdownOptions = (
-    items: { id: number; name: string }[],
+    items: { id: number; name: string }[] | undefined,
     placeholder: string,
   ): IDropdownOption[] => [
     { label: placeholder, value: "" },
-    ...items.map((item) => ({ label: item.name, value: String(item.id) })),
+    ...(items ?? []).map((item) => ({ label: item.name, value: String(item.id) })),
   ];
-
+  // https://sida.findnerd.com/api/auth/master/districts/10087/tehsils
+  
+// https://sida.findnerd.com/api/master/districts/10090/tehsils
   const stateOptions = useMemo(
-    () => toDropdownOptions(stateListing.data.data, "Select State"),
-    [stateListing.data.data],
+    () => toDropdownOptions(stateListing.data, "Select State"),
+    [stateListing.data],
   );
   const districtOptions = useMemo(
-    () => toDropdownOptions(districtListing.data.data, "Select District"),
-    [districtListing.data.data],
+    () => toDropdownOptions(districtListing.data, "Select District"),
+    [districtListing.data],
   );
   const tehsilOptions = useMemo(
-    () => toDropdownOptions(tehsilListing.data.data, "Select Tehsil"),
-    [tehsilListing.data.data],
+    () => toDropdownOptions(tehsilListing.data, "Select Tehsil"),
+    [tehsilListing.data],
   );
   const cityOptions = useMemo(
-    () => toDropdownOptions(cityListing.data.data, "Select City/Village"),
-    [cityListing.data.data],
+    () => toDropdownOptions(cityListing.data, "Select City/Village"),
+    [cityListing.data],
   );
+
+  console.log("stateListing",stateListing)
 
   const contactFields = useMemo(
     () =>

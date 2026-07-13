@@ -10,7 +10,7 @@ import {
 const getStateListing = (): Promise<IStateListResponse> => {
   return RestService.generateHeaders().then((headers) => {
     return RestService.fetch(
-      `${AUTH_BASE_URL}/api/auth/master/countries/1/states`,
+      `${AUTH_BASE_URL}/api/auth/master/countries/101/states`,
       {
         method: "GET",
         headers,
@@ -36,7 +36,7 @@ const getDistrictListing = (
 const getTehsilListing = (districtId: number): Promise<ITehsilListResponse> => {
   return RestService.generateHeaders().then((headers) => {
     return RestService.fetch(
-      `${AUTH_BASE_URL}/api/master/districts/${districtId}/tehsils`,
+      `${AUTH_BASE_URL}/api/auth/master/districts/${districtId}/tehsils`,
       {
         method: "GET",
         headers,
