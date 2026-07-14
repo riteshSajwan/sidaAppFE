@@ -85,6 +85,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       path: Routes.APPLICATIONS,
       icon: 'page',
     },
+     {
+      label: TranslateMessage('Admin.Sida.App.Upload'),
+      path: Routes.UPLOAD,
+      icon: 'trophy',
+    },
     {
       label: TranslateMessage('Admin.Sida.App.ScheduleAwards'),
       path: Routes.SCHEDULE_AWARDS,

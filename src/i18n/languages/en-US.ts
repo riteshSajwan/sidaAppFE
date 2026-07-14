@@ -1212,6 +1212,7 @@ export default {
     'Admin.Sida.App.Registration.Email': 'Email id',
 
     // DocumentUploads table header & status keys
+    'Admin.Sida.App.Upload': 'Upload',
     'Admin.Sida.App.DocumentUpload.Header.Index':       '#',
     'Admin.Sida.App.DocumentUpload.Header.DocType':     'Document Type',
     'Admin.Sida.App.DocumentUpload.Header.Description': 'Description',
