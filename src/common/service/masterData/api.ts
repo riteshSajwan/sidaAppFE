@@ -1,6 +1,7 @@
 import RestService from "src/common/service/restService/restService";
 import { AUTH_BASE_URL } from "src/constants";
 import {
+  IBuildingDataResponse,
   ICityListResponse,
   IDistrictListResponse,
   IStateListResponse,
@@ -57,7 +58,20 @@ const getCityListing = (stateId: number): Promise<ICityListResponse> => {
   });
 };
 
+const getBuildingData = (): Promise<IBuildingDataResponse> => {
+  return RestService.generateHeaders().then((headers) => {
+    return RestService.fetch(
+      `${AUTH_BASE_URL}/api/v1/rules/formMasterData`,
+      {
+        method: "GET",
+        headers,
+      },
+    );
+  });
+};
+
 export {
+  getBuildingData,
   getCityListing,
   getDistrictListing,
   getStateListing,

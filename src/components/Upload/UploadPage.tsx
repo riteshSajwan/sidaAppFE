@@ -1,16 +1,19 @@
 import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 import { useButtonStyle } from 'src/common/assets/styles/button';
 import { useLayoutStyle } from 'src/common/assets/styles/layout';
 import { IFilesData } from 'src/common/components/CustomDocumentPicker/CustomDocumentPicker';
 import { Loader } from 'src/common/components/Loader/Loader';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { fetchBuildingDataAction } from 'src/common/service/masterData/action';
 import { useRestroStyle } from 'src/components/Restaurant/RestroStyle';
 import { useTableStyle } from 'src/components/ServiceArea/ServiceTable';
+import { AppDispatch, RootState } from 'src/store';
 import UploadContainer from './Upload/UploadContainer';
 import {
   generateInitialState,
@@ -52,7 +55,11 @@ const Upload = () => {
 
   const { theme } = useAppTheme();
 
+    const dispatch: AppDispatch = useDispatch();
 
+  const buildingData = useSelector(
+    (state: RootState) => state.masterlocation.buildingTypes,
+  );
 
 
 
@@ -98,7 +105,9 @@ const Upload = () => {
   }
   }
 
-
+  useEffect(()=>{
+    dispatch(fetchBuildingDataAction());
+  },[dispatch])
 
   function renderHeading() {
     return (
@@ -140,6 +149,7 @@ const Upload = () => {
                     setUploadedFiles={setUploadedFiles}
                     infoError={infoError}
                     setInfoError={setInfoError}
+                    buildingData={buildingData}
                   />
                 </ScrollView>
               </View>

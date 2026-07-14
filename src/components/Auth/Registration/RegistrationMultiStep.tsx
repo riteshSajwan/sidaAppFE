@@ -12,44 +12,44 @@ import { RegisterArchitectFilesDto } from "src/common/model/auth/login";
 import { signUpRequest } from "src/common/service/auth/action";
 import { resetAuthDetails } from "src/common/service/auth/slice";
 import {
-  fetchCityListingAction,
-  fetchDistrictListingAction,
-  fetchStateListingAction,
-  fetchTehsilListingAction,
-} from "src/common/service/masterlocation/action";
+    fetchCityListingAction,
+    fetchDistrictListingAction,
+    fetchStateListingAction,
+    fetchTehsilListingAction,
+} from "src/common/service/masterData/action";
 import {
-  resetCityListing,
-  resetDistrictListing,
-  resetStateListing,
-  resetTehsilListing,
-} from "src/common/service/masterlocation/slice";
+    resetCityListing,
+    resetDistrictListing,
+    resetStateListing,
+    resetTehsilListing,
+} from "src/common/service/masterData/slice";
 import DocumentUploads from "src/components/ArchitectDetails/DocumentUploads/DocumentUploads";
 import {
-  generateInitialErrorsFromFields,
-  generateInitialFilesStateFromFields,
-  IDocumentErrors,
-  IDocumentFilesState,
-  validateDocumentUploadsForFields,
+    generateInitialErrorsFromFields,
+    generateInitialFilesStateFromFields,
+    IDocumentErrors,
+    IDocumentFilesState,
+    validateDocumentUploadsForFields,
 } from "src/components/ArchitectDetails/DocumentUploads/DocumentUploadsUtils";
 import { Routes } from "src/routing/paths";
 import { AppDispatch, RootState } from "src/store";
 import { Icon } from "src/submodules/iconlibrary/src";
 import { sectionStyles, stepStyles, styles } from "./Registration";
 import {
-  CO_NUMBER_REGEX,
-  CONTACT_FIELDS,
-  EDUCATION_FIELDS,
-  generateInitialFormErrors,
-  IDropdownOption,
-  IFormField,
-  INITIAL_FORM,
-  IRegistrationForm,
-  IRegistrationFormErrors,
-  PERSONAL_FIELDS,
-  PRIVATE_ARCH_ATTACHMENT_FIELDS,
-  REGISTRATION_FIELDS,
-  STEPS,
-  validateRegistrationForm,
+    CO_NUMBER_REGEX,
+    CONTACT_FIELDS,
+    EDUCATION_FIELDS,
+    generateInitialFormErrors,
+    IDropdownOption,
+    IFormField,
+    INITIAL_FORM,
+    IRegistrationForm,
+    IRegistrationFormErrors,
+    PERSONAL_FIELDS,
+    PRIVATE_ARCH_ATTACHMENT_FIELDS,
+    REGISTRATION_FIELDS,
+    STEPS,
+    validateRegistrationForm,
 } from "./RegistrationUtils";
 
 // ─── Step Indicator ───────────────────────────────────────────────────────────

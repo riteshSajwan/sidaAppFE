@@ -45,25 +45,66 @@ export interface ICityListingState {
   data: ICityListResponse;
 }
 
+export interface IMasterDataOption {
+  id: number;
+  code: string;
+  name: string;
+  active: boolean;
+}
+
+export interface IBuildingSubType extends IMasterDataOption {
+  buildingTypeId: number;
+  buildingTypeCode: string;
+  buildingTypeName: string;
+}
+
+export interface IBuildingDataResponse {
+  status: number;
+  message: string;
+  buildingTypes: IMasterDataOption[];
+  buildingSubTypes: IBuildingSubType[];
+  terrains: IMasterDataOption[];
+  locationContexts: IMasterDataOption[];
+  error: string | null;
+}
+
+export interface IBuildingDataState {
+  loading: boolean;
+  error: string | null;
+  buildingTypes: IMasterDataOption[];
+  buildingSubTypes: IBuildingSubType[];
+  terrains: IMasterDataOption[];
+  locationContexts: IMasterDataOption[];
+}
+
 export interface IMasterLocationState {
   stateListing: IStateListingState;
   districtListing: IDistrictListingState;
   tehsilListing: ITehsilListingState;
   cityListing: ICityListingState;
+  buildingTypes: IBuildingDataState
 }
 
 const emptyListResponse: never[] = [];
 
-export const masterLocationInitialState: IMasterLocationState = {
+export const masterDataInitalState: IMasterLocationState = {
   stateListing: { loading: false, error: null, data: emptyListResponse },
   districtListing: { loading: false, error: null, data: emptyListResponse },
   tehsilListing: { loading: false, error: null, data: emptyListResponse },
   cityListing: { loading: false, error: null, data: emptyListResponse },
+  buildingTypes: {
+    loading: false,
+    error: null,
+    buildingTypes: emptyListResponse,
+    buildingSubTypes: emptyListResponse,
+    terrains: emptyListResponse,
+    locationContexts: emptyListResponse,
+  },
 };
 
-const masterLocationSlice = createSlice({
-  name: "masterlocation",
-  initialState: masterLocationInitialState,
+const masterData = createSlice({
+  name: "masterData",
+  initialState: masterDataInitalState,
   reducers: {
     fetchStateListing(state) {
       state.stateListing.loading = true;
@@ -78,7 +119,7 @@ const masterLocationSlice = createSlice({
       state.stateListing.error = action.payload;
     },
     resetStateListing(state) {
-      state.stateListing = masterLocationInitialState.stateListing;
+      state.stateListing = masterDataInitalState.stateListing;
     },
 
     fetchDistrictListing(state) {
@@ -97,7 +138,7 @@ const masterLocationSlice = createSlice({
       state.districtListing.error = action.payload;
     },
     resetDistrictListing(state) {
-      state.districtListing = masterLocationInitialState.districtListing;
+      state.districtListing = masterDataInitalState.districtListing;
     },
 
     fetchTehsilListing(state) {
@@ -116,7 +157,7 @@ const masterLocationSlice = createSlice({
       state.tehsilListing.error = action.payload;
     },
     resetTehsilListing(state) {
-      state.tehsilListing = masterLocationInitialState.tehsilListing;
+      state.tehsilListing = masterDataInitalState.tehsilListing;
     },
 
     fetchCityListing(state) {
@@ -132,7 +173,26 @@ const masterLocationSlice = createSlice({
       state.cityListing.error = action.payload;
     },
     resetCityListing(state) {
-      state.cityListing = masterLocationInitialState.cityListing;
+      state.cityListing = masterDataInitalState.cityListing;
+    },
+
+    fetchBuildingData(state) {
+      state.buildingTypes.loading = true;
+      state.buildingTypes.error = null;
+    },
+    fetchBuildingDataSuccess(state, action: PayloadAction<IBuildingDataResponse>) {
+      state.buildingTypes.loading = false;
+      state.buildingTypes.buildingTypes = action.payload.buildingTypes;
+      state.buildingTypes.buildingSubTypes = action.payload.buildingSubTypes;
+      state.buildingTypes.terrains = action.payload.terrains;
+      state.buildingTypes.locationContexts = action.payload.locationContexts;
+    },
+    fetchBuildingDataFailure(state, action: PayloadAction<string>) {
+      state.buildingTypes.loading = false;
+      state.buildingTypes.error = action.payload;
+    },
+    resetBuildingData(state) {
+      state.buildingTypes = masterDataInitalState.buildingTypes;
     },
   },
 });
@@ -154,6 +214,10 @@ export const {
   fetchCityListingSuccess,
   fetchCityListingFailure,
   resetCityListing,
-} = masterLocationSlice.actions;
+  fetchBuildingData,
+  fetchBuildingDataSuccess,
+  fetchBuildingDataFailure,
+  resetBuildingData,
+} = masterData.actions;
 
-export const MasterLocationReducer = masterLocationSlice.reducer;
+export const MasterLocationReducer = masterData.reducer;

@@ -1,7 +1,10 @@
 import { translateMessage } from 'src/i18n/createTranslation';
 import { AppThunk } from 'src/store';
-import { getCityListing, getDistrictListing, getStateListing, getTehsilListing } from './api';
+import { getBuildingData, getCityListing, getDistrictListing, getStateListing, getTehsilListing } from './api';
 import {
+  fetchBuildingData,
+  fetchBuildingDataFailure,
+  fetchBuildingDataSuccess,
   fetchCityListing,
   fetchCityListingFailure,
   fetchCityListingSuccess,
@@ -61,5 +64,17 @@ export const fetchCityListingAction = (stateId: number): AppThunk => (dispatch) 
     })
     .catch(() => {
       dispatch(fetchCityListingFailure(translateMessage('Admin.Sida.App.SomethingWentWrong')));
+    });
+};
+
+export const fetchBuildingDataAction = (): AppThunk => (dispatch) => {
+  dispatch(fetchBuildingData());
+  return getBuildingData()
+    .then((result) => {
+      dispatch(fetchBuildingDataSuccess(result));
+      return result;
+    })
+    .catch(() => {
+      dispatch(fetchBuildingDataFailure(translateMessage('Admin.Sida.App.SomethingWentWrong')));
     });
 };

@@ -1,10 +1,10 @@
 import {
-  Action,
-  AnyAction,
-  combineReducers,
-  configureStore,
-  ThunkAction,
-  ThunkDispatch,
+    Action,
+    AnyAction,
+    combineReducers,
+    configureStore,
+    ThunkAction,
+    ThunkDispatch,
 } from "@reduxjs/toolkit";
 
 // IMPORT SLICES:--
@@ -18,7 +18,7 @@ import { CouponReducer } from "src/common/service/coupon/slice";
 import { CustomerReducer } from "src/common/service/customer/slice";
 import { DriverReducer } from "src/common/service/driver/slice";
 import { InvoicingReducer } from "src/common/service/invoicing/slice";
-import { MasterLocationReducer } from "src/common/service/masterlocation/slice";
+import { MasterLocationReducer } from "src/common/service/masterData/slice";
 import { NotificationReducer } from "src/common/service/notification/slice";
 import { OnboardingReducer } from "src/common/service/onboarding/slice";
 import { ProfileReducer } from "src/common/service/profile/slice";

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useButtonStyle } from 'src/common/assets/styles/button';
@@ -11,33 +11,21 @@ import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown'
 import ErrorMessageContainer from 'src/common/components/ErrorMessage/ErrorMessage';
 import Typography from 'src/common/components/Typography/Typography';
 import { useAppTheme } from 'src/common/context/AppTheme';
+import { IMasterDataOption } from 'src/common/service/masterData/slice';
 import { DXF_FILE_SIZE_BYTES } from 'src/constants';
 import {
   IOption,
+  isIndustriesCategory,
   IUploadContainerProps,
 } from './UploadContainerUtils';
 
-// ─── Static option lists ──────────────────────────────────────────────────────
-const CATEGORY_OPTIONS: IOption[] = [
-  { label: 'Select Category', value: '' },
-  { label: 'Finance', value: 'finance' },
-  { label: 'Operations', value: 'operations' },
-  { label: 'Human Resources', value: 'hr' },
-];
-
-const SUB_CATEGORY_OPTIONS: IOption[] = [
-  { label: 'Select Sub-Category', value: '' },
-  { label: 'Invoices', value: 'invoices' },
-  { label: 'Reports', value: 'reports' },
-  { label: 'Contracts', value: 'contracts' },
-];
-
-const FILE_TYPE_OPTIONS: IOption[] = [
-  { label: 'Select File Type', value: '' },
-  { label: 'PDF', value: 'pdf' },
-  { label: 'Excel', value: 'excel' },
-  { label: 'CSV', value: 'csv' },
-  { label: 'Image', value: 'image' },
+// ─── Option helpers ────────────────────────────────────────────────────────────
+const toDropdownOptions = (
+  items: IMasterDataOption[] | undefined,
+  placeholder: string,
+): IOption[] => [
+  { label: placeholder, value: '' },
+  ...(items ?? []).map((item) => ({ label: item.name, value: item.code })),
 ];
 
 const DXF_TYPES = [
@@ -55,12 +43,41 @@ const UploadContainer = ({
   setUploadedFiles,
   infoError,
   setInfoError,
+  buildingData,
 }: IUploadContainerProps) => {
   const { t: TranslateMessage } = useTranslation();
   const layout    = useLayoutStyle();
   const formStyle = useFormStyle();
   const button    = useButtonStyle();
   const { theme } = useAppTheme();
+
+  const categoryOptions = useMemo(
+    () => toDropdownOptions(buildingData.buildingTypes, 'Select Category'),
+    [buildingData.buildingTypes],
+  );
+
+  const subCategoryOptions = useMemo(
+    () =>
+      toDropdownOptions(
+        buildingData.buildingSubTypes.filter(
+          (subType) => subType.buildingTypeCode === form.category.value,
+        ),
+        'Select Sub-Category',
+      ),
+    [buildingData.buildingSubTypes, form.category.value],
+  );
+
+  const terrainOptions = useMemo(
+    () => toDropdownOptions(buildingData.terrains, 'Select File Type'),
+    [buildingData.terrains],
+  );
+
+  const locationOptions = useMemo(
+    () => toDropdownOptions(buildingData.locationContexts, 'Select Location'),
+    [buildingData.locationContexts],
+  );
+
+  const showLocation = isIndustriesCategory(form.category.value);
 
   // Picker-level error is now managed inside CustomDocumentWrapper
 
@@ -91,9 +108,13 @@ const UploadContainer = ({
 
   const handleCategoryChange = (item: IOption) => {
     resetErrorMsg('category');
+    resetErrorMsg('subCategory');
+    resetErrorMsg('location');
     setForm((prev) => ({
       ...prev,
       category: { label: item.label ?? '', value: String(item.value ?? '') },
+      subCategory: { label: 'Select Sub-Category', value: '' },
+      location: { label: 'Select Location', value: '' },
     }));
   };
 
@@ -110,6 +131,14 @@ const UploadContainer = ({
     setForm((prev) => ({
       ...prev,
       terrain: { label: item.label ?? '', value: String(item.value ?? '') },
+    }));
+  };
+
+  const handleLocationChange = (item: IOption) => {
+    resetErrorMsg('location');
+    setForm((prev) => ({
+      ...prev,
+      location: { label: item.label ?? '', value: String(item.value ?? '') },
     }));
   };
 
@@ -211,7 +240,7 @@ const UploadContainer = ({
 
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.Category'),
-          CATEGORY_OPTIONS,
+          categoryOptions,
           form.category,
           handleCategoryChange,
         )}
@@ -219,7 +248,7 @@ const UploadContainer = ({
 
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.SubCategory'),
-          SUB_CATEGORY_OPTIONS,
+          subCategoryOptions,
           form.subCategory,
           handleSubCategoryChange,
         )}
@@ -227,11 +256,23 @@ const UploadContainer = ({
 
         {renderDropdownField(
           TranslateMessage('Admin.Sida.App.Upload.FileType'),
-          FILE_TYPE_OPTIONS,
+          terrainOptions,
           form.terrain,
           handleTerrainChange,
         )}
         {renderErrorMsg(infoError.terrain)}
+
+        {showLocation && (
+          <>
+            {renderDropdownField(
+              TranslateMessage('Admin.Sida.App.Upload.Location'),
+              locationOptions,
+              form.location,
+              handleLocationChange,
+            )}
+            {renderErrorMsg(infoError.location)}
+          </>
+        )}
       </View>
     );
   }

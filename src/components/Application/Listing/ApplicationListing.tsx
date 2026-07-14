@@ -3,14 +3,14 @@ import { ScrollView, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomInputDatePicker from 'src/common/components/CustomDateNewPicker/CustomDateNewPicker';
 import Customdropdown from 'src/common/components/CustomDropdown/CustomDropdown';
-import { fetchDistrictListingAction } from 'src/common/service/masterlocation/action';
+import { fetchDistrictListingAction } from 'src/common/service/masterData/action';
 import { AppDispatch, RootState } from 'src/store';
 import { useApplicationListingStyle } from './ApplicationListingStyle';
 import {
-  AREA_OPTIONS,
-  BUILDING_TYPE_OPTIONS,
-  IOption, MOCK_APPLICATIONS,
-  STATUS_OPTIONS
+    AREA_OPTIONS,
+    BUILDING_TYPE_OPTIONS,
+    IOption, MOCK_APPLICATIONS,
+    STATUS_OPTIONS
 } from './ApplicationListingUtils';
 import ApplicationTable from './Table/ApplicationTable';
 
